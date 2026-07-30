@@ -17,8 +17,11 @@
 const K_SHRINK = 2.5;              // items needed before a dim is trusted
 const EV_CONF  = {High:1.0, Medium:0.78, Low:0.55};
 const RISK_GATE = 0.5;             // min measurement confidence to fire a risk
+<<<<<<< HEAD
 const INTEREST_SHARE = 0.32;       // interests' share of the growth score
 const INTEREST_DAMP  = 0.65;       // interests' weight relative to culture in fit
+=======
+>>>>>>> 315cfa5ec93e50ce3fd8adfb96f781b75adcf0fc
 
 const clamp=(n,a=0,b=100)=>Math.max(a,Math.min(b,n));
 const el=id=>document.getElementById(id);
@@ -64,6 +67,7 @@ function answered(q,r){
   return true;
 }
 
+<<<<<<< HEAD
 /* ---------- conditional questions ----------
    Sub-domain items only appear for a child who picked that interest.
    Clash items only appear once three interests exist to rank. The bank
@@ -165,6 +169,8 @@ function subDomainCheck(schoolName,subs){
   return out;
 }
 
+=======
+>>>>>>> 315cfa5ec93e50ce3fd8adfb96f781b75adcf0fc
 /* ---------- scoring with confidence ---------- */
 function scoreQuestions(qs,responses){
   const out={};
@@ -441,8 +447,12 @@ function schoolMatch(s,school,fam){
   keys.forEach(k=>{
     const strength=Math.abs(want[k]-50)/50;
     const c=conf[k]||0;
+<<<<<<< HEAD
     const isInterest=["music","tech","sport","enterprise"].includes(k);
     const w=(0.4+1.6*strength*c)*(isInterest?INTEREST_DAMP:1);
+=======
+    const w=0.4+1.6*strength*c;
+>>>>>>> 315cfa5ec93e50ce3fd8adfb96f781b75adcf0fc
     acc+=(100-Math.abs(want[k]-A[k]))*w; totW+=w; measSum+=c;
   });
   const natural=totW>0?acc/totW:50;
@@ -462,11 +472,15 @@ function schoolMatch(s,school,fam){
   dev.push(100-Math.abs(wantIntensity-A.peerIntensity));
   dev.push(S(s,"teacher")>65 ? A.teacher : 100-Math.abs(want.teacher-A.teacher));
   dev.push(S(s,"breadth")>65 ? A.breadth : 100-Math.abs(want.breadth-A.breadth));
+<<<<<<< HEAD
   /* Interests are deliberately the smaller share. A ten-year-old's
      hobbies change; culture, teaching style and the opportunities a
      school actually creates do not, and they matter for six years.
      Interest alignment is a tiebreaker, not a driver. */
   const opportunity=capacity*INTEREST_SHARE+(dev.reduce((a,b)=>a+b,0)/dev.length)*(1-INTEREST_SHARE);
+=======
+  const opportunity=capacity*0.55+(dev.reduce((a,b)=>a+b,0)/dev.length)*0.45;
+>>>>>>> 315cfa5ec93e50ce3fd8adfb96f781b75adcf0fc
 
   /* --- risk: only from dimensions we measured well enough --- */
   let risk=4; const risks=[];

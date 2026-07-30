@@ -107,6 +107,7 @@ const childQuestions = [
  hint:"Pick any number, including none.",
  options:tileOpts(0.6,{effortSelfdir:1})},
 
+<<<<<<< HEAD
 /* ---------- STAGE 0b · sub-domain, conditional ----------
    Only shown to a child who picked the parent interest. Framed as a
    decision rather than a form. Not scored into any dimension — the
@@ -161,6 +162,8 @@ const childQuestions = [
  {text:"I'd ask a teacher or my parents to help me work out the week.",w:{structure:3,teacher:2,helpSeeking:3,effortSelfdir:-2}},
  {text:"I'd probably end up doing neither as well as I wanted.",w:{pressure:-3,spaceNeed:3,effortSelfdir:-2}}]},
 
+=======
+>>>>>>> 315cfa5ec93e50ce3fd8adfb96f781b75adcf0fc
 /* ---------- STAGE 1 · two-option trade-offs (24) ---------- */
 {stage:1,type:"choice",round:"Challenge",prompt:"You get to pick one class for next term. Which sounds better?",options:[
  {text:"A hard class where you'd probably be one of the best in the room.",w:{academic:2,visibility:2,resilience:-1}},

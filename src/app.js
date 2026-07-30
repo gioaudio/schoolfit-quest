@@ -26,6 +26,7 @@ function startGame(){ ci=0; answers={}; order={}; tokens=2; showOnly("game"); re
 
 const STAGE_NAME={0:"What you're into",1:"Quick choices",2:"What you'd actually do",3:"What matters most"};
 
+<<<<<<< HEAD
 /* Swap {TOP} for the child's own number-one interest, so the academic
    clash reads "and your music has something big on" rather than the
    vaguer "the thing you care most about". */
@@ -54,6 +55,16 @@ function renderQ(){
 
   let h=`<div class="q-kicker">${q.type==="bestworst"?"Pick one MOST and one LEAST":q.type==="multi"?(q.pick?("Pick "+q.pick):"Pick any number"):"Choose what feels most true"}</div>`;
   h+=`<h2 class="q-title">${esc(fillTokens(q.prompt))}</h2>`;
+=======
+function renderQ(){
+  const q=childQuestions[ci], r=answers[ci];
+  el("roundLabel").textContent="Part "+(q.stage+1)+" · "+STAGE_NAME[q.stage];
+  el("progressText").textContent=(ci+1)+" of "+childQuestions.length;
+  el("progressBar").style.width=((ci+1)/childQuestions.length*100)+"%";
+
+  let h=`<div class="q-kicker">${q.type==="bestworst"?"Pick one MOST and one LEAST":q.type==="multi"?(q.pick?("Pick "+q.pick):"Pick any number"):"Choose what feels most true"}</div>`;
+  h+=`<h2 class="q-title">${esc(q.prompt)}</h2>`;
+>>>>>>> 315cfa5ec93e50ce3fd8adfb96f781b75adcf0fc
   if(q.hint) h+=`<p class="note">${esc(q.hint)}</p>`;
 
   if(q.type==="bestworst"){
@@ -74,6 +85,7 @@ function renderQ(){
     });
     h+=`</div>`;
     if(q.pick) h+=`<p class="note" id="pickCount">${sel.length} of ${q.pick} chosen</p>`;
+<<<<<<< HEAD
   } else if(q.type==="clash"){
     const tiles=pickedTiles(answers);
     h+=`<div class="opt-list">`;
@@ -83,6 +95,8 @@ function renderQ(){
       h+=`<button class="opt clash${r===side?" on":""}" data-opt="${side}">${esc(tile.t)}</button>`;
     });
     h+=`</div>`;
+=======
+>>>>>>> 315cfa5ec93e50ce3fd8adfb96f781b75adcf0fc
   } else {
     h+=`<div class="opt-list">`;
     orderFor(order,ci,q.options.length).forEach(idx=>{
@@ -128,6 +142,7 @@ function renderQ(){
 function next(){
   const q=childQuestions[ci];
   if(!answered(q,answers[ci])&&answers[ci]!=="skip") return;
+<<<<<<< HEAD
   let i=ci+1;
   while(i<childQuestions.length && !isActive(childQuestions[i],answers)) i++;
   if(i<childQuestions.length){ ci=i; renderQ(); } else finishChild();
@@ -141,6 +156,16 @@ function back(){
 function finishChild(){
   const clean={}; Object.keys(answers).forEach(k=>{ if(answers[k]!=="skip") clean[k]=answers[k]; });
   childScores=applyInterestRank(scoreQuestions(childQuestions,clean), interestRanking(answers));
+=======
+  if(ci<childQuestions.length-1){ ci++; renderQ(); }
+  else finishChild();
+}
+function back(){ if(ci>0){ci--;renderQ();} }
+
+function finishChild(){
+  const clean={}; Object.keys(answers).forEach(k=>{ if(answers[k]!=="skip") clean[k]=answers[k]; });
+  childScores=scoreQuestions(childQuestions,clean);
+>>>>>>> 315cfa5ec93e50ce3fd8adfb96f781b75adcf0fc
   useParent=false; showOnly("results"); renderResults();
 }
 
@@ -321,6 +346,7 @@ function renderProfileNotes(s){
     ? rows.map(r=>`<div class="insight"><strong>${esc(DIMS[r.d].label)} — ${r.dir==="high"?"high":"low"}</strong>${esc(DIMS[r.d].desc)}<span class="conf-lab" style="display:block;margin-top:6px">${Math.round(r.x.confidence*100)}% measurement confidence · ${r.x.n} question${r.x.n===1?"":"s"}</span></div>`).join("")
     : `<p class="note">Nothing here stood out strongly enough to report.</p>`;
 
+<<<<<<< HEAD
   /* The interest ladder, shown plainly — this is the bit parents find
      most surprising, and it is worth showing the working. */
   const rank=interestRanking(answers), subs=subDomains(answers);
@@ -352,6 +378,8 @@ function renderProfileNotes(s){
   }
   el("profileNotes").innerHTML = bits.join("") + el("profileNotes").innerHTML;
 
+=======
+>>>>>>> 315cfa5ec93e50ce3fd8adfb96f781b75adcf0fc
   const um=unmappedInterests(answers);
   el("unmappedNote").innerHTML = um.length
     ? `<div class="insight warn"><strong>Interests this tool cannot match on</strong>The school dataset has no attribute for ${esc(um.join(", "))}. These interests are shown in the profile and turned into tour questions, but they do not affect any school's score. Ask each school about them directly.</div>`
@@ -360,7 +388,10 @@ function renderProfileNotes(s){
 
 function renderSchools(s){
   const fam=familyFilters();
+<<<<<<< HEAD
   const subs=subDomains(answers);
+=======
+>>>>>>> 315cfa5ec93e50ce3fd8adfb96f781b75adcf0fc
   const ranked=schools.map(sc=>({sc,m:schoolMatch(s,sc,fam)})).sort((a,b)=>b.m.score-a.m.score);
   const ok=ranked.filter(r=>r.m.eligible), no=ranked.filter(r=>!r.m.eligible);
   const tours=profileTours(s);
@@ -383,9 +414,12 @@ function renderSchools(s){
       </header>
       ${m.blocks.length?`<div class="blocked">Outside your stated constraints: ${esc(m.blocks.join(" "))}</div>`:""}
       ${m.softs.length?`<div class="soft">${esc(m.softs.join(" "))}</div>`:""}
+<<<<<<< HEAD
       ${(()=>{const c=subDomainCheck(sc.name,subs);return c.length?
         `<div class="subdomain">${c.map(x=>`<span class="sd ${x.level}">${esc(x.text)}</span>`).join("")}
          ${programNote(sc.name)?`<p class="sd-note">${esc(programNote(sc.name))}</p>`:""}</div>`:"";})()}
+=======
+>>>>>>> 315cfa5ec93e50ce3fd8adfb96f781b75adcf0fc
       <div class="align">
         <div class="align-col ok">
           <h4>How this could suit</h4>

@@ -8,6 +8,7 @@
 
 import { readFileSync, writeFileSync } from "node:fs";
 
+<<<<<<< HEAD
 /* Bump this on every release you push. It is what lets a visitor
    holding a cached copy notice they are out of date. */
 const VERSION = "4.4.0";
@@ -36,11 +37,18 @@ const APP_VERSION = ${JSON.stringify(VERSION)};
   }
 })();`;
 
+=======
+const read = f => readFileSync(new URL(f, import.meta.url), "utf8");
+
+>>>>>>> 315cfa5ec93e50ce3fd8adfb96f781b75adcf0fc
 /* Order matters. questions -> schools -> engine -> app. */
 const JS_FILES = [
   "src/questions.js",   // dimensions + child and parent question banks
   "src/schools.js",     // the 21 school profiles and their sources
+<<<<<<< HEAD
   "src/programs.js",    // sport and music sub-domain data
+=======
+>>>>>>> 315cfa5ec93e50ce3fd8adfb96f781b75adcf0fc
   "src/engine.js",      // scoring, confidence, matching, alignment narrative
   "src/app.js"          // flow and rendering
 ];
@@ -59,9 +67,12 @@ ${read("src/styles.css").trim()}
 <body>
 ${read("src/body.html").trim()}
 <script>
+<<<<<<< HEAD
 /* ===== version check ===== */
 ${VERSION_CHECK.trim()}
 
+=======
+>>>>>>> 315cfa5ec93e50ce3fd8adfb96f781b75adcf0fc
 ${JS_FILES.map(f => `/* ===== ${f} ===== */\n${read(f).trim()}`).join("\n\n")}
 </script>
 </body>
@@ -77,6 +88,10 @@ try {
 }
 
 writeFileSync(new URL("index.html", import.meta.url), html);
+<<<<<<< HEAD
 writeFileSync(new URL("version.json", import.meta.url), JSON.stringify({ version: VERSION }) + "\n");
 console.log(`Built index.html — ${(html.length / 1024).toFixed(0)}KB — version ${VERSION}`);
 console.log("Commit index.html AND version.json together, or the version check will misfire.");
+=======
+console.log(`Built index.html — ${(html.length / 1024).toFixed(0)}KB`);
+>>>>>>> 315cfa5ec93e50ce3fd8adfb96f781b75adcf0fc
