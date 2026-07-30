@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en-AU">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SchoolFit Quest — Perth School Matcher</title>
-  <style>
-    :root{
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="An exploratory school-fit tool for Perth families. Not a ranking, not an assessment of any school." />
+<title>SchoolFit Quest — Perth School Fit</title>
+<style>
+/* SchoolFit Quest — base */
+:root{
       --ink:#18212f;
       --muted:#617087;
       --paper:#fbfaf7;
@@ -189,60 +191,133 @@
       .panel{box-shadow:none;break-inside:avoid}
       .app{max-width:none;padding:0}
     }
-  </style>
+
+/* v4 additions */
+/* ---- v4 additions ---- */
+.hidden{display:none !important}
+.q-kicker{font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.q-title{font-size:clamp(1.3rem,2.4vw,1.9rem);letter-spacing:-.03em;margin-bottom:22px;line-height:1.2}
+.opt-list{display:grid;gap:12px}
+.opt{display:flex;align-items:center;gap:12px;text-align:left;padding:18px 20px;border-radius:16px;border:1.5px solid var(--line);background:#fff;font-size:1.02rem;line-height:1.4;transition:.14s}
+.opt:hover{border-color:var(--accent);transform:translateY(-1px)}
+.opt.on{border-color:var(--accent);background:rgba(98,87,213,.07);box-shadow:0 0 0 3px rgba(98,87,213,.12)}
+.rank{display:grid;place-items:center;min-width:26px;height:26px;border-radius:9px;background:var(--accent);color:#fff;font-size:.82rem;font-weight:800}
+.tile-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.tile{text-align:left;padding:14px 16px;border-radius:14px;border:1.5px solid var(--line);background:#fff;font-size:.94rem;line-height:1.35;transition:.14s}
+.tile:hover{border-color:var(--accent)}
+.tile.on{border-color:var(--accent);background:rgba(98,87,213,.09);font-weight:650}
+.bw-head{display:grid;grid-template-columns:56px 56px 1fr;gap:10px;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:8px}
+.bw-list{display:grid;gap:10px}
+.bw-row{display:grid;grid-template-columns:56px 56px 1fr;gap:10px;align-items:center;padding:12px 14px;border-radius:14px;border:1.5px solid var(--line);background:#fff}
+.bw-row.is-most{border-color:var(--accent2);background:rgba(31,157,138,.07)}
+.bw-row.is-least{border-color:var(--warm);background:rgba(242,166,90,.09)}
+.bw-btn{width:34px;height:34px;border-radius:11px;border:1.5px solid var(--line);background:#fff}
+.bw-btn.most.on{background:var(--accent2);border-color:var(--accent2)}
+.bw-btn.least.on{background:var(--warm);border-color:var(--warm)}
+.bw-text{font-size:.98rem;line-height:1.35}
+.btn-sm{margin-top:14px;font-size:.85rem;padding:8px 14px}
+.trait{padding:14px 0;border-bottom:1px solid var(--line)}
+.trait-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.trait-val{font-weight:850;font-variant-numeric:tabular-nums}
+.trait p{font-size:.86rem;color:var(--muted);margin:6px 0 0}
+.trait-meta{display:flex;align-items:center;gap:8px;margin-top:7px}
+.bar{height:8px;border-radius:99px;background:#eceef3;overflow:hidden;margin-top:7px}
+.bar>div{height:100%;background:var(--accent);border-radius:99px}
+.bar>div.alt{background:var(--accent2)}
+.bar>div.warn{background:var(--warm)}
+.conf{display:inline-block;width:52px;height:5px;border-radius:99px;background:#e6e9ef;overflow:hidden}
+.conf-fill{display:block;height:100%;background:var(--muted)}
+.conf-lab{font-size:.73rem;color:var(--muted);font-weight:650}
+.insight{padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:#fff;font-size:.9rem;line-height:1.45;margin-bottom:10px}
+.insight strong{display:block;margin-bottom:5px}
+.insight.warn{border-color:var(--warm);background:rgba(242,166,90,.08)}
+.school{padding:22px;border:1px solid var(--line);border-radius:var(--radius);background:#fff;margin-bottom:16px;box-shadow:var(--shadow)}
+.school.dim{opacity:.62}
+.school-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:14px}
+.school-head h3{margin:0 0 4px;font-size:1.18rem}
+.school-type{margin:0;font-size:.85rem;color:var(--muted)}
+.school-score{text-align:right;flex-shrink:0}
+.ss-num{font-size:2.1rem;font-weight:850;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.ss-band{font-size:.9rem;font-weight:650;color:var(--muted);margin-left:3px}
+.ss-lab{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:750}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin:14px 0}
+.metrics span{font-size:.78rem;color:var(--muted);font-weight:700}
+.metrics b{font-size:.86rem;display:block;margin-top:4px}
+.blocked{padding:10px 13px;border-radius:11px;background:rgba(200,79,94,.09);border:1px solid rgba(200,79,94,.3);font-size:.86rem;margin-bottom:10px}
+.soft{padding:10px 13px;border-radius:11px;background:rgba(242,166,90,.1);font-size:.86rem;margin-bottom:10px}
+.evidence{font-size:.82rem;color:var(--muted);line-height:1.5;padding:11px 13px;background:var(--paper);border-radius:11px}
+.school details{margin-top:9px;font-size:.9rem}
+.school summary{cursor:pointer;font-weight:700;padding:7px 0}
+.school details ul{margin:6px 0 10px;padding-left:20px;line-height:1.55}
+.align{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+@media(max-width:720px){.align{grid-template-columns:1fr}}
+.align-col{padding:14px 16px;border-radius:14px;border:1px solid var(--line)}
+.align-col.ok{background:rgba(31,157,138,.06);border-color:rgba(31,157,138,.28)}
+.align-col.no{background:rgba(242,166,90,.07);border-color:rgba(242,166,90,.32)}
+.align-col h4{margin:0 0 8px;font-size:.76rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.align-col ul{margin:0;padding-left:18px}
+.align-col li{font-size:.9rem;line-height:1.5;margin-bottom:6px}
+.align-col .surplus{font-size:.84rem;line-height:1.5;margin:10px 0 0;padding-top:9px;border-top:1px solid rgba(0,0,0,.08);color:var(--muted)}
+.align-col .none{font-size:.88rem;color:var(--muted);margin:0;line-height:1.5}
+.summary{padding:20px 22px;border:1px solid var(--line);border-radius:var(--radius);background:#fff;margin-bottom:22px;box-shadow:var(--shadow)}
+.summary h3{margin:0 0 4px}
+.sum-row{display:grid;grid-template-columns:38px 1fr;gap:14px;padding:14px 0;border-top:1px solid var(--line)}
+.sum-rank{display:grid;place-items:center;width:34px;height:34px;border-radius:12px;background:var(--accent);color:#fff;font-weight:850}
+.sum-row strong{display:block;font-size:1.02rem}
+.sum-score{display:block;font-size:.78rem;color:var(--muted);font-weight:700;margin:3px 0 7px}
+.sum-row p{margin:0;font-size:.92rem;line-height:1.55}
+.tie{margin:14px 0 0;padding:12px 14px;border-radius:12px;background:var(--paper);font-size:.87rem;line-height:1.5;color:var(--muted)}
+.cmp{padding:14px;border:1px solid var(--line);border-radius:14px;background:#fff;margin-bottom:10px}
+.cmp-bars{margin:8px 0}
+.cmp-bars span{font-size:.76rem;color:var(--muted);font-weight:700}
+.cmp p{font-size:.86rem;color:var(--muted);margin:6px 0 0}
+.filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+.filters label{display:block;font-size:.78rem;font-weight:750;color:var(--muted);margin-bottom:5px}
+.filters select{width:100%;padding:11px 13px;border-radius:12px;border:1.5px solid var(--line);background:#fff}
+@media print{.game-nav,.actions,.filters-panel{display:none}.school{break-inside:avoid;box-shadow:none}}
+</style>
 </head>
 <body>
 <div class="app">
   <div class="topbar">
     <div class="brand"><div class="mark">SF</div><span>SchoolFit Quest</span></div>
-    <div class="badge">Deep-research prototype · Perth · 21 schools · updated July 2026</div>
+    <div class="badge">v4 · Perth · 21 schools · confidence-weighted</div>
   </div>
 
-  <main id="landing" class="panel hero">
-    <section>
-      <div class="badge">A school-fit game, not a school ranking</div>
-      <h1>Which school environment brings out their best?</h1>
-      <p class="lede">A scenario-based game that tests trade-offs: challenge or confidence, teacher direction or independence, ambitious peers or room to lead, sport or music, breadth or specialisation.</p>
-      <div class="input-grid">
-        <div>
-          <label for="childName">Child’s name (optional)</label>
-          <input id="childName" placeholder="e.g. Hugo" />
+  <section id="intro">
+    <div class="panel hero">
+      <div>
+        <div class="badge">A school-fit game, not a school ranking</div>
+        <h1>Which school environment actually suits your child?</h1>
+        <p class="lede">Fifty forced choices — no agree/disagree scales, no obviously right answers. The game asks what your child would <em>actually do</em>, not what sounds best, and it tells you how confident it is in every reading it gives you.</p>
+        <div class="actions">
+          <button class="btn btn-primary" id="startBtn">Start the child game</button>
+          <button class="btn btn-ghost" id="aboutBtn">How it works</button>
         </div>
-        <div>
-          <label for="childYear">Current school year</label>
-          <select id="childYear">
-            <option>Year 3</option><option selected>Year 4</option><option>Year 5</option>
-            <option>Year 6</option><option>Year 7</option>
-          </select>
-        </div>
+        <p class="note">About 15–20 minutes. There are no good answers. Pick what feels most true, even when both options sound fine.</p>
       </div>
-      <div class="actions">
-        <button class="btn btn-primary" id="startBtn">Start the child game</button>
-        <button class="btn btn-ghost" id="aboutBtn">How it works</button>
+      <div class="panel section">
+        <div class="mini">What this will not do</div>
+        <p style="font-size:.92rem;line-height:1.55;margin:0">It will not tell you the best school. It will not treat expensive, selective, private, public, co-ed or single-sex as better. It has never been checked against how children actually went at these schools, so treat every number as a conversation starter rather than a finding.</p>
       </div>
-      <p class="note">About 18–22 minutes. There are no “good” answers. Choose what feels most true, even when both choices sound appealing.</p>
-    </section>
-    <aside class="hero-card">
-      <div class="mini">The question behind the game</div>
-      <blockquote>“Does this child need the most impressive school, or the environment that consistently makes them lean forward?”</blockquote>
-    </aside>
-  </main>
+    </div>
+  </section>
 
   <section id="about" class="panel section hidden">
-    <h2>How the prototype works</h2>
-    <p class="lede">The game progresses from simple forced choices, into richer behaviour scenarios, and finishes with best–worst priority selections. The same trait is tested in several different contexts, reducing the chance that one obvious answer controls the result.</p>
+    <h2>How it works</h2>
+    <p class="lede">Three rounds: what your child is into, quick trade-offs, then what they would actually do in specific situations, finishing with most-and-least priorities.</p>
     <div class="grid-2">
-      <div class="insight"><strong>Child profile</strong>Interests, motivation, response to challenge, social influence, structure, independence and pressure tolerance.</div>
-      <div class="insight"><strong>School matching</strong>Each school is profiled against the same dimensions, with cautions and links to supporting evidence.</div>
-      <div class="insight"><strong>Optional parent lens</strong>A shorter observation-based extension compares what the child chose with patterns adults have actually seen.</div>
-      <div class="insight"><strong>Not a diagnosis</strong>This is an exploratory decision aid. It has not yet been psychometrically validated and should not replace tours, conversations or professional advice.</div>
+      <div class="insight"><strong>Confidence, not false precision</strong>Every dimension records how many questions informed it. A dimension measured by one question is pulled back toward neutral instead of swinging to an extreme, and it is not allowed to trigger a risk warning.</div>
+      <div class="insight"><strong>Interests kept separate</strong>What your child likes is asked once, directly, across sixteen areas. The behavioural questions never name an interest, so they measure how your child operates rather than what they enjoy.</div>
+      <div class="insight"><strong>Evidence carried through</strong>Schools with thinner supporting evidence get a wider ± band and their attributes are pulled toward the dataset average. The tool does not pretend to know a school it has read little about.</div>
+      <div class="insight"><strong>Constraints are filters</strong>Fees, faith, travel and co-ed preference exclude schools from the ranking. They never quietly reduce a school's score, and co-ed is never inferred from your child's answers.</div>
     </div>
     <div class="actions"><button class="btn btn-primary" id="aboutStart">Start</button><button class="btn btn-ghost" id="aboutBack">Back</button></div>
   </section>
 
   <section id="game" class="game-shell hidden">
     <div class="progress-wrap">
-      <div class="progress-meta"><span id="roundLabel">Round 1</span><span id="progressText">1 of 44</span></div>
+      <div class="progress-meta"><span id="roundLabel">Part 1</span><span id="progressText">1 of 50</span></div>
       <div class="progress"><div id="progressBar"></div></div>
     </div>
     <div id="questionCard" class="panel question"></div>
@@ -252,113 +327,9 @@
     </div>
   </section>
 
-  <section id="results" class="results hidden">
-    <div class="panel result-hero">
-      <div>
-        <div class="badge">Child profile</div>
-        <h2 id="profileName" class="profile-name"></h2>
-        <p id="profileSummary" class="profile-summary"></p>
-        <div class="pill-row" id="topPills"></div>
-        <div class="actions">
-          <button class="btn btn-primary parent-cta" id="parentStartBtn">Add parent perspective</button>
-          <button class="btn btn-secondary" id="printBtn">Print / save PDF</button>
-          <button class="btn btn-ghost" id="restartBtn">Restart</button>
-        </div>
-      </div>
-      <div class="score-orb">
-        <div><span class="note">Best overall balance</span><strong id="topMatchScore">—</strong><span id="topMatchName"></span></div>
-      </div>
-    </div>
-
-    <div class="grid-2">
-      <div class="panel section">
-        <h3>Profile dimensions</h3>
-        <div class="trait-list" id="traitList"></div>
-      </div>
-      <div class="panel section">
-        <h3>Best-fit environment</h3>
-        <div id="environmentInsights" class="trait-list"></div>
-      </div>
-    </div>
-
-    <div id="comparisonPanel" class="panel section hidden">
-      <h3>Child and parent comparison</h3>
-      <p class="note">Differences are not errors. They often reveal the questions worth investigating.</p>
-      <div id="comparisonList" class="compare-grid"></div>
-      <div id="differenceInsights" class="trait-list" style="margin-top:18px"></div>
-      <div class="actions">
-        <button class="btn btn-secondary" id="toggleCombinedBtn">Use combined interpretation</button>
-      </div>
-    </div>
-
-    <div class="panel section filters-panel">
-      <h3>Family filters</h3>
-      <p class="note">These do not change the child profile. They adjust the practical school shortlist.</p>
-      <div class="filters">
-        <div>
-          <label>School gender</label>
-          <select id="filterGender">
-            <option value="any">No preference</option>
-            <option value="coedPreferred" selected>Co-ed preferred</option>
-            <option value="coedOnly">Co-ed only</option>
-            <option value="boysEligible">Co-ed or boys’ schools</option>
-            <option value="girlsEligible">Co-ed or girls’ schools</option>
-            <option value="boysPreferred">Boys’ school preferred</option>
-            <option value="girlsPreferred">Girls’ school preferred</option>
-            <option value="boysOnly">Boys’ schools only</option>
-            <option value="girlsOnly">Girls’ schools only</option>
-          </select>
-        </div>
-        <div>
-          <label>Annual tuition</label>
-          <select id="filterBudget">
-            <option value="public">Public only</option>
-            <option value="10000">Up to $10,000</option>
-            <option value="18000">Up to $18,000</option>
-            <option value="30000" selected>Up to $30,000</option>
-            <option value="40000">Up to $40,000</option>
-            <option value="any">No limit</option>
-          </select>
-        </div>
-        <div>
-          <label>Religious setting</label>
-          <select id="filterReligion">
-            <option value="any" selected>No preference</option>
-            <option value="light">Comfortable if not dominant</option>
-            <option value="avoid">Prefer secular</option>
-          </select>
-        </div>
-        <div>
-          <label>Travel tolerance</label>
-          <select id="filterTravel">
-            <option value="local">Prefer very local</option>
-            <option value="moderate" selected>Moderate commute</option>
-            <option value="metro">Anywhere in metro Perth</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <div class="panel section">
-      <h3>How the school dossiers are weighted</h3>
-      <div class="grid-2">
-        <div class="insight"><strong>Verified structure</strong>Public School Reviews, annual reports, entry rules, subject pathways, scholarships, fees and published support structures receive the greatest weight.</div>
-        <div class="insight"><strong>Ground-level themes</strong>Student, parent, alumni and staff commentary is included only as anecdotal context. Repeated themes are more useful than isolated praise or criticism.</div>
-        <div class="insight"><strong>Contradictions</strong>The app deliberately preserves opposing evidence, such as strong formal wellbeing systems alongside reports of comparison pressure.</div>
-        <div class="insight"><strong>Unknowns</strong>Where dependable evidence is unavailable, the app generates questions for tours and current-family conversations rather than inventing a culture score.</div>
-      </div>
-    </div>
-
-    <div class="panel section">
-      <h2>Suggested Perth schools</h2>
-      <p class="lede">Matches are comparative, not verdicts. Each dossier separates verified structure, recurring ground-level themes, contradictions and important unknowns. Matches now show natural fit, developmental opportunity and risk separately. Evidence confidence varies by school.</p>
-      <div id="schoolList" class="school-list"></div>
-    </div>
-  </section>
-
   <section id="parentGame" class="game-shell hidden">
     <div class="progress-wrap">
-      <div class="progress-meta"><span>Optional parent perspective</span><span id="parentProgressText">1 of 18</span></div>
+      <div class="progress-meta"><span id="parentPartLabel">Part 1</span><span id="parentProgressText">1 of 32</span></div>
       <div class="progress"><div id="parentProgressBar"></div></div>
     </div>
     <div id="parentQuestionCard" class="panel question"></div>
@@ -368,437 +339,649 @@
     </div>
   </section>
 
+  <section id="results" class="results hidden">
+    <div class="panel section">
+      <div class="badge" id="modeLabel">Child answers only</div>
+      <h2 id="profileName" class="profile-name"></h2>
+      <p id="profileSummary" class="profile-summary lede"></p>
+      <div class="actions">
+        <button class="btn btn-primary" id="parentStartBtn">Add parent perspective</button>
+        <button class="btn btn-secondary" id="printBtn">Print / save PDF</button>
+        <button class="btn btn-ghost" id="restartBtn">Restart</button>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="panel section">
+        <h3>Profile</h3>
+        <p class="note">The grey bar under each trait shows how much of the questionnaire actually informed it.</p>
+        <div class="trait-list" id="traitList"></div>
+      </div>
+      <div class="panel section">
+        <h3>Measured, but not matched on</h3>
+        <p class="note">These say something real about your child, but the school dataset holds no comparable evidence — so they shape the profile and the tour questions, and never touch a school's score.</p>
+        <div id="profileNotes"></div>
+        <div id="unmappedNote"></div>
+      </div>
+    </div>
+
+    <div id="comparisonPanel" class="panel section hidden">
+      <h3>Where you and your child see it differently</h3>
+      <p class="note">Differences are not errors. They are usually the most useful thing on this page.</p>
+      <div id="comparisonList" class="compare-grid"></div>
+      <div id="differenceInsights" style="margin-top:18px"></div>
+    </div>
+
+    <div class="panel section filters-panel">
+      <h3>Practical constraints</h3>
+      <p class="note">These do not change your child's profile. They decide which schools are on the list at all.</p>
+      <div class="filters">
+        <div><label for="filterEligible">Student</label><select id="filterEligible">
+          <option value="any">Any</option><option value="boy">Boy</option><option value="girl">Girl</option></select></div>
+        <div><label for="filterCoed">Co-ed or single-sex</label><select id="filterCoed">
+          <option value="none">No preference</option><option value="leanCoed">Lean co-ed</option><option value="coed">Co-ed only</option>
+          <option value="leanSingle">Lean single-sex</option><option value="single">Single-sex only</option></select></div>
+        <div><label for="filterBudget">Annual fees up to</label><select id="filterBudget">
+          <option value="any">No limit</option><option value="1500">Public only</option><option value="8000">$8,000</option>
+          <option value="16000">$16,000</option><option value="25000">$25,000</option><option value="40000">$40,000</option></select></div>
+        <div><label for="filterFaith">Faith</label><select id="filterFaith">
+          <option value="fine">No preference</option><option value="want">Want a faith community</option>
+          <option value="light">Prefer it minimal</option><option value="none">Secular only</option></select></div>
+        <div><label for="filterTravel">Travel</label><select id="filterTravel">
+          <option value="any">Any</option><option value="moderate">Moderate</option><option value="local">Local only</option></select></div>
+      </div>
+    </div>
+
+    <div class="panel section">
+      <h3>Schools</h3>
+      <p class="note">Ranked by fit indication. The ± band is real uncertainty, not decoration — where two schools overlap inside their bands, this tool cannot tell them apart.</p>
+      <div id="topSummary"></div>
+      <div id="schoolList"></div>
+      <div id="excludedList"></div>
+    </div>
+  </section>
+
   <footer class="footer">
-    Prototype only. School profiles are interpretive summaries based on public information and limited community commentary. Some community links may require a platform login. Programs, fees and entry rules change; verify directly with each school.
+    Prototype. School profiles are interpretive summaries built from public information and limited community commentary, not verified assessments of any school. This tool has not been validated against student outcomes. Programs, fees and entry rules change — verify everything directly with each school.
   </footer>
 </div>
-
 <script>
+/* ===== src/questions.js ===== */
+/* ============================================================
+   SchoolFit Quest v4 — dimensions and question bank
+   Two classes of dimension:
+     SCORED  — a matching attribute exists in the school dataset
+     PROFILE — measured on the child, but no school-side evidence
+               exists, so it never touches the match score. It
+               shapes the narrative and generates tour questions.
+   ============================================================ */
+
 const DIMS = {
-  academic:{label:"Academic challenge",desc:"Enjoys demanding ideas, advanced work and intellectual stretch."},
-  teacher:{label:"Teacher mentorship",desc:"Performs best when a respected adult notices potential and raises the bar."},
-  peerDrive:{label:"Ambitious peers",desc:"Gains energy from capable, engaged students nearby."},
-  resilience:{label:"Outperformance resilience",desc:"Stays engaged when others are currently stronger."},
-  structure:{label:"Structure and accountability",desc:"Benefits from clear standards, checkpoints and follow-through."},
-  autonomy:{label:"Creative independence",desc:"Wants room to choose methods, topics and direction."},
-  social:{label:"Social energy",desc:"Draws motivation and identity from groups, events and belonging."},
-  peerInfluence:{label:"Peer-culture sensitivity",desc:"Tends to absorb the habits and priorities of close friends."},
-  pressure:{label:"Pressure tolerance",desc:"Can sustain effort under selection, deadlines and visible comparison."},
-  music:{label:"Music and production",desc:"Prioritises performance, composition, production and sound."},
-  tech:{label:"Technology and making",desc:"Prioritises computing, media, design and building things."},
-  sport:{label:"Sport and movement",desc:"Values teams, competition, physical challenge and active school life."},
-  enterprise:{label:"Leadership and enterprise",desc:"Enjoys leading, pitching, organising and turning ideas into action."},
-  breadth:{label:"Breadth of identity",desc:"Wants several strong pathways rather than one defining specialty."},
-  grounded:{label:"Grounded social culture",desc:"Values social breadth, community connection and low status-consciousness."},
-  visibility:{label:"Need to be actively noticed",desc:"Benefits when teachers identify potential and personally direct opportunities."},
-  focus:{label:"Focused learning culture",desc:"Needs classrooms and peers where effort and attention are consistently normal."},
-  mixedGender:{label:"Co-ed preference",desc:"Prefers learning and socialising in a mixed-gender secondary-school environment."}
+  /* ---------- SCORED ---------- */
+  academic:{label:"Academic challenge",kind:"scored",desc:"Enjoys demanding ideas, advanced work and intellectual stretch."},
+  teacher:{label:"Teacher mentorship",kind:"scored",desc:"Performs best when a respected adult notices potential and raises the bar."},
+  peerDrive:{label:"Ambitious peers",kind:"scored",desc:"Gains energy from capable, engaged students nearby."},
+  peerInfluence:{label:"Peer-culture sensitivity",kind:"scored",desc:"Tends to absorb the habits and priorities of close friends."},
+  resilience:{label:"Outperformance resilience",kind:"scored",desc:"Stays engaged when others are currently stronger."},
+  structure:{label:"Structure and accountability",kind:"scored",desc:"Benefits from clear standards, checkpoints and follow-through."},
+  autonomy:{label:"Independence",kind:"scored",desc:"Wants room to choose methods, topics and direction."},
+  focus:{label:"Focused learning culture",kind:"scored",desc:"Needs classrooms where effort and attention are consistently normal."},
+  social:{label:"Social energy",kind:"scored",desc:"Draws motivation and identity from groups, events and belonging."},
+  pressure:{label:"Pressure tolerance",kind:"scored",desc:"Can sustain effort under selection, deadlines and visible comparison."},
+  visibility:{label:"Need to be actively noticed",kind:"scored",desc:"Benefits when teachers identify potential and personally direct opportunities."},
+  breadth:{label:"Breadth of identity",kind:"scored",desc:"Wants several strong pathways rather than one defining specialty."},
+  grounded:{label:"Grounded social culture",kind:"scored",desc:"Values social breadth, community connection and low status-consciousness."},
+  academicInterest:{label:"Academic interest",kind:"scored",attr:"academic",desc:"Draws towards study, reading, puzzles and ideas for their own sake."},
+  music:{label:"Music and performing arts",kind:"scored",desc:"Prioritises performance, composition, production and sound."},
+  tech:{label:"Technology and making",kind:"scored",desc:"Prioritises computing, media, design and building things."},
+  sport:{label:"Sport and movement",kind:"scored",desc:"Values teams, competition, physical challenge and active school life."},
+  enterprise:{label:"Leadership and enterprise",kind:"scored",desc:"Enjoys leading, pitching, organising and turning ideas into action."},
+
+  /* ---------- PROFILE ONLY ---------- */
+  helpSeeking:{label:"Surfacing a problem",kind:"profile",desc:"Whether they tell someone when they are stuck, behind or struggling.",lowIsRisk:true},
+  belonging:{label:"Close-friendship reliance",kind:"profile",desc:"Whether they rely on one or two close friendships rather than a wide network."},
+  schoolSize:{label:"Environment size",kind:"profile",desc:"Comfort in a large, anonymous school versus a small one where everyone is known."},
+  changeTolerance:{label:"New starts",kind:"profile",desc:"How readily they settle into a group where they know nobody.",lowIsRisk:true},
+  statusTolerance:{label:"Status-hierarchy comfort",kind:"profile",desc:"Comfort in a school where standing and reputation are visible and ranked."},
+  conflictRepair:{label:"Repairing a falling-out",kind:"profile",desc:"How they handle a rupture with a close friend."},
+  empathy:{label:"Looking out for others",kind:"profile",desc:"Willingness to act for someone else at some cost to themselves."},
+  spaceNeed:{label:"Need for downtime",kind:"profile",desc:"How much recovery time they need after a full or crowded day.",highIsRisk:true},
+  formality:{label:"Traditional culture fit",kind:"profile",desc:"Whether uniform, ceremony and school tradition energise or cost them."},
+  cohortStability:{label:"Stable grouping",kind:"profile",desc:"Preference for one consistent class group over moving between groups."},
+  outdoor:{label:"Outdoor and expedition",kind:"profile",desc:"Appetite for camps, hiking and time away from home."},
+  effortSelfdir:{label:"Follow-through",kind:"profile",desc:"Whether work gets finished without an adult prompting.",lowIsRisk:true},
+  mentorStyle:{label:"Preferred teacher style",kind:"profile",desc:"Relational and attentive at one end, expert and demanding at the other."},
+  coed:{label:"Mixed-group working",kind:"display",desc:"How they described working in mixed versus same-gender groups. Recorded, never scored."}
 };
 
+const SCORED_DIMS  = Object.keys(DIMS).filter(d=>DIMS[d].kind==="scored");
+const PROFILE_DIMS = Object.keys(DIMS).filter(d=>DIMS[d].kind==="profile");
+
+/* Child dimension -> school attribute. Where two child dimensions
+   feed one school attribute they are blended in desiredSchoolVector. */
+const ATTR_OF = {
+  academic:"academic", academicInterest:"academic", teacher:"teacher", visibility:"visibility",
+  structure:"structure", autonomy:"autonomy", focus:"focus", social:"social",
+  pressure:"pressure", music:"music", tech:"tech", sport:"sport",
+  enterprise:"enterprise", breadth:"breadth", grounded:"grounded"
+};
+
+/* Interest tiles for the Stage 0 inventory. `d` = dimension weights.
+   `unmapped` marks a domain with no attribute in the school dataset:
+   it is reported and turned into a tour question, never scored. */
+const TILES = [
+  {id:"music",   t:"Making music or playing an instrument", d:{music:3}},
+  {id:"art",     t:"Drawing, design or animation",          d:{tech:1}, unmapped:"visual art and design"},
+  {id:"drama",   t:"Acting, film or performing",            d:{music:2, social:1}},
+  {id:"writing", t:"Writing stories, or making videos",     d:{tech:1, academicInterest:1}, unmapped:"writing and media"},
+  {id:"sport",   t:"Sport and training",                    d:{sport:3}},
+  {id:"outdoor", t:"Being outdoors — camping, hiking, exploring", d:{outdoor:3, sport:1}},
+  {id:"build",   t:"Building or fixing things",             d:{tech:3}},
+  {id:"code",    t:"Coding, games or robotics",             d:{tech:3}},
+  {id:"science", t:"Science experiments or nature",         d:{academicInterest:2, tech:1}},
+  {id:"puzzles", t:"Puzzles, chess or quiz stuff",          d:{academicInterest:3}},
+  {id:"reading", t:"Reading or going deep on a topic",      d:{academicInterest:3}},
+  {id:"animals", t:"Looking after animals",                 d:{outdoor:2}, unmapped:"animal and environmental programs"},
+  {id:"helping", t:"Helping or coaching younger kids",      d:{empathy:3, social:1}, unmapped:"service and peer-support programs"},
+  {id:"organise",t:"Organising an event or running a club", d:{enterprise:3, social:1}},
+  {id:"selling", t:"Making or selling something to earn money", d:{enterprise:3}},
+  {id:"lang",    t:"Languages, travel or other countries",  d:{academicInterest:2}, unmapped:"languages and exchange"}
+];
+
+function tileOpts(scale, extra){
+  return TILES.map(t=>{
+    const w={};
+    Object.keys(t.d).forEach(k=>w[k]=t.d[k]*scale);
+    if(extra) Object.keys(extra).forEach(k=>w[k]=(w[k]||0)+extra[k]);
+    return {id:t.id, text:t.t, w, unmapped:t.unmapped};
+  });
+}
+
+/* ============================================================
+   CHILD BANK — 50 items
+   ============================================================ */
 const childQuestions = [
-{type:"choice",round:"Challenge",prompt:"You can choose one class for next term. Which sounds better?",options:[
-{text:"A demanding class where you would probably be one of the strongest students.",w:{academic:2,structure:1,resilience:-1}},
-{text:"The hardest class available, where many students would begin ahead of you.",w:{academic:3,peerDrive:2,resilience:3,pressure:1}}
-]},
-{type:"choice",round:"Challenge",prompt:"You have one free afternoon each week. Which would you choose?",options:[
-{text:"A teacher-led program preparing a team for a real competition.",w:{teacher:2,structure:3,peerDrive:1,pressure:1}},
-{text:"A studio and equipment to develop any project you choose.",w:{autonomy:3,tech:1,music:1}}
-]},
-{type:"choice",round:"Interests",prompt:"Two important events happen at the same time. Which do you attend?",options:[
-{text:"A close sports final where your team needs you.",w:{sport:3,social:2,pressure:1}},
-{text:"A live showcase where you perform or present original music.",w:{music:3,social:1,pressure:1}}
-]},
-{type:"choice",round:"Interests",prompt:"Which project would you rather spend six weeks completing?",options:[
-{text:"Build and pitch a useful app, product or interactive object.",w:{tech:3,enterprise:3,autonomy:1}},
-{text:"Investigate a difficult question and present the strongest answer.",w:{academic:3,teacher:1,structure:1}}
-]},
-{type:"choice",round:"Motivation",prompt:"Your friends have started taking a group project less seriously. What would help you most?",options:[
-{text:"A teacher checks in, expects more and gives you a clear target.",w:{teacher:3,structure:3,peerInfluence:2}},
-{text:"You are allowed to leave the group and complete an ambitious version alone.",w:{autonomy:3,resilience:1,peerInfluence:-1}}
-]},
-{type:"choice",round:"Social",prompt:"In a major team project, which role feels more satisfying?",options:[
-{text:"Coordinate the group, present the idea and keep everyone moving.",w:{enterprise:3,social:3,structure:1}},
-{text:"Become the specialist who makes the most technically impressive part.",w:{tech:2,music:1,autonomy:2,academic:1}}
-]},
 
+/* ---------- STAGE 0 · interest inventory (3) ---------- */
+{stage:0,type:"multi",pick:3,round:"What you're into",
+ prompt:"Pick the three things you'd most want to spend a whole Saturday doing.",
+ options:tileOpts(1)},
 
-{type:"choice",round:"Motivation",prompt:"After doing excellent work, which response would matter more?",options:[
-{text:"A teacher you respect says they expected that level from you.",w:{teacher:3,structure:1}},
-{text:"You know privately that it is the best work you have ever done.",w:{autonomy:3,resilience:1}}
-]},
-{type:"choice",round:"Challenge",prompt:"You are paired with someone much more advanced than you. Which option sounds better?",options:[
-{text:"Work together and learn how they approach the task.",w:{resilience:3,peerDrive:3,social:1}},
-{text:"Work separately so you can control the whole result.",w:{autonomy:3,resilience:-1}}
-]},
+{stage:0,type:"multi",pick:3,round:"What you're into",
+ prompt:"Now pick the three you'd least want to spend a Saturday doing.",
+ options:tileOpts(-1)},
 
-{type:"choice",round:"Structure",prompt:"A teacher gives you a large project. Which setup helps you do your best?",options:[
-{text:"A clear standard, weekly checkpoints and direct feedback.",w:{structure:3,teacher:3}},
-{text:"A broad goal and freedom to invent your own process.",w:{autonomy:3,enterprise:1}}
-]},
+{stage:0,type:"multi",pick:0,round:"What you're into",
+ prompt:"Which of these have you actually done in the last month, without an adult asking you to? Pick as many as are true.",
+ hint:"Pick any number, including none.",
+ options:tileOpts(0.6,{effortSelfdir:1})},
 
+/* ---------- STAGE 1 · two-option trade-offs (24) ---------- */
+{stage:1,type:"choice",round:"Challenge",prompt:"You get to pick one class for next term. Which sounds better?",options:[
+ {text:"A hard class where you'd probably be one of the best in the room.",w:{academic:2,visibility:2,resilience:-1}},
+ {text:"The hardest class in the school, where lots of people would start ahead of you.",w:{academic:3,peerDrive:2,resilience:3,pressure:1}}]},
 
-{type:"choice",round:"Identity",prompt:"By Year 10, which would you prefer?",options:[
-{text:"Be known as exceptional in one main area.",w:{breadth:-2,pressure:1}},
-{text:"Be strong across academics, activities and several interests.",w:{breadth:3,social:1}}
-]},
-{type:"choice",round:"Social",prompt:"A new club interests you, but none of your friends are joining. What sounds more like you?",options:[
-{text:"Join anyway and see who is there.",w:{resilience:2,autonomy:2,peerInfluence:-2}},
-{text:"Choose a different activity that friends are doing.",w:{social:2,peerInfluence:3}}
-]},
-{type:"choice",round:"Challenge",prompt:"Which accomplishment sounds more satisfying?",options:[
-{text:"Winning a short, competitive challenge against strong entrants.",w:{pressure:3,peerDrive:2,enterprise:1}},
-{text:"Finishing a complex project that took months to improve.",w:{structure:2,autonomy:2,resilience:1}}
-]},
-{type:"choice",round:"Social",prompt:"Your closest friends become obsessed with a new hobby. What is more likely?",options:[
-{text:"I would probably become interested too.",w:{peerInfluence:3,social:2,breadth:1}},
-{text:"I would keep spending most of my time on my existing interests.",w:{autonomy:2,peerInfluence:-2,resilience:1}}
-]},
-{type:"choice",round:"Challenge",prompt:"Which class position feels more motivating?",options:[
-{text:"Near the top, with a real chance to lead and be recognised.",w:{teacher:1,enterprise:2,resilience:-2}},
-{text:"Around the middle, surrounded by students doing extraordinary work.",w:{peerDrive:3,resilience:3,academic:2}}
-]},
-{type:"choice",round:"Feedback",prompt:"Which feedback would make you act sooner?",options:[
-{text:"A teacher explains exactly what is holding the work back.",w:{teacher:3,structure:2}},
-{text:"Other students choose someone else’s work as the strongest.",w:{peerDrive:2,pressure:2,resilience:2}}
-]},
-{type:"choice",round:"Interests",prompt:"Which creative challenge sounds better?",options:[
-{text:"Produce an original song with strong sound, arrangement and performance.",w:{music:3,autonomy:2}},
-{text:"Code or build an interactive gadget that surprises people.",w:{tech:3,enterprise:2}}
-]},
+{stage:1,type:"choice",round:"Motivation",prompt:"Your friends have started taking a group project less seriously. What would help you most?",options:[
+ {text:"A teacher checks in on you, expects more, and gives you a clear target.",w:{teacher:3,structure:3,peerInfluence:2}},
+ {text:"You're allowed to leave the group and do a bigger version on your own.",w:{autonomy:3,resilience:1,peerInfluence:-1}}]},
 
-{type:"choice",round:"Pressure",prompt:"Which opportunity would you rather take?",options:[
-{text:"A selective audition or trial where not everyone gets in.",w:{pressure:3,resilience:2,peerDrive:1}},
-{text:"An open program where everyone can join and improve.",w:{grounded:2,social:2,pressure:-1}}
-]},
-{type:"choice",round:"Practical",prompt:"Which would you prefer for secondary school?",options:[
-{text:"A nearby school where friends, activities and community stay connected.",w:{grounded:3,social:2}},
-{text:"A longer commute for a highly specialised opportunity.",w:{academic:1,music:1,tech:1,pressure:1,breadth:-1}}
-]},
-{type:"choice",round:"School environment",prompt:"Two schools offer equally good subjects. Which environment sounds better?",options:[
-{text:"A large school with many programs, where you need to seek out the best opportunities.",w:{autonomy:2,breadth:3,visibility:-3}},
-{text:"A school where teachers are more likely to notice your strengths and suggest opportunities.",w:{teacher:2,structure:1,visibility:3}}
-]},
-{type:"choice",round:"School environment",prompt:"Which trade-off would you rather accept?",options:[
-{text:"Some distracted students in ordinary classes, but access to advanced classes and a broad social mix.",w:{grounded:2,breadth:2,resilience:1,focus:-3}},
-{text:"Most students are highly focused, but the atmosphere is more competitive and pressured.",w:{peerDrive:3,pressure:2,focus:3}}
-]},
-{type:"choice",round:"School culture",prompt:"Which student culture would suit you better?",options:[
-{text:"Sport is a major part of school life and top athletes are especially visible.",w:{sport:3,social:2,breadth:-1}},
-{text:"Academic, creative, sporting and leadership achievements are all similarly visible.",w:{breadth:3,grounded:2,enterprise:1}}
-]},
-{type:"choice",round:"School culture",prompt:"Which school event sounds more appealing?",options:[
-{text:"A formal ceremony with uniforms, traditions, awards and strong school identity.",w:{structure:3,pressure:1,grounded:1}},
-{text:"A relaxed showcase where students present performances, projects and unusual new ideas.",w:{autonomy:3,enterprise:2,music:1,tech:1}}
-]},
-{type:"choice",round:"Belonging",prompt:"You are accepted into a selective program. Which experience sounds better?",options:[
-{text:"Most of your classes and friendships are built around that shared strength.",w:{peerDrive:3,focus:2,breadth:-2}},
-{text:"The program matters, but you keep mixing widely with students who have different strengths.",w:{breadth:3,grounded:2,social:1}}
-]},
-{type:"choice",round:"Workload",prompt:"Which secondary-school week sounds more satisfying?",options:[
-{text:"Sport, music, clubs and academic activities on most afternoons.",w:{breadth:3,social:2,pressure:2,structure:1}},
-{text:"One or two serious commitments, with enough time to become excellent at them.",w:{autonomy:2,structure:1,pressure:-1}}
-]},
-{type:"choice",round:"Challenge",prompt:"At the end of a year, which experience would feel more successful?",options:[
-{text:"You earned excellent results and were often one of the strongest students.",w:{pressure:1,teacher:1,resilience:-2}},
-{text:"Your results were lower than before, but you learned much harder material.",w:{academic:3,resilience:3,peerDrive:1}}
-]},
-{type:"choice",round:"Creative pathways",prompt:"Which matters more in a school?",options:[
-{text:"Music and technology are excellent activities alongside the main academic program.",w:{breadth:2,music:1,tech:1}},
-{text:"Music and technology are treated as serious pathways where students create ambitious original work.",w:{music:3,tech:3,academic:1,autonomy:1}}
-]},
-{type:"choice",round:"School life",prompt:"Which social environment feels more natural for secondary school?",options:[
-{text:"Learning and socialising with boys and girls together.",w:{social:1,mixedGender:3}},
-{text:"Learning mainly with students of the same gender, with other friendships outside school.",w:{structure:1,mixedGender:-3}}
-]},
-{type:"choice",round:"Belonging",prompt:"How would you rather be grouped across the school day?",options:[
-{text:"Stay with one strong cohort for most important subjects and build close shared expectations.",w:{peerDrive:2,focus:3,breadth:-1}},
-{text:"Move between different groups depending on the subject, activity and level.",w:{breadth:3,social:1,autonomy:1}}
-]},
-{type:"scenario",round:"Real behaviour",prompt:"Another student is clearly better than you at something you care about. What are you most likely to do?",options:[
-{text:"Ask how they trained and try their approach.",w:{resilience:3,peerDrive:3}},
-{text:"Practise privately until I feel ready to compete.",w:{resilience:2,pressure:2,autonomy:1}},
-{text:"Contribute in a different area where I am strong.",w:{breadth:2,social:1,resilience:1}},
-{text:"Become quieter and let them take over.",w:{resilience:-3,peerInfluence:1}},
-{text:"Lose interest and move towards something else.",w:{resilience:-2,breadth:1}}
-]},
-{type:"scenario",round:"Real behaviour",prompt:"Your friendship group decides doing the minimum is good enough. What happens to your effort?",options:[
-{text:"It stays the same; my own goals matter more.",w:{autonomy:2,peerInfluence:-3,resilience:1}},
-{text:"I try to lift the group.",w:{enterprise:3,social:2,peerInfluence:-1}},
-{text:"It probably drops a little without me noticing.",w:{peerInfluence:3}},
-{text:"It drops unless a teacher keeps me accountable.",w:{teacher:3,structure:2,peerInfluence:2}},
-{text:"I find another group for the things I care about.",w:{resilience:2,peerDrive:2}}
-]},
-{type:"scenario",round:"Real behaviour",prompt:"You start an exciting project with no deadline. After three weeks, what is most likely?",options:[
-{text:"It is finished and I have started improving it.",w:{autonomy:3,structure:1}},
-{text:"I have made lots of it, but it may not be finished.",w:{autonomy:3,breadth:1,structure:-1}},
-{text:"I need a reminder or checkpoint to keep moving.",w:{teacher:1,structure:3}},
-{text:"I have moved to a newer idea.",w:{breadth:2,structure:-2}},
-{text:"I invite people in so the project has momentum.",w:{social:2,enterprise:2}}
-]},
-{type:"scenario",round:"Real behaviour",prompt:"A teacher gives direct criticism of work you were proud of. What happens next?",options:[
-{text:"I want to know exactly how to fix it.",w:{teacher:3,resilience:3,structure:1}},
-{text:"I feel annoyed first, then improve it later.",w:{resilience:1,autonomy:1}},
-{text:"I defend my choices and keep most of it.",w:{autonomy:2,resilience:-1}},
-{text:"I worry I have disappointed them.",w:{teacher:2,pressure:-2,resilience:-1}},
-{text:"I compare the feedback with what classmates received.",w:{peerDrive:2,pressure:1}}
-]},
-{type:"scenario",round:"Real behaviour",prompt:"You arrive at a camp or program where you know nobody. What are you most likely to do?",options:[
-{text:"Start conversations and find a group quickly.",w:{social:3,resilience:2}},
-{text:"Join through an activity or shared task.",w:{social:2,structure:1}},
-{text:"Wait for someone confident to include me.",w:{peerInfluence:2,social:1,resilience:-1}},
-{text:"Focus on the activity and friendships can come later.",w:{autonomy:2,academic:1,tech:1,music:1}},
-{text:"Feel uncomfortable enough that I participate less.",w:{resilience:-2,social:-1}}
-]},
-{type:"scenario",round:"Real behaviour",prompt:"A week contains a test, a performance and a sports final. How do you react?",options:[
-{text:"I love having several important things happening.",w:{pressure:3,breadth:3,social:1}},
-{text:"I make a plan and work through each one.",w:{structure:3,pressure:2}},
-{text:"I focus mainly on the one that matters most to me.",w:{pressure:1,breadth:-1,autonomy:1}},
-{text:"I need adults to help organise the week.",w:{teacher:2,structure:2,pressure:-1}},
-{text:"I become overwhelmed and enjoy none of them.",w:{pressure:-3}}
-]},
-{type:"scenario",round:"Real behaviour",prompt:"A teacher says you could be exceptional at something if you work much harder. What is your first reaction?",options:[
-{text:"Excited — I want to prove them right.",w:{teacher:3,pressure:2,structure:1}},
-{text:"Curious — I want to know what the next level looks like.",w:{academic:2,teacher:2,resilience:1}},
-{text:"Proud, but I still want to choose how much time it gets.",w:{autonomy:2}},
-{text:"Worried that expectations will keep increasing.",w:{pressure:-2,teacher:1}},
-{text:"More motivated if friends are doing it too.",w:{peerDrive:2,peerInfluence:2}}
-]},
-{type:"scenario",round:"Real behaviour",prompt:"You do not make a team, ensemble or selective program. What is most likely?",options:[
-{text:"Ask what I need to improve and try again.",w:{resilience:3,teacher:2,pressure:2}},
-{text:"Train privately and try again without much discussion.",w:{resilience:2,autonomy:2}},
-{text:"Choose another activity where I have a better chance.",w:{breadth:2,resilience:-1}},
-{text:"Avoid that activity for a while.",w:{resilience:-3,pressure:-1}},
-{text:"Join an open version so I can keep participating.",w:{grounded:1,social:2,resilience:1}}
-]},
-{type:"scenario",round:"Real behaviour",prompt:"Your class publishes rankings after a major task. What effect does that have?",options:[
-{text:"It makes me want to climb higher.",w:{peerDrive:3,pressure:3,resilience:2}},
-{text:"It helps me understand the standard, but I do not obsess over it.",w:{academic:2,resilience:2}},
-{text:"I enjoy it mainly when I rank highly.",w:{pressure:1,resilience:-2}},
-{text:"It distracts me from learning.",w:{pressure:-2,autonomy:1}},
-{text:"I would rather receive private feedback.",w:{teacher:2,pressure:-1}}
-]},
-{type:"scenario",round:"Real behaviour",prompt:"A subject feels boring, but the teacher expects excellent work from you. What happens?",options:[
-{text:"I still work hard because I respect the teacher.",w:{teacher:3,structure:2}},
-{text:"I find a way to connect it to my interests.",w:{autonomy:2,breadth:1}},
-{text:"I do enough to keep a good result.",w:{structure:1}},
-{text:"My effort drops because the work itself does not interest me.",w:{autonomy:1,structure:-2}},
-{text:"I work harder if classmates take it seriously.",w:{peerDrive:2,peerInfluence:2}}
-]},
-{type:"scenario",round:"Real behaviour",prompt:"A confident teammate begins controlling the project. What do you do?",options:[
-{text:"Challenge them and share leadership.",w:{enterprise:3,resilience:2,social:1}},
-{text:"Negotiate a clear area that I control.",w:{autonomy:2,structure:1,resilience:1}},
-{text:"Let them lead if the result will be strong.",w:{peerDrive:1,peerInfluence:1}},
-{text:"Become less involved.",w:{resilience:-2,peerInfluence:2}},
-{text:"Ask the teacher to clarify roles.",w:{teacher:2,structure:2}}
-]},
-{type:"scenario",round:"Real behaviour",prompt:"You get to design one new school activity. What do you create?",options:[
-{text:"A music production and live performance lab.",w:{music:3,tech:1,social:1}},
-{text:"A startup challenge where teams solve a real problem.",w:{enterprise:3,tech:2,academic:1}},
-{text:"A high-level academic competition club.",w:{academic:3,peerDrive:2,pressure:1}},
-{text:"A social sports league with serious finals.",w:{sport:3,social:2,pressure:1}},
-{text:"A rotating program so students try all of these.",w:{breadth:3,grounded:1}}
-]},
-{type:"scenario",round:"Real behaviour",prompt:"Your schoolwork feels too easy, but the teacher has not noticed. What are you most likely to do?",options:[
-{text:"Ask directly for harder work.",w:{academic:2,autonomy:2,visibility:-2}},
-{text:"Make the task harder or more interesting in my own way.",w:{autonomy:3,academic:1,visibility:-1}},
-{text:"Finish quickly and move on.",w:{structure:1,visibility:1}},
-{text:"Wait until the teacher challenges me.",w:{teacher:2,visibility:3}},
-{text:"Become distracted or put in less effort.",w:{peerInfluence:1,structure:-2,visibility:2}}
-]},
-{type:"scenario",round:"Real behaviour",prompt:"You are in a class where several students are distracting others. What is most likely?",options:[
-{text:"I keep working and mostly ignore it.",w:{resilience:3,autonomy:1,focus:-1}},
-{text:"I work well if the teacher maintains clear control.",w:{structure:3,teacher:2,focus:2}},
-{text:"My effort gradually drops with the group.",w:{peerInfluence:3,focus:3}},
-{text:"I become frustrated and want a more focused class.",w:{academic:1,focus:3}},
-{text:"I use the social energy but still complete strong work.",w:{social:2,resilience:2,focus:-2}}
-]},
-{type:"bestworst",round:"Priorities",prompt:"Which would matter MOST and LEAST at a school?",items:[
-{text:"Teachers who know what I am capable of.",w:{teacher:2,structure:1}},
-{text:"Students who take achievement seriously.",w:{peerDrive:2,academic:1}},
-{text:"Excellent creative and technical equipment.",w:{music:1,tech:2,autonomy:1}},
-{text:"A busy, friendly social life.",w:{social:2,grounded:1}}
-]},
-{type:"bestworst",round:"Priorities",prompt:"Choose the MOST and LEAST valuable opportunity.",items:[
-{text:"Strong sports teams and training.",w:{sport:2,social:1}},
-{text:"Advanced academic classes.",w:{academic:2,peerDrive:1}},
-{text:"Music studios, ensembles and performances.",w:{music:2,social:1}},
-{text:"Innovation, enterprise and product programs.",w:{tech:1,enterprise:2}}
-]},
-{type:"bestworst",round:"Priorities",prompt:"Which school quality matters MOST and LEAST?",items:[
-{text:"Clear standards and firm follow-up.",w:{structure:2,teacher:1}},
-{text:"Freedom to create unusual projects.",w:{autonomy:2,tech:1,music:1}},
-{text:"Competitions, auditions and awards.",w:{pressure:2,peerDrive:1}},
-{text:"A kind, grounded community.",w:{grounded:2,social:1}}
-]},
-{type:"bestworst",round:"Priorities",prompt:"Which student experience sounds MOST and LEAST appealing?",items:[
-{text:"Keeping local friendships and community links.",w:{grounded:2,social:1}},
-{text:"Belonging to a highly specialised cohort.",w:{peerDrive:2,breadth:-1}},
-{text:"Meeting students with very different strengths.",w:{breadth:2,grounded:1}},
-{text:"Belonging to a school with a prestigious reputation.",w:{pressure:1,academic:1,grounded:-1}}
-]},
-{type:"bestworst",round:"Priorities",prompt:"After completing hard work, which matters MOST and LEAST?",items:[
-{text:"A respected teacher gives detailed feedback.",w:{teacher:2,structure:1}},
-{text:"The work is publicly recognised.",w:{pressure:2,social:1}},
-{text:"I had freedom to make it my own.",w:{autonomy:2}},
-{text:"The whole team succeeded together.",w:{social:2,enterprise:1}}
-]},
-{type:"bestworst",round:"Priorities",prompt:"Which weekly activity would matter MOST and LEAST?",items:[
-{text:"Focused music practice or production.",w:{music:2,structure:1}},
-{text:"Open workshop time for making and coding.",w:{tech:2,autonomy:1}},
-{text:"Team training for a competitive sport.",w:{sport:2,peerDrive:1}},
-{text:"Debating, quizzes or academic challenges.",w:{academic:2,pressure:1}}
-]},
-{type:"bestworst",round:"Priorities",prompt:"Which role would you MOST and LEAST like to be known for?",items:[
-{text:"The person who quietly produces excellent work.",w:{autonomy:1,resilience:1}},
-{text:"The performer who energises the room.",w:{music:1,social:2}},
-{text:"The leader who turns ideas into action.",w:{enterprise:2,social:1}},
-{text:"The inventor who makes something new.",w:{tech:2,autonomy:1}}
-]},
-{type:"bestworst",round:"Priorities",prompt:"Which balance matters MOST and LEAST?",items:[
-{text:"Low stress and plenty of space.",w:{pressure:-2,autonomy:1}},
-{text:"High expectations and regular challenge.",w:{academic:1,teacher:1,pressure:2}},
-{text:"Many different pathways to explore.",w:{breadth:2}},
-{text:"A strong identity built around one talent.",w:{breadth:-2,pressure:1}}
-]}
+{stage:1,type:"choice",round:"Social",prompt:"In a big team project, which job feels better?",options:[
+ {text:"Run the group, present the idea and keep everyone going.",w:{enterprise:3,social:3,structure:1}},
+ {text:"Be the person who makes the hardest part really well.",w:{tech:1,autonomy:2,academic:1}}]},
+
+{stage:1,type:"choice",round:"Motivation",prompt:"You've just done work you're really proud of. Which would mean more?",options:[
+ {text:"A teacher you respect says that's the level they expect from you.",w:{teacher:3,visibility:2}},
+ {text:"You know yourself it's the best thing you've ever made.",w:{autonomy:3,resilience:1}}]},
+
+{stage:1,type:"choice",round:"Structure",prompt:"A teacher gives you a big project. Which setup gets your best work?",options:[
+ {text:"A clear standard, weekly check-ins and straight feedback.",w:{structure:3,teacher:1,effortSelfdir:-1}},
+ {text:"A rough goal and the freedom to work out your own way.",w:{autonomy:3,effortSelfdir:2}}]},
+
+{stage:1,type:"choice",round:"Identity",prompt:"By Year 10, which would you rather be?",options:[
+ {text:"Really good at one main thing.",w:{breadth:0}},
+ {text:"Good across school, activities and a few different interests.",w:{breadth:3}}]},
+
+{stage:1,type:"choice",round:"Social",prompt:"A new club looks interesting but none of your friends are joining. What's more like you?",options:[
+ {text:"Join anyway and see who's there.",w:{peerInfluence:-3}},
+ {text:"Pick something else your friends are doing.",w:{peerInfluence:3,social:2}}]},
+
+{stage:1,type:"choice",round:"Social",prompt:"Your closest friends get really into a new hobby. What's more likely?",options:[
+ {text:"I'd probably get into it too.",w:{peerInfluence:3}},
+ {text:"I'd keep spending most of my time on what I'm already into.",w:{peerInfluence:-3,autonomy:2}}]},
+
+{stage:1,type:"choice",round:"Challenge",prompt:"Which spot in a class would make you work harder?",options:[
+ {text:"Near the top, with a real chance to lead and get noticed.",w:{visibility:3,resilience:-2}},
+ {text:"Somewhere in the middle, with people around you doing amazing work.",w:{peerDrive:3,resilience:3}}]},
+
+{stage:1,type:"choice",round:"Learning",prompt:"You're stuck on something in class and you don't really get it. What's more like you?",options:[
+ {text:"Put your hand up and ask, even though everyone can hear.",w:{helpSeeking:3}},
+ {text:"Keep going on your own and try to work it out.",w:{helpSeeking:-3,autonomy:2}}]},
+
+{stage:1,type:"choice",round:"Environment",prompt:"Which school would suit you better?",options:[
+ {text:"A big school where there's something for everyone, but plenty of faces you'll never know.",w:{schoolSize:3,breadth:2}},
+ {text:"A smaller school where you'd know almost everyone, but there's less on offer.",w:{schoolSize:-3,belonging:2,visibility:2}}]},
+
+{stage:1,type:"choice",round:"Social",prompt:"Which sounds better for your first year of high school?",options:[
+ {text:"A big group of friends you hang around with.",w:{social:3,belonging:-2}},
+ {text:"One or two really close friends you'd do everything with.",w:{belonging:3,social:-1}}]},
+
+{stage:1,type:"choice",round:"Pressure",prompt:"Which would you rather do?",options:[
+ {text:"Try out for something where not everyone gets in.",w:{pressure:3,peerDrive:1}},
+ {text:"Join something open to anyone who wants to get better.",w:{pressure:-2,grounded:2}}]},
+
+{stage:1,type:"choice",round:"Environment",prompt:"Which would you pick for high school?",options:[
+ {text:"A school close to home, where your friends, sport and neighbourhood all stay connected.",w:{grounded:3,belonging:2}},
+ {text:"A school further away, with a longer trip each day, that's really strong at something you love.",w:{grounded:-2,pressure:1,academic:1}}]},
+
+{stage:1,type:"choice",round:"Environment",prompt:"Two schools have equally good subjects. Which sounds better?",options:[
+ {text:"A big school with heaps of programs, where you have to go looking for the best ones yourself.",w:{visibility:-3,schoolSize:2}},
+ {text:"A school where teachers are more likely to spot what you're good at and suggest things.",w:{visibility:3,teacher:2}}]},
+
+{stage:1,type:"choice",round:"Environment",prompt:"Which classroom would you rather be in?",options:[
+ {text:"Fairly relaxed, and some people muck around, but there's a big mix of people and you can still take harder classes.",w:{grounded:3,focus:-3}},
+ {text:"Almost everyone works hard the whole lesson, but it feels more competitive.",w:{focus:3,pressure:2,peerDrive:1}}]},
+
+{stage:1,type:"choice",round:"Culture",prompt:"Which school feels better?",options:[
+ {text:"Sport is a big deal, and the best athletes are the most well-known kids.",w:{sport:2,statusTolerance:3}},
+ {text:"Sport, music, art, marks and leadership all get noticed about the same.",w:{breadth:3,grounded:2,statusTolerance:-3}}]},
+
+{stage:1,type:"choice",round:"Culture",prompt:"Which school day sounds better?",options:[
+ {text:"Full uniform, assemblies, house competitions and lots of school traditions.",w:{formality:3,structure:1}},
+ {text:"Relaxed uniform, fewer formal events, and more say in how you do things.",w:{formality:-3,statusTolerance:-1}}]},
+
+{stage:1,type:"choice",round:"Identity",prompt:"Which high school week sounds better?",options:[
+ {text:"Something on most afternoons — sport, music, clubs, activities.",w:{breadth:3,social:2,spaceNeed:-3}},
+ {text:"One or two things you take seriously, with time left over to get really good at them.",w:{breadth:-1,spaceNeed:3}}]},
+
+{stage:1,type:"choice",round:"Environment",prompt:"Which would you rather?",options:[
+ {text:"Stay with the same class group for most subjects all year.",w:{cohortStability:3,belonging:1}},
+ {text:"Be in different groups for different subjects, depending on the subject.",w:{cohortStability:-3,changeTolerance:2}}]},
+
+{stage:1,type:"choice",round:"Social",prompt:"You're starting at a school where most kids already know each other from primary. What's more like you?",options:[
+ {text:"Fine — I'd find my people within a few weeks.",w:{changeTolerance:3,social:2}},
+ {text:"I'd rather go somewhere with a group I already know.",w:{changeTolerance:-3,belonging:2}}]},
+
+{stage:1,type:"choice",round:"What you're into",prompt:"Your school runs a week-long camp — hiking, tents, no phones. How do you feel about that?",options:[
+ {text:"Sounds great.",w:{outdoor:3,changeTolerance:1}},
+ {text:"I'd rather spend that week on the things I'm actually into.",w:{outdoor:-3}}]},
+
+{stage:1,type:"choice",round:"Learning",prompt:"Which teacher would you rather have for a whole year?",options:[
+ {text:"One who really knows their subject and pushes you hard.",w:{academic:2,pressure:1,mentorStyle:-3}},
+ {text:"One who knows you well and notices how you're going.",w:{teacher:3,visibility:2,mentorStyle:3}}]},
+
+{stage:1,type:"choice",round:"Motivation",prompt:"Which would put you off more?",options:[
+ {text:"A rule you think is unfair.",w:{formality:-3,structure:-2},risk:"fairness"},
+ {text:"Work that feels pointless.",w:{academic:2,structure:-1},risk:"meaning"}]},
+
+/* ---------- STAGE 2 · behavioural scenarios (15) ---------- */
+{stage:2,type:"scenario",round:"What you'd actually do",prompt:"Someone in your year turns out to be way better than you at something you really care about. What do you actually do?",options:[
+ {text:"Ask how they got that good and try doing it their way.",w:{resilience:3,peerDrive:3,helpSeeking:2}},
+ {text:"Practise on my own until I can keep up with them.",w:{resilience:2,autonomy:2,pressure:1}},
+ {text:"Put my effort into the part of it I'm already strong at.",w:{breadth:2,resilience:1}},
+ {text:"Let them take the lead on that one and step back a bit.",w:{resilience:-3,visibility:2}},
+ {text:"Spend more of my time on something else I enjoy.",w:{resilience:-3,breadth:1}}]},
+
+{stage:2,type:"scenario",round:"What you'd actually do",prompt:"Your friendship group decides that doing the bare minimum is good enough. What happens to how much effort you put in?",options:[
+ {text:"Stays the same — what I want out of it matters more.",w:{peerInfluence:-3,effortSelfdir:2}},
+ {text:"I try to talk the group into doing more.",w:{enterprise:2,peerInfluence:-1}},
+ {text:"It probably drops a bit without me really noticing.",w:{peerInfluence:3,focus:2}},
+ {text:"It drops unless a teacher is checking on me.",w:{peerInfluence:2,structure:3,teacher:2}},
+ {text:"I'd do the things I care about with different people.",w:{peerInfluence:1,social:2,schoolSize:2}}]},
+
+{stage:2,type:"scenario",round:"What you'd actually do",prompt:"You start an exciting project that nobody set and there's no due date. Three weeks later, what's most likely true?",options:[
+ {text:"It's finished and I've started making it better.",w:{effortSelfdir:3,autonomy:3}},
+ {text:"I've done heaps of it, but it's not finished.",w:{effortSelfdir:-1,breadth:1}},
+ {text:"I'd have kept going if someone had checked in on me.",w:{effortSelfdir:-3,structure:3,teacher:1}},
+ {text:"I've moved on to a newer idea.",w:{effortSelfdir:-2,breadth:2}},
+ {text:"I got other people involved so it kept moving.",w:{social:3,enterprise:2}}]},
+
+{stage:2,type:"scenario",round:"What you'd actually do",prompt:"A teacher gives you straight criticism of work you were proud of. What happens next?",options:[
+ {text:"I want to know exactly how to fix it.",w:{teacher:3,resilience:2,helpSeeking:2}},
+ {text:"I'm annoyed at first, then I go back and improve it.",w:{resilience:2,pressure:1}},
+ {text:"I explain why I did it that way and keep most of it.",w:{autonomy:3,resilience:1}},
+ {text:"I worry that I've let them down.",w:{teacher:3,pressure:-3,visibility:1}},
+ {text:"I check what other people got told before I decide what to think.",w:{peerInfluence:3,statusTolerance:1}}]},
+
+{stage:2,type:"scenario",round:"What you'd actually do",prompt:"You turn up to a camp or holiday program where you don't know a single person. What do you actually do?",options:[
+ {text:"Start talking to people and find a group pretty quickly.",w:{social:3,changeTolerance:3}},
+ {text:"Get to know people through the activity rather than by chatting.",w:{changeTolerance:1,breadth:1}},
+ {text:"Wait for someone outgoing to bring me in.",w:{social:-2,changeTolerance:-2,belonging:2}},
+ {text:"Get on with the activity — friends can happen later.",w:{autonomy:2,social:-1}},
+ {text:"Stay pretty quiet and join in less than I normally would.",w:{social:-3,changeTolerance:-3,visibility:2}}]},
+
+{stage:2,type:"scenario",round:"What you'd actually do",prompt:"You've got a test, a performance and a big game all in the same week. What actually happens?",options:[
+ {text:"I love having lots on.",w:{pressure:3,breadth:3,spaceNeed:-3}},
+ {text:"I make a plan and work through them one at a time.",w:{pressure:2,structure:2,effortSelfdir:2}},
+ {text:"I put most of my energy into the one that matters most to me.",w:{breadth:-2,autonomy:2}},
+ {text:"I get through it if an adult helps me organise the week.",w:{structure:3,teacher:1,effortSelfdir:-2}},
+ {text:"Weeks like that take a lot out of me.",w:{pressure:-3,spaceNeed:3}}]},
+
+{stage:2,type:"scenario",round:"What you'd actually do",prompt:"You try out for a team, a group or a special program and you don't get in. What's most likely?",options:[
+ {text:"Ask what I need to get better at and try again next time.",w:{resilience:3,teacher:2,helpSeeking:2}},
+ {text:"Train on my own and try again without talking about it much.",w:{resilience:2,autonomy:3,helpSeeking:-2}},
+ {text:"Put my energy into something where I've got a better shot.",w:{breadth:2,resilience:-1}},
+ {text:"Give that one a rest for a while.",w:{resilience:-3,pressure:-2}},
+ {text:"Join the version that's open to everyone so I can keep doing it.",w:{grounded:3,pressure:-2}}]},
+
+{stage:2,type:"scenario",round:"What you'd actually do",prompt:"Your class gets given a list showing where everyone placed on a big task. What effect does that have on you?",options:[
+ {text:"Makes me want to get further up the list.",w:{pressure:3,statusTolerance:3,peerDrive:2}},
+ {text:"Helps me see what the standard is, but I don't think about it much after.",w:{pressure:2,resilience:2}},
+ {text:"I like it on the weeks I do well.",w:{statusTolerance:2,visibility:2,resilience:-1}},
+ {text:"It pulls my attention away from actually learning.",w:{pressure:-3,statusTolerance:-3}},
+ {text:"I'd rather just be told privately how I went.",w:{pressure:-2,statusTolerance:-3,visibility:1}}]},
+
+{stage:2,type:"scenario",round:"What you'd actually do",prompt:"Your schoolwork feels too easy and the teacher hasn't noticed. What do you actually do?",options:[
+ {text:"Ask the teacher straight out for harder work.",w:{academic:3,helpSeeking:3,visibility:-1}},
+ {text:"Make the task harder or more interesting for myself.",w:{autonomy:3,academic:2,effortSelfdir:2}},
+ {text:"Finish it fast and move on to my own stuff.",w:{visibility:1,effortSelfdir:1}},
+ {text:"Wait until the teacher gives me something harder.",w:{visibility:3,teacher:2,helpSeeking:-2}},
+ {text:"Drift a bit and put in less than I could.",w:{visibility:3,focus:2,effortSelfdir:-3}}]},
+
+{stage:2,type:"scenario",round:"What you'd actually do",prompt:"You've been lost in a subject for about two weeks and nobody has noticed. What actually happens?",options:[
+ {text:"I tell the teacher.",w:{helpSeeking:3,teacher:2}},
+ {text:"I tell someone at home and they sort it out.",w:{helpSeeking:1,structure:1}},
+ {text:"I ask a friend who gets it.",w:{helpSeeking:1,peerInfluence:2}},
+ {text:"I try to catch up on my own without saying anything.",w:{helpSeeking:-3,visibility:3}},
+ {text:"I hope the next topic makes more sense.",w:{helpSeeking:-3,visibility:3,effortSelfdir:-2}}]},
+
+{stage:2,type:"scenario",round:"What you'd actually do",prompt:"You and a good friend have a falling out. A week later it still isn't sorted. What usually happens?",options:[
+ {text:"I go and talk to them about it.",w:{conflictRepair:3}},
+ {text:"I wait for them to come to me.",w:{conflictRepair:-2,belonging:1}},
+ {text:"We just start talking again and never mention it.",w:{conflictRepair:1}},
+ {text:"I spend more time with other friends instead.",w:{conflictRepair:-1,social:2,belonging:-2}},
+ {text:"I get someone else to help sort it out.",w:{conflictRepair:1,helpSeeking:2,belonging:2}}]},
+
+{stage:2,type:"scenario",round:"What you'd actually do",prompt:"Your team is going well, but one person keeps getting left out of things. What do you actually do?",options:[
+ {text:"Make sure they get a real job on the team.",w:{empathy:3,enterprise:2}},
+ {text:"Talk to them or sit with them, but leave the team stuff as it is.",w:{empathy:3,enterprise:1}},
+ {text:"Say something to whoever's leaving them out.",w:{empathy:3,statusTolerance:-2}},
+ {text:"Concentrate on my own part — it's not really mine to sort out.",w:{empathy:-2,focus:1}},
+ {text:"Mention it to a teacher.",w:{empathy:2,helpSeeking:2,teacher:1}}]},
+
+{stage:2,type:"scenario",round:"What you'd actually do",prompt:"Think about doing class work in a group with a mix of boys and girls, compared with a group of just your own gender. What's usually true for you?",options:[
+ {text:"I work and speak up about the same either way.",w:{coed:0}},
+ {text:"I get more done in a mixed group.",w:{coed:2}},
+ {text:"I get more done in a group of just my own gender.",w:{coed:-2}},
+ {text:"It depends way more on who the actual people are than on that.",w:{coed:0}},
+ {text:"I've never really noticed.",w:{coed:0}}]},
+
+{stage:2,type:"scenario",round:"What you'd actually do",prompt:"You're in a class where a few people are mucking around and putting others off. What's most likely?",options:[
+ {text:"I keep working and mostly tune it out.",w:{focus:-3,resilience:1}},
+ {text:"I work well as long as the teacher keeps things under control.",w:{focus:1,structure:3,teacher:2}},
+ {text:"My effort slowly drops along with everyone else's.",w:{focus:3,peerInfluence:3}},
+ {text:"It frustrates me and I'd rather be in a more focused class.",w:{focus:3,academic:2}},
+ {text:"I enjoy the energy and still get my work done.",w:{focus:-2,social:3}}]},
+
+{stage:2,type:"scenario",round:"What you'd actually do",prompt:"A confident person in your group starts taking over the whole project. What do you do?",options:[
+ {text:"Push back and share the leading.",w:{enterprise:3,statusTolerance:2,resilience:2}},
+ {text:"Sort out one part that's clearly mine to run.",w:{autonomy:3,enterprise:1}},
+ {text:"Let them lead if the end result will be good.",w:{visibility:1,statusTolerance:1}},
+ {text:"Step back and do less.",w:{resilience:-3,visibility:3}},
+ {text:"Ask the teacher to sort out who's doing what.",w:{structure:3,teacher:2,helpSeeking:2}}]},
+
+/* ---------- STAGE 3 · most and least (8) ---------- */
+{stage:3,type:"bestworst",round:"What matters most",prompt:"At a school, which of these would matter MOST to you, and which LEAST?",items:[
+ {text:"Teachers who know what I'm good at.",w:{teacher:3,visibility:3}},
+ {text:"Other kids who take their work seriously.",w:{peerDrive:3,focus:3}},
+ {text:"Great gear and spaces for the things I'm into.",w:{tech:2,music:2}},
+ {text:"A good social life.",w:{social:3,grounded:2}},
+ {text:"Adults who'd notice if I was having a bad week.",w:{teacher:2,visibility:2,belonging:3}}]},
+
+{stage:3,type:"bestworst",round:"What matters most",prompt:"Which of these would you MOST want a school to be great at, and which LEAST?",items:[
+ {text:"Sports teams and coaching.",w:{sport:3}},
+ {text:"Harder classes in the subjects I'm good at.",w:{academic:3,academicInterest:2}},
+ {text:"Arts — music, drama, art, film.",w:{music:3}},
+ {text:"Making and building — tech, design, robotics.",w:{tech:3}},
+ {text:"Outdoor programs, camps and expeditions.",w:{outdoor:3}}]},
+
+{stage:3,type:"bestworst",round:"What matters most",prompt:"Which of these school things matters MOST to you, and which LEAST?",items:[
+ {text:"Clear rules, and adults who follow up.",w:{structure:3,formality:2}},
+ {text:"Freedom to do things my own way.",w:{autonomy:3,formality:-2}},
+ {text:"Competitions, tryouts and awards.",w:{pressure:3,statusTolerance:2}},
+ {text:"A kind school where people look out for each other.",w:{grounded:3,empathy:2,belonging:1}}]},
+
+{stage:3,type:"bestworst",round:"What matters most",prompt:"Which of these sounds MOST appealing, and which LEAST?",items:[
+ {text:"Staying near my friends and my own area.",w:{grounded:3,belonging:2}},
+ {text:"Being around people who are into the same thing as me.",w:{peerDrive:2,breadth:-2}},
+ {text:"Meeting people who are into completely different things.",w:{grounded:2,breadth:3}},
+ {text:"Going to a school that people have heard of.",w:{statusTolerance:3},flag:"prestige"}]},
+
+{stage:3,type:"bestworst",round:"What matters most",prompt:"After you've finished something hard, which of these matters MOST, and which LEAST?",items:[
+ {text:"A teacher I respect gives me proper feedback on it.",w:{teacher:3,mentorStyle:1}},
+ {text:"Other people get to see it.",w:{visibility:2,statusTolerance:2,social:1}},
+ {text:"I got to do it my own way.",w:{autonomy:3}},
+ {text:"The whole team did well.",w:{social:3,empathy:2}}]},
+
+{stage:3,type:"bestworst",round:"What matters most",prompt:"Which of these would you MOST like to be known for, and which LEAST?",items:[
+ {text:"The one who quietly does really good work.",w:{visibility:3,effortSelfdir:1}},
+ {text:"The one who gets everyone going.",w:{social:3,enterprise:2}},
+ {text:"The one who turns ideas into action.",w:{enterprise:3}},
+ {text:"The one who makes something new.",w:{tech:2,music:1,autonomy:2}},
+ {text:"The one people go to when something's wrong.",w:{empathy:3,belonging:2}}]},
+
+{stage:3,type:"bestworst",round:"What matters most",prompt:"Which of these would matter MOST to you at school, and which LEAST?",items:[
+ {text:"Not much stress, and plenty of free time.",w:{pressure:-3,spaceNeed:3}},
+ {text:"High expectations and being pushed.",w:{academic:3,pressure:3,peerDrive:1}},
+ {text:"Lots of different things to try.",w:{breadth:3}},
+ {text:"One thing I'm really known for.",w:{breadth:-3,visibility:2}}]},
+
+{stage:3,type:"bestworst",round:"What matters most",prompt:"Which of these would MOST make you want to leave a school, and which LEAST?",items:[
+ {text:"Feeling like nobody there really knows me.",w:{visibility:3,belonging:2},risk:"anonymity"},
+ {text:"Being bored in class.",w:{academic:3,focus:1},risk:"underchallenge"},
+ {text:"Feeling behind everyone else.",w:{resilience:-3,pressure:-1},risk:"outclassed"},
+ {text:"Not having friends I click with.",w:{social:2,belonging:3},risk:"social"},
+ {text:"Feeling under pressure all the time.",w:{pressure:-3,spaceNeed:2},risk:"pressure"}]}
 ];
 
+/* ============================================================
+   PARENT BANK — 32 items (22 observation + 10 family)
+   Family items carry no dimension weights; they configure the
+   engine and act as constraints.
+   ============================================================ */
 const parentQuestions = [
-{type:"scenario",prompt:"When your child realises another child is significantly more capable, what usually happens?",options:[
-{text:"They become more determined and seek ideas from them.",w:{resilience:3,peerDrive:3}},
-{text:"They practise privately but remain involved.",w:{resilience:2,pressure:1}},
-{text:"They find another way to contribute.",w:{breadth:2,resilience:1}},
-{text:"They become quieter or step back.",w:{resilience:-3,peerInfluence:2}},
-{text:"They lose interest in the activity.",w:{resilience:-3}}
-]},
-{type:"scenario",prompt:"Without a deadline or adult follow-up, what usually happens to a self-directed project?",options:[
-{text:"It is completed independently.",w:{autonomy:3,structure:1}},
-{text:"They work intensely but may not finish.",w:{autonomy:3,structure:-1}},
-{text:"They need occasional checkpoints.",w:{structure:2,teacher:1}},
-{text:"They lose momentum quickly.",w:{structure:-3}},
-{text:"They recruit others to keep it moving.",w:{social:2,enterprise:2}}
-]},
-{type:"scenario",prompt:"How strongly does their friendship group affect effort and interests?",options:[
-{text:"Very little; they maintain their own direction.",w:{peerInfluence:-3,autonomy:2}},
-{text:"Somewhat, but adults and existing goals still matter.",w:{peerInfluence:1,teacher:1}},
-{text:"A lot; they absorb the group’s habits.",w:{peerInfluence:3,social:2}},
-{text:"It depends on whether they feel confident in the activity.",w:{peerInfluence:2,resilience:-1}}
-]},
-{type:"scenario",prompt:"Which adults have produced their strongest work?",options:[
-{text:"Warm teachers who build confidence.",w:{teacher:2,pressure:-1}},
-{text:"Demanding teachers who clearly expect more.",w:{teacher:3,structure:2,pressure:1}},
-{text:"Teachers who give them freedom and resources.",w:{autonomy:3,teacher:1}},
-{text:"Adult influence matters less than the peer group.",w:{peerDrive:2,peerInfluence:2}}
-]},
-{type:"scenario",prompt:"When praised publicly, what is the usual effect?",options:[
-{text:"They become noticeably more motivated.",w:{pressure:2,teacher:2,social:1}},
-{text:"They enjoy it but work similarly either way.",w:{resilience:1}},
-{text:"They become anxious about maintaining the standard.",w:{pressure:-2,teacher:1}},
-{text:"They dislike the attention.",w:{social:-1,pressure:-1}}
-]},
-{type:"scenario",prompt:"When a teacher says the work is not yet good enough, what usually follows?",options:[
-{text:"They rapidly improve it.",w:{teacher:3,resilience:3,structure:1}},
-{text:"They feel hurt but return to it later.",w:{resilience:1,teacher:1}},
-{text:"They argue or defend the work.",w:{autonomy:2,resilience:-1}},
-{text:"They disengage.",w:{resilience:-3,pressure:-2}}
-]},
-{type:"scenario",prompt:"How do they handle a crowded week of commitments?",options:[
-{text:"They become energised by it.",w:{pressure:3,breadth:2}},
-{text:"They manage well with a plan.",w:{structure:3,pressure:2}},
-{text:"They manage if an adult organises it.",w:{teacher:2,structure:2}},
-{text:"They become overwhelmed.",w:{pressure:-3}}
-]},
-{type:"scenario",prompt:"In group activities, which role appears most often?",options:[
-{text:"Leader or organiser.",w:{enterprise:3,social:2}},
-{text:"Social connector who keeps everyone involved.",w:{social:3,grounded:1}},
-{text:"Specialist who makes a key contribution.",w:{autonomy:2,tech:1,music:1}},
-{text:"Follower who joins the group’s direction.",w:{peerInfluence:2}},
-{text:"Observer who may step back.",w:{resilience:-1,social:-1}}
-]},
-{type:"scenario",prompt:"How often do they choose an activity without friends joining?",options:[
-{text:"Often.",w:{autonomy:2,peerInfluence:-3,resilience:2}},
-{text:"Sometimes, if very interested.",w:{autonomy:1,peerInfluence:-1}},
-{text:"Rarely.",w:{peerInfluence:3,social:1}},
-{text:"They join, but participate less confidently.",w:{resilience:-1,peerInfluence:1}}
-]},
-{type:"scenario",prompt:"What most reliably turns ability into sustained effort?",options:[
-{text:"A teacher relationship and high expectation.",w:{teacher:3,structure:2}},
-{text:"A competition, ranking or public goal.",w:{pressure:3,peerDrive:2}},
-{text:"Deep personal interest.",w:{autonomy:3}},
-{text:"Friends who are equally committed.",w:{peerDrive:3,peerInfluence:2}},
-{text:"A busy routine with fixed commitments.",w:{structure:3}}
-]},
-{type:"scenario",prompt:"Which concern feels most realistic in a highly selective cohort?",options:[
-{text:"They would thrive and learn from stronger peers.",w:{resilience:3,peerDrive:3}},
-{text:"They would work hard but become stressed.",w:{pressure:-1,peerDrive:2}},
-{text:"They may become less visible or confident.",w:{resilience:-3,peerInfluence:1}},
-{text:"They would not care much about comparisons.",w:{peerDrive:-1,resilience:2}}
-]},
-{type:"scenario",prompt:"When schoolwork is easy, what tends to happen?",options:[
-{text:"They ask for more or extend it themselves.",w:{academic:3,autonomy:2}},
-{text:"They complete it well but do not seek more.",w:{structure:1}},
-{text:"They coast unless an adult raises the standard.",w:{teacher:3,structure:2}},
-{text:"They become distracted by friends or other interests.",w:{peerInfluence:2,breadth:1}}
-]},
-{type:"scenario",prompt:"Which interest currently survives without adult prompting?",options:[
-{text:"Academic learning or puzzles.",w:{academic:3,autonomy:1}},
-{text:"Music, performance or production.",w:{music:3,autonomy:1}},
-{text:"Technology, building or computing.",w:{tech:3,autonomy:1}},
-{text:"Sport or physical activity.",w:{sport:3,social:1}},
-{text:"Organising, selling or leading projects.",w:{enterprise:3}}
-]},
-{type:"scenario",prompt:"Which setting most often brings out their social confidence?",options:[
-{text:"A broad mixed group.",w:{grounded:2,social:3}},
-{text:"A group built around a shared talent.",w:{peerDrive:2,social:2}},
-{text:"A team with clear roles.",w:{structure:1,social:2}},
-{text:"One-to-one or small groups.",w:{teacher:1,social:-1}}
-]},
-{type:"scenario",prompt:"How important is being among the strongest to their confidence?",options:[
-{text:"Not very; strong peers usually energise them.",w:{resilience:3,peerDrive:2}},
-{text:"Somewhat; they need regular evidence of success.",w:{resilience:1,teacher:1}},
-{text:"Very; they can withdraw when clearly outperformed.",w:{resilience:-3,peerInfluence:1}},
-{text:"It varies greatly by activity.",w:{breadth:2}}
-]},
-{type:"scenario",prompt:"Which learning structure most consistently works?",options:[
-{text:"Clear steps, deadlines and checks.",w:{structure:3,teacher:2}},
-{text:"A difficult goal with freedom inside it.",w:{structure:1,autonomy:3}},
-{text:"Full independence.",w:{autonomy:3,structure:-1}},
-{text:"Collaborative work with committed peers.",w:{peerDrive:2,social:2}}
-]},
-{type:"scenario",prompt:"What type of school culture would most likely shape them positively?",options:[
-{text:"Ambitious, academically focused peers.",w:{peerDrive:3,academic:2}},
-{text:"Active, social students involved in many things.",w:{social:3,breadth:2}},
-{text:"Creative and technically adventurous students.",w:{music:1,tech:2,autonomy:2}},
-{text:"Grounded students from varied backgrounds.",w:{grounded:3}},
-{text:"A traditional, highly structured community.",w:{structure:3}}
-]},
-{type:"scenario",prompt:"Which risk should a school choice guard against most?",options:[
-{text:"Coasting because peers do not value effort.",w:{peerInfluence:3,peerDrive:2}},
-{text:"Losing confidence among exceptional peers.",w:{resilience:-3,pressure:-1}},
-{text:"Losing interest because everything is over-structured.",w:{autonomy:3,structure:-2}},
-{text:"Becoming overwhelmed by too many commitments.",w:{pressure:-3,breadth:-1}},
-{text:"Narrowing too early into one identity.",w:{breadth:3}}
-]}
-,
-{type:"scenario",prompt:"When opportunities are not personally offered, what usually happens?",options:[
-{text:"They seek them out and ask directly.",w:{autonomy:2,visibility:-3}},
-{text:"They notice opportunities but need a small prompt.",w:{visibility:1,structure:1}},
-{text:"They usually wait for a teacher or adult to identify them.",w:{teacher:2,visibility:3}},
-{text:"They may miss opportunities even when highly capable.",w:{visibility:3,structure:-1}}
-]},
-{type:"scenario",prompt:"Which secondary-school social setting appears more natural for them?",options:[
-{text:"A co-ed environment.",w:{mixedGender:3,social:1}},
-{text:"A same-gender environment.",w:{mixedGender:-3,structure:1}},
-{text:"There is no clear preference.",w:{mixedGender:0}},
-{text:"Their comfort depends much more on the particular peer group.",w:{peerInfluence:2}}
-]},
-{type:"scenario",prompt:"How strongly does unfocused classroom behaviour affect their effort?",options:[
-{text:"Very little; they maintain their own standard.",w:{resilience:3,focus:-1}},
-{text:"They work well when the teacher maintains firm control.",w:{structure:3,teacher:2,focus:2}},
-{text:"Their effort gradually follows the group.",w:{peerInfluence:3,focus:3}},
-{text:"They become frustrated or disengaged.",w:{focus:3,resilience:-1}}
-]}
+{part:"A",type:"scenario",prompt:"When your child realises another child is significantly more capable, what usually happens?",options:[
+ {text:"They become more determined and seek ideas from them.",w:{resilience:3,peerDrive:3}},
+ {text:"They practise privately but remain involved.",w:{resilience:2,autonomy:2}},
+ {text:"They find another way to contribute.",w:{breadth:2,resilience:1}},
+ {text:"They become quieter or step back.",w:{resilience:-3,visibility:2}},
+ {text:"They lose interest in the activity.",w:{resilience:-3,breadth:1}}]},
+
+{part:"A",type:"scenario",prompt:"Without a deadline or adult follow-up, what usually happens to a self-directed project?",options:[
+ {text:"It is completed independently.",w:{effortSelfdir:3,autonomy:3}},
+ {text:"They work intensely but may not finish.",w:{effortSelfdir:-1,autonomy:2}},
+ {text:"They need occasional checkpoints.",w:{effortSelfdir:-2,structure:2,teacher:1}},
+ {text:"They lose momentum quickly.",w:{effortSelfdir:-3,structure:3}},
+ {text:"They recruit others to keep it moving.",w:{social:2,enterprise:2}}]},
+
+{part:"A",type:"scenario",prompt:"How strongly does their friendship group affect their effort and interests?",options:[
+ {text:"Very little — they hold their own direction.",w:{peerInfluence:-3,autonomy:2}},
+ {text:"Somewhat, but adults and their own goals still matter.",w:{peerInfluence:1,teacher:1}},
+ {text:"A lot — they absorb the group's habits.",w:{peerInfluence:3,social:2,focus:2}},
+ {text:"It depends on how confident they feel in that activity.",w:{peerInfluence:2,resilience:-1}}]},
+
+{part:"A",type:"scenario",prompt:"Which adults have got their strongest work out of them?",options:[
+ {text:"Warm teachers who build confidence.",w:{teacher:2,mentorStyle:3,pressure:-1}},
+ {text:"Demanding teachers who clearly expect more.",w:{teacher:3,structure:2,mentorStyle:-2,pressure:1}},
+ {text:"Teachers who give them freedom and resources.",w:{autonomy:3,teacher:1}},
+ {text:"Adults matter less than the peer group.",w:{peerDrive:2,peerInfluence:2,teacher:-2}}]},
+
+{part:"A",type:"scenario",prompt:"When a teacher says the work isn't good enough yet, what usually follows?",options:[
+ {text:"They rapidly improve it.",w:{resilience:3,teacher:2}},
+ {text:"They're hurt but come back to it.",w:{resilience:1,pressure:-2,teacher:2}},
+ {text:"They defend the work.",w:{autonomy:3,resilience:1}},
+ {text:"They disengage from that subject.",w:{resilience:-3,pressure:-2}}]},
+
+{part:"A",type:"scenario",prompt:"How do they handle a crowded week of commitments?",options:[
+ {text:"Energised by it.",w:{pressure:3,breadth:3,spaceNeed:-3}},
+ {text:"Manage well with a plan.",w:{pressure:2,structure:2,effortSelfdir:2}},
+ {text:"Manage if an adult organises it.",w:{structure:3,effortSelfdir:-2}},
+ {text:"Become overwhelmed.",w:{pressure:-3,spaceNeed:3}}]},
+
+{part:"A",type:"scenario",prompt:"In group activities, which role appears most often?",options:[
+ {text:"Leader or organiser.",w:{enterprise:3,social:2}},
+ {text:"Social connector who keeps everyone involved.",w:{social:3,empathy:2}},
+ {text:"Specialist who makes a key contribution.",w:{autonomy:2,tech:1,breadth:-1}},
+ {text:"Joins in with the group's direction.",w:{peerInfluence:3}},
+ {text:"Observer who may step back.",w:{social:-3,visibility:2}}]},
+
+{part:"A",type:"scenario",prompt:"How often do they choose an activity when friends aren't joining?",options:[
+ {text:"Often.",w:{peerInfluence:-3,autonomy:2}},
+ {text:"Sometimes, if they're very interested.",w:{peerInfluence:-1}},
+ {text:"Rarely.",w:{peerInfluence:3,social:2}},
+ {text:"They'll join, but less confidently.",w:{peerInfluence:2,social:-1,visibility:2}}]},
+
+{part:"A",type:"scenario",prompt:"What most reliably turns their ability into sustained effort?",options:[
+ {text:"A teacher relationship and high expectations.",w:{teacher:3,structure:2}},
+ {text:"A competition, ranking or public goal.",w:{pressure:3,statusTolerance:2}},
+ {text:"Deep personal interest.",w:{autonomy:3,effortSelfdir:2}},
+ {text:"Friends who are equally committed.",w:{peerDrive:3,peerInfluence:3}},
+ {text:"A busy routine with fixed commitments.",w:{structure:3,breadth:2}}]},
+
+{part:"A",type:"scenario",prompt:"Which concern feels most realistic in a highly selective cohort?",options:[
+ {text:"They'd thrive and learn from stronger peers.",w:{resilience:3,peerDrive:3}},
+ {text:"They'd work hard but get stressed.",w:{pressure:-2,resilience:1}},
+ {text:"They may become less visible or less confident.",w:{resilience:-3,visibility:3}},
+ {text:"They wouldn't care much about comparisons.",w:{statusTolerance:-2,autonomy:2}}]},
+
+{part:"A",type:"scenario",prompt:"When schoolwork is easy, what tends to happen?",options:[
+ {text:"They ask for more, or extend it themselves.",w:{academic:3,effortSelfdir:3,helpSeeking:2}},
+ {text:"They do it well but don't seek more.",w:{visibility:2}},
+ {text:"They coast unless an adult raises the bar.",w:{visibility:3,teacher:2,structure:2}},
+ {text:"They get distracted by friends or other interests.",w:{peerInfluence:3,focus:2,effortSelfdir:-2}}]},
+
+{part:"A",type:"multi",pick:3,prompt:"Which interests survive without any adult prompting? Pick up to three.",options:tileOpts(0.8)},
+
+{part:"A",type:"scenario",prompt:"Which setting most often brings out their social confidence?",options:[
+ {text:"A broad mixed group.",w:{social:3,schoolSize:2}},
+ {text:"A group built around a shared interest.",w:{peerDrive:2,breadth:-1}},
+ {text:"A team with clear roles.",w:{structure:2,social:1}},
+ {text:"One-to-one or small groups.",w:{social:-3,belonging:3,schoolSize:-2}}]},
+
+{part:"A",type:"scenario",prompt:"How important is being among the strongest to their confidence?",options:[
+ {text:"Not very — strong peers energise them.",w:{resilience:3,peerDrive:3}},
+ {text:"Somewhat — they need regular evidence of success.",w:{resilience:-1,visibility:2}},
+ {text:"Very — they can withdraw when clearly outperformed.",w:{resilience:-3,visibility:2}},
+ {text:"It varies a lot by activity.",w:{breadth:2}}]},
+
+{part:"A",type:"scenario",prompt:"Which school culture would most likely shape them positively?",options:[
+ {text:"Ambitious, academically focused peers.",w:{academic:3,peerDrive:3,focus:2}},
+ {text:"Active, social students doing lots of things.",w:{social:3,breadth:3}},
+ {text:"Creative and technically adventurous students.",w:{music:2,tech:2,autonomy:2}},
+ {text:"Grounded students from varied backgrounds.",w:{grounded:3,statusTolerance:-2}},
+ {text:"A traditional, highly structured community.",w:{structure:3,formality:3}}]},
+
+{part:"A",type:"scenario",prompt:"Which risk should the school choice guard against most?",options:[
+ {text:"Coasting because peers don't value effort.",w:{focus:3,peerDrive:2},risk:"underchallenge"},
+ {text:"Losing confidence among exceptional peers.",w:{resilience:-3},risk:"outclassed"},
+ {text:"Losing interest because everything is over-structured.",w:{autonomy:3,formality:-2},risk:"overstructured"},
+ {text:"Becoming overwhelmed by too many commitments.",w:{spaceNeed:3,pressure:-2},risk:"pressure"},
+ {text:"Narrowing into one identity too early.",w:{breadth:3},risk:"narrowing"}]},
+
+{part:"A",type:"scenario",prompt:"When opportunities aren't personally offered, what usually happens?",options:[
+ {text:"They seek them out and ask directly.",w:{visibility:-3,autonomy:2,helpSeeking:3}},
+ {text:"They notice them but need a small prompt.",w:{visibility:1,teacher:1}},
+ {text:"They usually wait for an adult to identify them.",w:{visibility:3,teacher:3}},
+ {text:"They may miss them even when highly capable.",w:{visibility:3,helpSeeking:-3}}]},
+
+{part:"A",type:"scenario",prompt:"How strongly does unfocused classroom behaviour affect their effort?",options:[
+ {text:"Very little.",w:{focus:-3,autonomy:2}},
+ {text:"They work well when the teacher keeps firm control.",w:{focus:1,structure:3,teacher:2}},
+ {text:"Their effort gradually follows the group.",w:{focus:3,peerInfluence:3}},
+ {text:"They become frustrated or disengaged.",w:{focus:3,academic:2}}]},
+
+{part:"A",type:"scenario",prompt:"When your child is struggling with something at school, how do you usually find out?",options:[
+ {text:"They tell us straight away.",w:{helpSeeking:3}},
+ {text:"We notice before they say anything.",w:{helpSeeking:-1,visibility:2}},
+ {text:"A teacher tells us.",w:{helpSeeking:-1,teacher:2,visibility:2}},
+ {text:"It usually comes out late, once it's built up.",w:{helpSeeking:-3,visibility:3}}]},
+
+{part:"A",type:"scenario",prompt:"How does your child usually handle a falling out with a friend?",options:[
+ {text:"Sorts it out directly.",w:{conflictRepair:3}},
+ {text:"Waits for the other person.",w:{conflictRepair:-2}},
+ {text:"Moves on to other friends.",w:{conflictRepair:-1,social:2,belonging:-2}},
+ {text:"Takes it hard, and it affects other things.",w:{conflictRepair:-3,belonging:3,pressure:-2}},
+ {text:"Brings it to an adult.",w:{conflictRepair:1,helpSeeking:3}}]},
+
+{part:"A",type:"scenario",prompt:"How does your child handle new starts — a new team, class or group?",options:[
+ {text:"Straight in.",w:{changeTolerance:3,social:2}},
+ {text:"Takes a few weeks, then they're fine.",w:{changeTolerance:1}},
+ {text:"Takes a term or more.",w:{changeTolerance:-3,belonging:2}},
+ {text:"Needs at least one familiar person to settle.",w:{changeTolerance:-3,belonging:3}}]},
+
+{part:"A",type:"scenario",prompt:"After a full day, what does your child need?",options:[
+ {text:"To go straight into the next thing.",w:{spaceNeed:-3,breadth:2,social:2}},
+ {text:"A short break, then they're fine.",w:{spaceNeed:-1}},
+ {text:"Real downtime before they're any use.",w:{spaceNeed:3}},
+ {text:"They run out of steam, and it shows at home.",w:{spaceNeed:3,pressure:-3}}]},
+
+/* ---------- Part B · family values, culture, constraints ---------- */
+{part:"B",type:"rank2",prompt:"At the end of Year 12, what would make you feel this school was the right choice? Pick your top two.",
+ config:"success",options:[
+ {id:"results",text:"Strong results and options after school."},
+ {id:"character",text:"The kind of person they've become."},
+ {id:"wellbeing",text:"That they were happy and well."},
+ {id:"opportunity",text:"Opportunities and doors that opened."},
+ {id:"belonging",text:"Friendships and belonging that lasted."}]},
+
+{part:"B",type:"config",prompt:"Being honest with yourself: how much does a school's reputation matter to you?",
+ note:"There is no right answer here. Naming it lets the tool show it to you rather than hide it inside a score.",
+ config:"prestige",options:[
+ {id:"high",text:"A lot, and I'm comfortable with that."},
+ {id:"some",text:"Somewhat — it's one factor."},
+ {id:"low",text:"Not much."},
+ {id:"avoid",text:"I'd actively avoid a status-driven school."}]},
+
+{part:"B",type:"config",prompt:"What role do you want in school life?",config:"involvement",options:[
+ {id:"heavy",text:"Heavily involved — committees, sidelines, volunteering."},
+ {id:"some",text:"At the things that matter."},
+ {id:"minimal",text:"Minimal — I want it to run well without me."},
+ {id:"depends",text:"Depends what the child needs."}]},
+
+{part:"B",type:"config",prompt:"Which approach to behaviour and discipline fits your family?",config:"discipline",options:[
+ {id:"firm",text:"Firm rules and clear consequences."},
+ {id:"restorative",text:"Restorative conversations and repair."},
+ {id:"warm",text:"High expectations delivered with warmth."},
+ {id:"flexible",text:"Flexible, judged case by case."}]},
+
+{part:"B",type:"config",prompt:"When your child hits a setback, what does your family usually do?",config:"setback",options:[
+ {id:"early",text:"Step in early and help fix it."},
+ {id:"coach",text:"Coach them through it."},
+ {id:"sit",text:"Let them sit with it and work it out."},
+ {id:"varies",text:"It varies a lot."}]},
+
+{part:"B",type:"config",prompt:"How important is faith, chapel or religious tradition in the school?",config:"faith",options:[
+ {id:"want",text:"Important — we want it."},
+ {id:"fine",text:"Comfortable with it either way."},
+ {id:"light",text:"We'd prefer it minimal."},
+ {id:"none",text:"We'd prefer none."}]},
+
+{part:"B",type:"config",prompt:"Do you have a view on co-ed versus single-sex?",
+ note:"Treated as a family preference and a tour question. It is never derived from the child's answers, and neither model is scored as better.",
+ config:"coed",options:[
+ {id:"coed",text:"We'd prefer co-ed."},
+ {id:"leanCoed",text:"Leaning co-ed."},
+ {id:"none",text:"No strong view."},
+ {id:"leanSingle",text:"Leaning single-sex."},
+ {id:"single",text:"We'd prefer single-sex."}]},
+
+{part:"B",type:"config",prompt:"How much does it matter that you feel at home among the other parents?",config:"parentFit",options:[
+ {id:"high",text:"A lot."},
+ {id:"some",text:"Somewhat."},
+ {id:"low",text:"Not much."}]},
+
+{part:"B",type:"config",prompt:"How formal a school culture suits your family — uniform, ceremony, honours and tradition?",config:"formality",options:[
+ {id:"positive",text:"A real positive for us."},
+ {id:"neutral",text:"Neutral — we don't mind."},
+ {id:"mild",text:"A mild negative."},
+ {id:"off",text:"It would put us off."}]},
+
+{part:"B",type:"config",prompt:"If your child's answers and your own point to different environments, whose reading should carry more weight?",config:"weighting",options:[
+ {id:"parent",text:"Mine — they're still young."},
+ {id:"child",text:"Theirs — they know how they feel."},
+ {id:"even",text:"Weight them evenly, and show me where we disagree."}]}
 ];
 
+/* ===== src/schools.js ===== */
 const schools = [
 {
 name:"Melville Senior High School — Academic Extension",
@@ -1265,331 +1448,924 @@ sources:[
 const schoolExtraAttrs = {"Melville Senior High School — Academic Extension":{"visibility":66,"focus":68,"mixedGender":100},"All Saints’ College":{"visibility":92,"focus":76,"mixedGender":100},"Perth Modern School":{"visibility":76,"focus":99,"mixedGender":100},"John Curtin College of the Arts":{"visibility":83,"focus":77,"mixedGender":100},"Corpus Christi College":{"visibility":87,"focus":73,"mixedGender":100},"Aquinas College":{"visibility":83,"focus":80,"mixedGender":0},"Rossmoyne Senior High School":{"visibility":71,"focus":86,"mixedGender":100},"Willetton Senior High School":{"visibility":70,"focus":90,"mixedGender":100},"Applecross Senior High School — Academic Extension":{"visibility":73,"focus":76,"mixedGender":100},"Shenton College — HPL / GATE":{"visibility":79,"focus":89,"mixedGender":100},"Fremantle College":{"visibility":83,"focus":67,"mixedGender":100},"Kennedy Baptist College":{"visibility":85,"focus":73,"mixedGender":100},"Carey Baptist College — Harrisdale":{"visibility":85,"focus":79,"mixedGender":100},"Scotch College":{"visibility":87,"focus":88,"mixedGender":0},"Christ Church Grammar School":{"visibility":92,"focus":92,"mixedGender":0},"Hale School":{"visibility":88,"focus":87,"mixedGender":0},"Wesley College":{"visibility":89,"focus":83,"mixedGender":0},"CBC Fremantle":{"visibility":88,"focus":78,"mixedGender":0},"Iona Presentation College":{"visibility":89,"focus":80,"mixedGender":0},"Santa Maria College":{"visibility":90,"focus":78,"mixedGender":0},"Seton Catholic College":{"visibility":89,"focus":68,"mixedGender":100}};
 schools.forEach(sc=>Object.assign(sc.attrs,schoolExtraAttrs[sc.name]||{}));
 
-let currentIndex=0, answers={}, parentIndex=0, parentAnswers={}, childScores=null, parentScores=null, useCombined=false;
+/* ===== src/engine.js ===== */
+/* ============================================================
+   SchoolFit Quest v4 — scoring engine
 
-const el=id=>document.getElementById(id);
+   Changes from v3:
+   1. Every dimension carries a measurement confidence based on how
+      many items informed it. Thinly measured dimensions are shrunk
+      toward neutral instead of swinging to 0 or 100.
+   2. Risk triggers only fire when the dimension driving them was
+      actually measured well enough to justify it.
+   3. School evidence level propagates: weaker-evidence attributes
+      regress toward the dataset mean and widen the reported band.
+   4. Family constraints are hard filters, not score penalties.
+   5. Co-ed is never scored. It is a family filter and a tour note.
+   6. Nothing in the output layer is hardcoded to any one interest.
+   ============================================================ */
+
+const K_SHRINK = 2.5;              // items needed before a dim is trusted
+const EV_CONF  = {High:1.0, Medium:0.78, Low:0.55};
+const RISK_GATE = 0.5;             // min measurement confidence to fire a risk
+
 const clamp=(n,a=0,b=100)=>Math.max(a,Math.min(b,n));
+const el=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
-function showOnly(id){
-  ["landing","about","game","results","parentGame"].forEach(x=>el(x).classList.toggle("hidden",x!==id));
-  window.scrollTo({top:0,behavior:"smooth"});
-}
-function startGame(){currentIndex=0;answers={};showOnly("game");renderQuestion();}
-el("startBtn").onclick=startGame;
-el("aboutBtn").onclick=()=>showOnly("about");
-el("aboutBack").onclick=()=>showOnly("landing");
-el("aboutStart").onclick=startGame;
+/* ---------- per-question bounds and values ---------- */
+function optW(o,dim){ return (o.w&&o.w[dim])||0; }
 
-function renderQuestion(){
-  const q=childQuestions[currentIndex], card=el("questionCard"), response=answers[currentIndex];
-  el("roundLabel").textContent=q.round;
-  el("progressText").textContent=`${currentIndex+1} of ${childQuestions.length}`;
-  el("progressBar").style.width=`${((currentIndex+1)/childQuestions.length)*100}%`;
-  let html=`<div class="q-kicker">${q.type==="bestworst"?"Priority round":"Choose what feels most true"}</div><h2 class="q-title">${q.prompt}</h2>`;
+function bounds(q,dim){
   if(q.type==="bestworst"){
-    html+=`<p class="note">Select one MOST important and one LEAST important.</p><div class="bw-grid">`;
-    q.items.forEach((it,i)=>{
-      html+=`<div class="bw-item"><span>${it.text}</span>
-      <button class="chip most ${response?.most===i?"active":""}" data-most="${i}">Most</button>
-      <button class="chip least ${response?.least===i?"active":""}" data-least="${i}">Least</button></div>`;
-    });
-    html+=`</div>`;
-  }else{
-    html+=`<div class="options">`;
-    q.options.forEach((o,i)=>html+=`<button class="option ${response===i?"selected":""}" data-opt="${i}">${o.text}</button>`);
-    html+=`</div>`;
+    let lo=Infinity,hi=-Infinity;
+    q.items.forEach((m,mi)=>q.items.forEach((l,li)=>{
+      if(mi===li)return;
+      const v=2*optW(m,dim)-optW(l,dim);
+      if(v<lo)lo=v; if(v>hi)hi=v;
+    }));
+    return [lo,hi];
   }
-  card.innerHTML=html;
-  card.querySelectorAll("[data-opt]").forEach(b=>b.onclick=()=>{answers[currentIndex]=+b.dataset.opt;renderQuestion();});
-  card.querySelectorAll("[data-most]").forEach(b=>b.onclick=()=>{
-    const i=+b.dataset.most, r=answers[currentIndex]||{};
-    answers[currentIndex]={most:i,least:r.least===i?undefined:r.least};renderQuestion();
-  });
-  card.querySelectorAll("[data-least]").forEach(b=>b.onclick=()=>{
-    const i=+b.dataset.least, r=answers[currentIndex]||{};
-    answers[currentIndex]={most:r.most===i?undefined:r.most,least:i};renderQuestion();
-  });
-  el("backBtn").disabled=currentIndex===0;
-  el("nextBtn").textContent=currentIndex===childQuestions.length-1?"See my profile":"Next";
-}
-function answered(q,r){
-  if(q.type==="bestworst")return r && Number.isInteger(r.most)&&Number.isInteger(r.least)&&r.most!==r.least;
-  return Number.isInteger(r);
-}
-el("backBtn").onclick=()=>{if(currentIndex>0){currentIndex--;renderQuestion();}};
-el("nextBtn").onclick=()=>{
-  const q=childQuestions[currentIndex];
-  if(!answered(q,answers[currentIndex])){alert(q.type==="bestworst"?"Choose both MOST and LEAST.":"Choose an answer first.");return;}
-  if(currentIndex<childQuestions.length-1){currentIndex++;renderQuestion();}
-  else finishChild();
-};
-
-function enumerateBounds(q,dim){
-  if(q.type==="bestworst"){
-    let vals=[];
-    q.items.forEach((m,mi)=>q.items.forEach((l,li)=>{if(mi!==li)vals.push(2*(m.w[dim]||0)-(l.w[dim]||0));}));
-    return [Math.min(...vals),Math.max(...vals)];
+  if(q.type==="multi"){
+    const vals=q.options.map(o=>optW(o,dim));
+    const pos=vals.filter(v=>v>0).sort((a,b)=>b-a);
+    const neg=vals.filter(v=>v<0).sort((a,b)=>a-b);
+    const k=q.pick||vals.length;
+    const hi=pos.slice(0,k).reduce((a,b)=>a+b,0);
+    const lo=neg.slice(0,k).reduce((a,b)=>a+b,0);
+    return [lo,hi];
   }
-  const vals=q.options.map(o=>o.w[dim]||0);
+  const vals=q.options.map(o=>optW(o,dim));
   return [Math.min(...vals),Math.max(...vals)];
 }
-function responseValue(q,r,dim){
-  if(q.type==="bestworst")return 2*(q.items[r.most].w[dim]||0)-(q.items[r.least].w[dim]||0);
-  return q.options[r].w[dim]||0;
+
+function value(q,r,dim){
+  if(q.type==="bestworst") return 2*optW(q.items[r.most],dim)-optW(q.items[r.least],dim);
+  if(q.type==="multi") return (r||[]).reduce((sum,i)=>sum+optW(q.options[i],dim),0);
+  return optW(q.options[r],dim);
 }
+
+function answered(q,r){
+  if(r===undefined||r===null) return false;
+  if(q.type==="bestworst") return r.most!==undefined && r.least!==undefined && r.most!==r.least;
+  if(q.type==="multi") return Array.isArray(r) && (q.pick===0 ? true : r.length===q.pick);
+  if(q.type==="rank2") return Array.isArray(r) && r.length===2;
+  return true;
+}
+
+/* ---------- scoring with confidence ---------- */
 function scoreQuestions(qs,responses){
   const out={};
   Object.keys(DIMS).forEach(dim=>{
-    let raw=0,min=0,max=0,used=0;
+    let raw=0,lo=0,hi=0,n=0;
     qs.forEach((q,i)=>{
-      const r=responses[i]; if(!answered(q,r))return;
-      const b=enumerateBounds(q,dim);
-      raw+=responseValue(q,r,dim);min+=b[0];max+=b[1];used++;
+      if(!q.options && !q.items) return;
+      const r=responses[i];
+      if(!answered(q,r)) return;
+      const b=bounds(q,dim);
+      if(b[0]===b[1]) return;                 // dim not present in this item
+      raw+=value(q,r,dim); lo+=b[0]; hi+=b[1]; n++;
     });
-    out[dim]=max===min?50:clamp(Math.round((raw-min)/(max-min)*100));
+    if(n===0){ out[dim]={score:50,observed:50,n:0,confidence:0}; return; }
+    const observed=clamp(Math.round((raw-lo)/(hi-lo)*100));
+    const confidence=n/(n+K_SHRINK);
+    out[dim]={
+      score: clamp(Math.round(50+(observed-50)*confidence)),
+      observed, n,
+      confidence: Math.round(confidence*100)/100
+    };
   });
   return out;
 }
-function finishChild(){
-  childScores=scoreQuestions(childQuestions,answers);
-  useCombined=false;
-  showOnly("results");
-  renderResults();
+
+/* Blend child and parent profiles by the family's chosen weighting. */
+function blend(child,parent,mode){
+  if(!parent) return child;
+  const wC = mode==="parent"?0.35 : mode==="child"?0.8 : 0.55;
+  const out={};
+  Object.keys(DIMS).forEach(d=>{
+    const c=child[d], p=parent[d];
+    if(!p || p.n===0) { out[d]=c; return; }
+    if(!c || c.n===0) { out[d]=p; return; }
+    const n=c.n+p.n, confidence=n/(n+K_SHRINK);
+    const observed=Math.round(c.observed*wC + p.observed*(1-wC));
+    out[d]={score:clamp(Math.round(50+(observed-50)*confidence)),observed,n,confidence:Math.round(confidence*100)/100};
+  });
+  return out;
 }
-function activeScores(){
-  if(useCombined && parentScores){
-    const s={};
-    Object.keys(DIMS).forEach(d=>s[d]=Math.round(childScores[d]*.7+parentScores[d]*.3));
-    return s;
+
+const S  = (s,d)=> (s[d]?s[d].score:50);
+const CF = (s,d)=> (s[d]?s[d].confidence:0);
+
+/* ---------- desired school vector ---------- */
+function desiredSchoolVector(s){
+  const mix=(a,b,wa)=>Math.round(S(s,a)*wa+S(s,b)*(1-wa));
+  const cmin=(a,b)=>Math.min(CF(s,a),CF(s,b));
+  return {
+    v:{
+      academic:      mix("academic","academicInterest",0.6),
+      teacher:       S(s,"teacher"),
+      visibility:    S(s,"visibility"),
+      peerAmbition:  mix("peerDrive","peerInfluence",0.62),
+      peerIntensity: mix("resilience","pressure",0.65),
+      structure:     S(s,"structure"),
+      autonomy:      S(s,"autonomy"),
+      focus:         S(s,"focus"),
+      social:        S(s,"social"),
+      pressure:      S(s,"pressure"),
+      music:         S(s,"music"),
+      tech:          S(s,"tech"),
+      sport:         S(s,"sport"),
+      enterprise:    S(s,"enterprise"),
+      breadth:       S(s,"breadth"),
+      grounded:      S(s,"grounded")
+    },
+    c:{
+      academic:cmin("academic","academicInterest"), teacher:CF(s,"teacher"), visibility:CF(s,"visibility"),
+      peerAmbition:cmin("peerDrive","peerInfluence"), peerIntensity:cmin("resilience","pressure"),
+      structure:CF(s,"structure"), autonomy:CF(s,"autonomy"), focus:CF(s,"focus"),
+      social:CF(s,"social"), pressure:CF(s,"pressure"), music:CF(s,"music"), tech:CF(s,"tech"),
+      sport:CF(s,"sport"), enterprise:CF(s,"enterprise"), breadth:CF(s,"breadth"), grounded:CF(s,"grounded")
+    }
+  };
+}
+
+/* ---------- relative attribute positioning ----------
+   A family is choosing among these 21 schools, not against an
+   absolute standard. Raw attributes sit in a narrow band (most
+   schools score 60-90 on most things), so comparing them directly
+   flattens every ranking toward the middle. We convert each
+   attribute to its position within the dataset instead, which is
+   the comparison the family is actually making. */
+let ATTR_RANK=null;
+function attrRank(){
+  if(ATTR_RANK) return ATTR_RANK;
+  ATTR_RANK={};
+  Object.keys(schools[0].attrs).forEach(k=>{
+    const vals=schools.map(s=>s.attrs[k]).filter(v=>v!==undefined);
+    ATTR_RANK[k]=v=>{
+      let below=0;
+      vals.forEach(x=>{ if(x<v) below+=1; else if(x===v) below+=0.5; });
+      return 6+(below/vals.length)*88;      // 6..94, keeps ends reachable
+    };
+  });
+  return ATTR_RANK;
+}
+
+/* An attribute from a weaker-evidence school is pulled back toward
+   the middle of the field. We do not claim to know it as precisely. */
+function evAttr(school,key){
+  const conf=EV_CONF[school.evidenceLevel]||0.7;
+  const raw=school.attrs[key];
+  if(raw===undefined) return null;
+  const rel=attrRank()[key](raw);
+  return 50+(rel-50)*(0.65+0.35*conf);
+}
+
+/* ---------- risk triggers ---------- */
+const RISK_RULES=[
+  {dims:["resilience"], test:(s,a)=>S(s,"resilience")<42 && a.peerIntensity>82, pts:26,
+   msg:"This cohort's intensity may amplify a tendency to step back when others are ahead."},
+  {dims:["resilience"], test:(s,a)=>S(s,"resilience")<50 && S(s,"resilience")>=42 && a.peerIntensity>76, pts:13,
+   msg:"Support may be needed during the period when they are no longer among the strongest."},
+  {dims:["pressure"], test:(s,a)=>S(s,"pressure")<44 && a.pressure>78, pts:22,
+   msg:"The pressure profile of this environment looks higher than the child currently sustains comfortably."},
+  {dims:["peerInfluence"], test:(s,a)=>S(s,"peerInfluence")>66 && a.peerAmbition<67, pts:20,
+   msg:"Effort here would depend heavily on which friendship group forms, and cohort ambition varies."},
+  {dims:["visibility"], test:(s,a)=>S(s,"visibility")>66 && a.visibility<72, pts:16,
+   msg:"This environment may not actively surface a child who waits to be noticed."},
+  {dims:["focus"], test:(s,a)=>S(s,"focus")>66 && a.focus<70, pts:18,
+   msg:"Classroom focus varies more here than this child appears to need."},
+  {dims:["teacher"], test:(s,a)=>S(s,"teacher")>70 && a.teacher<70, pts:11,
+   msg:"Mentorship is central to this child's motivation, and the profile here is less certain on that."},
+  {dims:["social"], test:(s,a)=>S(s,"social")>72 && a.social<68, pts:9,
+   msg:"The social and co-curricular ecosystem may feel narrower than this child wants."},
+  {dims:["academic","academicInterest"], test:(s,a)=>S(s,"academic")>72 && a.academic<68, pts:14,
+   msg:"Academic stretch may need to be sought out rather than being the default setting."},
+  {dims:["grounded"], test:(s,a)=>S(s,"grounded")>70 && a.grounded<65, pts:12,
+   msg:"The social mix here is narrower than this child's stated preference for a grounded environment."},
+  /* Symmetric risks — v3 only ever flagged under-provision, never over-provision. */
+  {dims:["autonomy"], test:(s,a)=>S(s,"autonomy")>70 && a.structure>78 && a.autonomy<50, pts:16,
+   msg:"This is a tightly structured environment and this child works best with room to move. Over-structure is a real disengagement path, not a safe default."},
+  {dims:["spaceNeed"], test:(s,a)=>S(s,"spaceNeed")>66 && a.breadth>82, pts:14,
+   msg:"Commitment load here is high, and this child needs genuine downtime. Ask what is actually compulsory."},
+  {dims:["statusTolerance"], test:(s,a)=>S(s,"statusTolerance")<36 && a.grounded<45, pts:15,
+   msg:"Standing and reputation are more visible here than this child appears comfortable with."},
+  {dims:["breadth"], test:(s,a)=>S(s,"breadth")<35 && a.breadth>82, pts:9,
+   msg:"This school spreads students across many things, while this child wants to go deep on one or two."}
+];
+
+/* ---------- alignment narrative ----------
+   Phrases are written about the fit between this child and this
+   environment, never as a judgement of the school. hiHi/loLo are
+   agreements; hiLo/loHi are gaps in opposite directions. An empty
+   string suppresses that combination as not worth saying. */
+const PHRASE={
+ academic:{
+  hiHi:"the academic level should meet a child who wants to be pushed",
+  hiLo:"academic stretch would need to be sought out rather than being the default setting",
+  loHi:"the academic intensity runs higher than this child has asked for",
+  loLo:"the academic pace is unlikely to feel like a burden"},
+ teacher:{
+  hiHi:"teacher relationships are a visible strength, and that is how this child's motivation runs",
+  hiLo:"mentorship matters a great deal to this child, and the evidence for it here is thinner",
+  loHi:"strong mentoring is available, though this child leans on it less than most",
+  loLo:"little here depends on a close teacher relationship, which suits this child"},
+ visibility:{
+  hiHi:"staff are more likely to spot a child and direct opportunity to them rather than wait to be asked",
+  hiLo:"this child tends to wait to be noticed, and opportunity here more often goes to those who ask",
+  loHi:"opportunities are actively directed here, though this child would find them anyway",
+  loLo:"this child goes looking for opportunities, which is how this environment works"},
+ peerAmbition:{
+  hiHi:"cohort ambition should carry a child whose effort tracks the group around them",
+  hiLo:"effort would depend heavily on which friendship group forms, and ambition varies across the cohort",
+  loHi:"peers here are notably driven, more so than this child needs",
+  loLo:"cohort ambition varies, which matters less for a child who sets their own pace"},
+ peerIntensity:{
+  hiHi:"the intensity of the cohort matches what this child can currently sustain",
+  hiLo:"this child can handle more intensity than this cohort typically generates",
+  loHi:"the cohort runs hotter than this child currently finds comfortable",
+  loLo:"the pace is gentler, which matches where this child is right now"},
+ structure:{
+  hiHi:"clear standards and follow-up are built into how the school runs",
+  hiLo:"this child does their best work with checkpoints, and there is more latitude here",
+  loHi:"the structure is tighter than this child has asked for",
+  loLo:"there is room to move, which is how this child works"},
+ autonomy:{
+  hiHi:"students get real latitude over how they approach work",
+  hiLo:"this child wants room to work their own way, and there is less of it here",
+  loHi:"considerable freedom is on offer, more than this child needs",
+  loLo:"how work is set is fairly prescribed, which this child is comfortable with"},
+ focus:{
+  hiHi:"classroom focus is consistent, which this child needs in order to hold their own standard",
+  hiLo:"classroom focus varies more than this child appears to need",
+  loHi:"classrooms run tightly, beyond what this child requires",
+  loLo:"a livelier classroom would not cost this child much"},
+ social:{
+  hiHi:"there is a great deal going on socially, which is where this child draws energy",
+  hiLo:"this child runs on social energy, and the ecosystem here is narrower",
+  loHi:"the social and co-curricular scene is busy, more than this child seems to want",
+  loLo:"a quieter social environment suits this child"},
+ pressure:{
+  hiHi:"this child sustains pressure well, and there is plenty of it",
+  hiLo:"this child copes under pressure and would meet less of it here",
+  loHi:"the pressure profile looks higher than this child currently sustains",
+  loLo:"the pressure is moderate, which matches this child"},
+ breadth:{
+  hiHi:"the breadth of pathways matches a child who wants several rather than one",
+  hiLo:"this child wants several pathways, and this school concentrates more narrowly",
+  loHi:"a lot is expected across many areas, while this child wants to go deep on one or two",
+  loLo:"students are able to concentrate here, which is what this child wants"},
+ grounded:{
+  hiHi:"the social mix is broad, which this child said matters to them",
+  hiLo:"this child values a grounded, mixed environment and the intake here is narrower",
+  loHi:"the intake is socially broad, more than this child specifically asked for",
+  loLo:""},
+ music:{hiHi:"music and performing arts are a real strength, and one of this child's top interests",
+  hiLo:"music and performing arts matter to this child and are not among this school's stronger areas",
+  loHi:"the arts are strong here, though not a priority for this child",loLo:""},
+ tech:{hiHi:"technology and making are a real strength, and one of this child's top interests",
+  hiLo:"technology and making matter to this child and are not among this school's stronger areas",
+  loHi:"technology and design are strong here, though not a priority for this child",loLo:""},
+ sport:{hiHi:"sport is a real strength, and one of this child's top interests",
+  hiLo:"sport matters to this child and is not among this school's stronger areas",
+  loHi:"sport is prominent here, though not a priority for this child",loLo:""},
+ enterprise:{hiHi:"leadership and enterprise are a real strength, and one of this child's top interests",
+  hiLo:"leadership and enterprise matter to this child and are not among this school's stronger areas",
+  loHi:"leadership and enterprise programs are strong here, though not a priority for this child",loLo:""}
+};
+
+/* A mismatch has two very different flavours. The child wanting more
+   than the school offers is a genuine watch-out. The school offering
+   more than the child needs is not a problem — it is just unused
+   capacity, and reporting the two together makes good schools look
+   risky. They are separated here. */
+function alignmentNotes(want,conf,A){
+  const suits=[],deficits=[],surplus=[];
+  Object.keys(PHRASE).forEach(k=>{
+    if(A[k]===null||A[k]===undefined) return;
+    const strength=Math.abs(want[k]-50)/50*(conf[k]||0);
+    if(strength<0.20) return;                      // child didn't express this, or we didn't measure it
+    const childHi=want[k]>=50, schoolHi=A[k]>=50;
+    const gap=Math.abs(want[k]-A[k]);
+    const text=PHRASE[k][(childHi?"hi":"lo")+(schoolHi?"Hi":"Lo")];
+    if(!text) return;
+    if(childHi===schoolHi){ if(gap<=26) suits.push({k,text,w:strength*(30-gap)}); }
+    else if(gap>=22){
+      const row={k,text,w:strength*gap};
+      (childHi ? deficits : surplus).push(row);    // child wants more vs school gives more
+    }
+  });
+  const take=(a,n)=>a.sort((x,y)=>y.w-x.w).slice(0,n).map(x=>x.text);
+  return { suits:take(suits,4), watch:take(deficits,3), surplus:take(surplus,2) };
+}
+
+/* One-line lead describing what kind of environment this is, relative
+   to the other twenty. Descriptive, not evaluative. */
+function schoolCharacter(A){
+  const traits=[];
+  if(A.peerIntensity>=72) traits.push("a high-intensity cohort");
+  else if(A.peerIntensity<=38) traits.push("a gentler pace");
+  if(A.structure>=70) traits.push("tight structure");
+  else if(A.autonomy>=72) traits.push("unusual latitude for students");
+  if(A.breadth>=72) traits.push("a wide co-curricular spread");
+  else if(A.breadth<=38) traits.push("a narrower set of pathways");
+  if(A.grounded>=72) traits.push("a socially broad intake");
+  else if(A.grounded<=32) traits.push("a narrower social intake");
+  if(A.visibility>=74) traits.push("staff who actively direct opportunity");
+  return traits.slice(0,3);
+}
+
+/* ---------- match ---------- */
+function schoolMatch(s,school,fam){
+  const {v:want,c:conf}=desiredSchoolVector(s);
+  const A={}; Object.keys(school.attrs).forEach(k=>A[k]=evAttr(school,k));
+  const evConf=EV_CONF[school.evidenceLevel]||0.7;
+
+  /* --- natural fit: weight by how strongly the child expressed the
+         dimension AND how well we actually measured it --- */
+  const keys=Object.keys(want).filter(k=>A[k]!==null&&A[k]!==undefined);
+  let acc=0,totW=0,measSum=0;
+  keys.forEach(k=>{
+    const strength=Math.abs(want[k]-50)/50;
+    const c=conf[k]||0;
+    const w=0.4+1.6*strength*c;
+    acc+=(100-Math.abs(want[k]-A[k]))*w; totW+=w; measSum+=c;
+  });
+  const natural=totW>0?acc/totW:50;
+  const avgMeas=measSum/keys.length;
+
+  /* --- growth opportunity: capacity in this child's real interests,
+         plus developmental alignment on the dimensions that stretch --- */
+  const interestDims=["academic","music","tech","sport","enterprise"];
+  const top=interestDims.map(k=>({k,val:want[k]})).sort((a,b)=>b.val-a.val).slice(0,3);
+  const capacity=top.reduce((sum,t)=>sum+A[t.k],0)/top.length;
+
+  const dev=[];
+  dev.push(S(s,"peerInfluence")>65 ? A.peerAmbition : 100-Math.abs(want.peerAmbition-A.peerAmbition));
+  dev.push(S(s,"visibility")>65 ? A.visibility : 100-Math.abs(want.visibility-A.visibility));
+  dev.push(S(s,"focus")>65 ? A.focus : 100-Math.abs(want.focus-A.focus));
+  const wantIntensity=S(s,"resilience")<45?68:S(s,"resilience")<70?78:90;
+  dev.push(100-Math.abs(wantIntensity-A.peerIntensity));
+  dev.push(S(s,"teacher")>65 ? A.teacher : 100-Math.abs(want.teacher-A.teacher));
+  dev.push(S(s,"breadth")>65 ? A.breadth : 100-Math.abs(want.breadth-A.breadth));
+  const opportunity=capacity*0.55+(dev.reduce((a,b)=>a+b,0)/dev.length)*0.45;
+
+  /* --- risk: only from dimensions we measured well enough --- */
+  let risk=4; const risks=[];
+  RISK_RULES.forEach(rule=>{
+    const c=Math.min(...rule.dims.map(d=>CF(s,d)));
+    if(c<RISK_GATE) return;                      // not measured well enough to claim
+    if(!rule.test(s,A)) return;
+    risk+=rule.pts*(0.6+0.4*c);
+    risks.push(rule.msg);
+  });
+  risk=clamp(Math.round(risk),1,99);
+
+  /* --- hard constraints: filters, never score penalties --- */
+  const blocks=[],softs=[];
+  if(fam){
+    const g=school.gender||(school.coed?"coed":"boys");
+    if(fam.eligibility==="boy" && g==="girls") blocks.push("Not open to boys.");
+    if(fam.eligibility==="girl" && g==="boys") blocks.push("Not open to girls.");
+    if(fam.coed==="coed" && g!=="coed") blocks.push("You asked for co-ed only.");
+    if(fam.coed==="single" && g==="coed") blocks.push("You asked for single-sex only.");
+    if(fam.coed==="leanCoed" && g!=="coed") softs.push("You lean co-ed; this is single-sex.");
+    if(fam.coed==="leanSingle" && g==="coed") softs.push("You lean single-sex; this is co-ed.");
+    if(fam.budget!=="any"){
+      const cap=+fam.budget;
+      if(school.fee>cap) blocks.push("Annual fees of about $"+school.fee.toLocaleString()+" are above the range you set.");
+    }
+    if(fam.faith==="none" && school.religion!=="secular") blocks.push("This is a faith-based school.");
+    if(fam.faith==="light" && school.religion==="strong") softs.push("Religious identity is more prominent here than you preferred.");
+    if(fam.faith==="want" && school.religion==="secular") softs.push("This is a secular school; you indicated you wanted a faith community.");
+    if(fam.travel==="local" && school.travel!=="local") softs.push("Further from home than you preferred.");
+    if(fam.travel==="moderate" && school.travel==="metro") softs.push("Likely a longer daily trip than you preferred.");
   }
+
+  /* --- composite, with an honesty band --- */
+  const base=natural*0.58+opportunity*0.42;
+  const score=clamp(Math.round(base-risk*0.18),1,99);
+  const band=Math.round((1-evConf)*14+(1-avgMeas)*9);
+
+  const notes=alignmentNotes(want,conf,A);
+
+  return {
+    score, band,
+    natural:clamp(Math.round(natural),1,99),
+    opportunity:clamp(Math.round(opportunity),1,99),
+    risk, riskLabel:riskLabel(risk), risks,
+    eligible:blocks.length===0, blocks, softs,
+    evConf, avgMeas,
+    suits:notes.suits, watch:notes.watch, surplus:notes.surplus,
+    character:schoolCharacter(A)
+  };
+}
+
+/* Sentence-level summary for the shortlist. Built from the same
+   alignment data as the card, so the two can never disagree. */
+function schoolBlurb(school,m){
+  const cap=t=>t.charAt(0).toUpperCase()+t.slice(1);
+  const parts=[];
+  if(m.character.length) parts.push("Relative to the other twenty, this is a school with "+listJoin(m.character)+".");
+  if(m.suits.length===0) parts.push("Nothing in this child's profile points strongly toward this environment.");
+  else if(m.suits.length===1) parts.push(cap(m.suits[0])+".");
+  else parts.push("It lines up on two things in particular: "+m.suits[0]+"; and "+m.suits[1]+".");
+  if(m.watch.length) parts.push("The thing to check is that "+m.watch[0]+
+    (m.watch.length>1?", and that "+m.watch[1]:"")+".");
+  else if(m.surplus.length) parts.push("No real gap showed up. There is more on offer here than this child specifically needs — "+m.surplus[0]+" — which costs nothing, but is worth knowing you would be paying for it in fees or in time.");
+  else parts.push("No clear mismatch surfaced, though thin evidence is not the same as a good sign — read the unknowns before treating that as reassurance.");
+  return parts.join(" ");
+}
+function listJoin(a){
+  if(a.length===1) return a[0];
+  if(a.length===2) return a[0]+" and "+a[1];
+  return a.slice(0,-1).join(", ")+" and "+a[a.length-1];
+}
+function riskLabel(n){ return n<25?"Low":n<48?"Moderate":n<70?"High":"Very high"; }
+
+/* ---------- tour questions from unscored constructs ---------- */
+const PROFILE_TOURS=[
+  {d:"helpSeeking", dir:"low",  q:"How would you know my child was quietly struggling, before it showed up in a report?"},
+  {d:"belonging",   dir:"high", q:"How are tutor or house groups formed, and what happens if a child doesn't click with theirs?"},
+  {d:"schoolSize",  dir:"low",  q:"How many students are in Year 7, and how many adults would know my child by name in term one?"},
+  {d:"changeTolerance",dir:"low",q:"What proportion of your Year 7 intake arrives from one or two feeder schools?"},
+  {d:"statusTolerance",dir:"low",q:"Which kinds of achievement actually get celebrated here, and how visibly?"},
+  {d:"statusTolerance",dir:"high",q:"What opportunities exist for a child who wants to compete and be recognised?"},
+  {d:"conflictRepair",dir:"low", q:"How does the school handle a friendship breakdown that hasn't resolved on its own?"},
+  {d:"empathy",     dir:"high", q:"What service, mentoring or peer-support roles are open to students from Year 7?"},
+  {d:"spaceNeed",   dir:"high", q:"What is the minimum weekly co-curricular commitment, and how much of the week is unstructured?"},
+  {d:"formality",   dir:"high", q:"How much of school life is formal — assembly, ceremony, uniform standards, house tradition?"},
+  {d:"formality",   dir:"low",  q:"How much flexibility do students have in uniform, routine and how they approach work?"},
+  {d:"cohortStability",dir:"high",q:"Do students stay with one class group across subjects, or move between groups?"},
+  {d:"outdoor",     dir:"high", q:"What outdoor education runs in Years 7 to 10, and how much of it is compulsory?"},
+  {d:"outdoor",     dir:"low",  q:"How much outdoor or camp time is compulsory, and what are the alternatives?"},
+  {d:"effortSelfdir",dir:"low", q:"How quickly would I hear from the school if work stopped being handed in?"},
+  {d:"mentorStyle", dir:"high", q:"Which staff member would hold an ongoing relationship with my child across Years 7 to 10?"},
+  {d:"mentorStyle", dir:"low",  q:"How are subject specialists matched to students who want to go deeper than the class?"}
+];
+
+function profileTours(s){
+  const out=[];
+  PROFILE_TOURS.forEach(t=>{
+    if(CF(s,t.d)<0.4) return;                    // don't ask on the basis of one item
+    const v=S(s,t.d);
+    if(t.dir==="low" && v<=42) out.push(t.q);
+    if(t.dir==="high"&& v>=58) out.push(t.q);
+  });
+  return out;
+}
+
+/* Interests the child cares about that the school dataset cannot speak to. */
+function unmappedInterests(answers){
+  const picked=new Set();
+  [0,2].forEach(qi=>{
+    const q=childQuestions[qi], r=answers[qi];
+    if(Array.isArray(r)) r.forEach(i=>{ if(q.options[i].unmapped) picked.add(q.options[i].unmapped); });
+  });
+  return [...picked];
+}
+
+/* ===== src/app.js ===== */
+/* ============================================================
+   SchoolFit Quest v4 — flow and rendering
+   ============================================================ */
+
+let ci=0, answers={}, pi=0, pAnswers={}, order={}, pOrder={};
+let childScores=null, parentScores=null, famConfig={}, tokens=2, useParent=false;
+
+function showOnly(id){
+  ["intro","about","game","results","parentGame"].forEach(x=>el(x).classList.toggle("hidden",x!==id));
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* Option order is randomised once per question and remembered, so a
+   child moving back and forth doesn't see the options jump around. */
+function orderFor(store,key,len){
+  if(!store[key]){
+    const a=[...Array(len).keys()];
+    for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+    store[key]=a;
+  }
+  return store[key];
+}
+
+/* ---------------- child game ---------------- */
+function startGame(){ ci=0; answers={}; order={}; tokens=2; showOnly("game"); renderQ(); }
+
+const STAGE_NAME={0:"What you're into",1:"Quick choices",2:"What you'd actually do",3:"What matters most"};
+
+function renderQ(){
+  const q=childQuestions[ci], r=answers[ci];
+  el("roundLabel").textContent="Part "+(q.stage+1)+" · "+STAGE_NAME[q.stage];
+  el("progressText").textContent=(ci+1)+" of "+childQuestions.length;
+  el("progressBar").style.width=((ci+1)/childQuestions.length*100)+"%";
+
+  let h=`<div class="q-kicker">${q.type==="bestworst"?"Pick one MOST and one LEAST":q.type==="multi"?(q.pick?("Pick "+q.pick):"Pick any number"):"Choose what feels most true"}</div>`;
+  h+=`<h2 class="q-title">${esc(q.prompt)}</h2>`;
+  if(q.hint) h+=`<p class="note">${esc(q.hint)}</p>`;
+
+  if(q.type==="bestworst"){
+    h+=`<div class="bw-head"><span>Most</span><span>Least</span><span></span></div><div class="bw-list">`;
+    orderFor(order,ci,q.items.length).forEach(idx=>{
+      const it=q.items[idx], sel=r||{};
+      h+=`<div class="bw-row${sel.most===idx?" is-most":""}${sel.least===idx?" is-least":""}">
+        <button class="bw-btn most${sel.most===idx?" on":""}" data-most="${idx}" aria-label="Most: ${esc(it.text)}"></button>
+        <button class="bw-btn least${sel.least===idx?" on":""}" data-least="${idx}" aria-label="Least: ${esc(it.text)}"></button>
+        <span class="bw-text">${esc(it.text)}</span></div>`;
+    });
+    h+=`</div>`;
+  } else if(q.type==="multi"){
+    const sel=r||[];
+    h+=`<div class="tile-grid">`;
+    orderFor(order,ci,q.options.length).forEach(idx=>{
+      h+=`<button class="tile${sel.includes(idx)?" on":""}" data-tile="${idx}">${esc(q.options[idx].text)}</button>`;
+    });
+    h+=`</div>`;
+    if(q.pick) h+=`<p class="note" id="pickCount">${sel.length} of ${q.pick} chosen</p>`;
+  } else {
+    h+=`<div class="opt-list">`;
+    orderFor(order,ci,q.options.length).forEach(idx=>{
+      h+=`<button class="opt${r===idx?" on":""}" data-opt="${idx}">${esc(q.options[idx].text)}</button>`;
+    });
+    h+=`</div>`;
+    if(q.stage===1&&tokens>0&&r!=="skip")
+      h+=`<button class="btn btn-ghost btn-sm" id="tokenBtn">Genuinely can't choose (${tokens} left)</button>`;
+    if(r==="skip") h+=`<p class="note">Marked as “can't choose”.</p>`;
+  }
+  el("questionCard").innerHTML=h;
+
+  el("questionCard").querySelectorAll("[data-opt]").forEach(b=>b.onclick=()=>{
+    answers[ci]=+b.dataset.opt; renderQ(); setTimeout(next,140);
+  });
+  el("questionCard").querySelectorAll("[data-tile]").forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.tile; const cur=answers[ci]||[];
+    const at=cur.indexOf(i);
+    if(at>=0) cur.splice(at,1);
+    else { if(q.pick && cur.length>=q.pick) cur.shift(); cur.push(i); }
+    answers[ci]=cur; renderQ();
+  });
+  el("questionCard").querySelectorAll("[data-most]").forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.most, cur=answers[ci]||{};
+    cur.most = cur.most===i?undefined:i;
+    if(cur.least===i) cur.least=undefined;
+    answers[ci]=cur; renderQ();
+  });
+  el("questionCard").querySelectorAll("[data-least]").forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.least, cur=answers[ci]||{};
+    cur.least = cur.least===i?undefined:i;
+    if(cur.most===i) cur.most=undefined;
+    answers[ci]=cur; renderQ();
+  });
+  const tb=el("tokenBtn");
+  if(tb) tb.onclick=()=>{ answers[ci]="skip"; tokens--; renderQ(); setTimeout(next,140); };
+
+  el("backBtn").disabled=ci===0;
+  el("nextBtn").textContent=ci===childQuestions.length-1?"See the profile":"Next";
+  el("nextBtn").disabled=!answered(q,answers[ci])&&answers[ci]!=="skip";
+}
+
+function next(){
+  const q=childQuestions[ci];
+  if(!answered(q,answers[ci])&&answers[ci]!=="skip") return;
+  if(ci<childQuestions.length-1){ ci++; renderQ(); }
+  else finishChild();
+}
+function back(){ if(ci>0){ci--;renderQ();} }
+
+function finishChild(){
+  const clean={}; Object.keys(answers).forEach(k=>{ if(answers[k]!=="skip") clean[k]=answers[k]; });
+  childScores=scoreQuestions(childQuestions,clean);
+  useParent=false; showOnly("results"); renderResults();
+}
+
+/* ---------------- parent flow ---------------- */
+function startParent(){ pi=0; pAnswers={}; pOrder={}; showOnly("parentGame"); renderP(); }
+
+function renderP(){
+  const q=parentQuestions[pi], r=pAnswers[pi];
+  el("parentProgressText").textContent=(pi+1)+" of "+parentQuestions.length;
+  el("parentProgressBar").style.width=((pi+1)/parentQuestions.length*100)+"%";
+  el("parentPartLabel").textContent = q.part==="A"?"Part 1 · What you've observed":"Part 2 · Your family";
+
+  let h=`<div class="q-kicker">${q.part==="A"?"Observation":"Family"}</div><h2 class="q-title">${esc(q.prompt)}</h2>`;
+  if(q.note) h+=`<p class="note">${esc(q.note)}</p>`;
+
+  if(q.type==="multi"){
+    const sel=r||[];
+    h+=`<div class="tile-grid">`;
+    orderFor(pOrder,pi,q.options.length).forEach(i=>h+=`<button class="tile${sel.includes(i)?" on":""}" data-tile="${i}">${esc(q.options[i].text)}</button>`);
+    h+=`</div><p class="note">${sel.length} of ${q.pick} chosen</p>`;
+  } else if(q.type==="rank2"){
+    const sel=r||[];
+    h+=`<div class="opt-list">`;
+    q.options.forEach((o,i)=>{
+      const rank=sel.indexOf(i);
+      h+=`<button class="opt${rank>=0?" on":""}" data-rank="${i}">${rank>=0?`<span class="rank">${rank+1}</span>`:""}${esc(o.text)}</button>`;
+    });
+    h+=`</div><p class="note">${sel.length} of 2 chosen</p>`;
+  } else {
+    h+=`<div class="opt-list">`;
+    const ord = q.part==="A" ? orderFor(pOrder,pi,q.options.length) : [...Array(q.options.length).keys()];
+    ord.forEach(i=>h+=`<button class="opt${r===i?" on":""}" data-opt="${i}">${esc(q.options[i].text)}</button>`);
+    h+=`</div>`;
+  }
+  el("parentQuestionCard").innerHTML=h;
+
+  el("parentQuestionCard").querySelectorAll("[data-opt]").forEach(b=>b.onclick=()=>{
+    pAnswers[pi]=+b.dataset.opt; renderP(); setTimeout(pNext,140);
+  });
+  el("parentQuestionCard").querySelectorAll("[data-tile]").forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.tile, cur=pAnswers[pi]||[], at=cur.indexOf(i);
+    if(at>=0)cur.splice(at,1); else { if(cur.length>=q.pick)cur.shift(); cur.push(i); }
+    pAnswers[pi]=cur; renderP();
+  });
+  el("parentQuestionCard").querySelectorAll("[data-rank]").forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.rank, cur=pAnswers[pi]||[], at=cur.indexOf(i);
+    if(at>=0)cur.splice(at,1); else { if(cur.length>=2)cur.shift(); cur.push(i); }
+    pAnswers[pi]=cur; renderP();
+  });
+
+  el("parentBackBtn").disabled=pi===0;
+  el("parentNextBtn").textContent=pi===parentQuestions.length-1?"See the comparison":"Next";
+  el("parentNextBtn").disabled=!answered(q,pAnswers[pi]);
+}
+function pNext(){
+  const q=parentQuestions[pi];
+  if(!answered(q,pAnswers[pi])) return;
+  if(pi<parentQuestions.length-1){ pi++; renderP(); } else finishParent();
+}
+function pBack(){ if(pi>0){pi--;renderP();} }
+
+function finishParent(){
+  const partA=parentQuestions.filter(q=>q.part==="A");
+  const aAns={}; partA.forEach((q,idx)=>{ const orig=parentQuestions.indexOf(q); if(pAnswers[orig]!==undefined) aAns[idx]=pAnswers[orig]; });
+  parentScores=scoreQuestions(partA,aAns);
+
+  famConfig={};
+  parentQuestions.forEach((q,idx)=>{
+    if(q.part!=="B"||pAnswers[idx]===undefined) return;
+    if(q.type==="rank2") famConfig[q.config]=pAnswers[idx].map(i=>q.options[i].id);
+    else famConfig[q.config]=q.options[pAnswers[idx]].id;
+  });
+  useParent=true;
+  syncFiltersFromFamily();
+  showOnly("results"); renderResults();
+}
+
+/* Family answers pre-set the practical filters; the user can still change them. */
+function syncFiltersFromFamily(){
+  if(famConfig.coed==="coed") el("filterCoed").value="coed";
+  else if(famConfig.coed==="single") el("filterCoed").value="single";
+  else if(famConfig.coed==="leanCoed") el("filterCoed").value="leanCoed";
+  else if(famConfig.coed==="leanSingle") el("filterCoed").value="leanSingle";
+  if(famConfig.faith) el("filterFaith").value=famConfig.faith;
+}
+
+function familyFilters(){
+  return {
+    eligibility: el("filterEligible").value,
+    coed: el("filterCoed").value,
+    budget: el("filterBudget").value,
+    faith: el("filterFaith").value,
+    travel: el("filterTravel").value
+  };
+}
+
+/* ---------------- results ---------------- */
+function activeScores(){
+  if(useParent && parentScores) return blend(childScores,parentScores,famConfig.weighting||"even");
   return childScores;
 }
-function topDims(scores,n=5){
-  return Object.entries(scores).sort((a,b)=>b[1]-a[1]).slice(0,n);
-}
+
+/* Profile title is derived, never hardcoded to a fixed set of interests. */
 function profileTitle(s){
-  const creative=(s.music+s.tech+s.enterprise)/3;
-  if(s.teacher>72 && creative>68 && s.social>65)return "The Mentored Creative Achiever";
-  if(s.academic>78 && s.resilience>65 && s.peerDrive>70)return "The Competitive Intellectual Explorer";
-  if(s.social>78 && s.peerInfluence>65)return "The Social Chameleon";
-  if(s.autonomy>78 && creative>70)return "The Independent Maker";
-  if(s.structure>76 && s.teacher>70)return "The Structured High-Potential Learner";
-  if(s.breadth>76 && s.social>65)return "The Multi-Pathway All-Rounder";
-  return "The Responsive, Multi-Interest Learner";
+  const interests=[["academic","Academic"],["academicInterest","Scholarly"],["music","Creative"],
+    ["tech","Maker"],["sport","Sporting"],["enterprise","Enterprising"],["outdoor","Outdoors"],["empathy","People-centred"]];
+  const topInterest=interests.map(([k,l])=>({l,v:S(s,k),c:CF(s,k)})).filter(x=>x.c>=0.4).sort((a,b)=>b.v-a.v)[0];
+  const drivers=[
+    {v:S(s,"autonomy"), l:"independent"},
+    {v:S(s,"teacher"),  l:"mentored"},
+    {v:S(s,"peerDrive"),l:"peer-driven"},
+    {v:S(s,"structure"),l:"structured"},
+    {v:S(s,"social"),   l:"socially-led"}
+  ].sort((a,b)=>b.v-a.v)[0];
+  return (topInterest?topInterest.l:"Broad")+" and "+drivers.l;
 }
+
 function profileText(s){
-  const parts=[];
-  if(s.teacher>68)parts.push("responds strongly when respected adults notice potential and set a clear standard");
-  if(s.visibility>68)parts.push("benefits when opportunities and expectations are actively brought to their attention");
-  if(s.autonomy>68)parts.push("still needs meaningful room to make work their own");
-  if(s.peerInfluence>62)parts.push("is likely to absorb the habits and ambitions of the surrounding friendship group");
-  if(s.resilience<48)parts.push("may step back when surrounded by people who are clearly stronger");
-  else if(s.resilience>68)parts.push("is relatively comfortable learning among stronger peers");
-  if(s.focus>70)parts.push("is likely to be affected by whether focused effort feels normal in the surrounding cohort");
-  if(s.social>68)parts.push("draws energy from a busy, socially connected school life");
-  return "This profile "+(parts.length?parts.join(", "):"shows a relatively balanced mix of motivations")+". The strongest fit is likely to combine challenge with confidence, rather than maximising prestige or selectivity for its own sake.";
+  const p=[];
+  const say=(d,hi,lo)=>{ if(CF(s,d)<0.4) return; const v=S(s,d); if(v>=60)p.push(hi); else if(v<=40)p.push(lo); };
+  say("resilience","Stronger peers appear to pull this child forward rather than push them back.",
+                   "When someone is clearly ahead, this child currently tends to step back rather than lean in — which makes the ability spread of the cohort a real consideration.");
+  say("peerInfluence","Effort here tracks the friendship group closely, so cohort culture matters more than any single program.",
+                      "Effort seems to hold independently of the friendship group, which widens the range of workable schools.");
+  say("visibility","This child benefits from being actively noticed rather than having to put their hand up.",
+                   "This child goes after opportunities without waiting to be invited.");
+  say("structure","Clear standards, checkpoints and follow-up bring out the best work.",
+                  "Room to work in their own way matters more than scaffolding.");
+  say("helpSeeking","Problems get surfaced early, which is protective in a larger school.",
+                    "Difficulty tends to stay private. In a big environment that can mean a long gap before anyone notices.");
+  say("spaceNeed","A full week costs this child real energy, so total commitment load is worth watching.",
+                  "A busy week seems to be energising rather than draining.");
+  say("belonging","Belonging appears to run through one or two close friendships rather than a wide group.","");
+  return p.filter(Boolean).slice(0,5).join(" ");
 }
+
 function renderResults(){
   const s=activeScores();
   el("profileName").textContent=profileTitle(s);
   el("profileSummary").textContent=profileText(s);
-  el("topPills").innerHTML=topDims(s,5).map(([d])=>`<span class="tag">${DIMS[d].label}</span>`).join("");
-  renderTraits(s);
-  renderInsights(s);
-  renderSchools(s);
-  if(parentScores)renderComparison();
+  el("modeLabel").textContent = useParent?"Child and parent, combined":"Child answers only";
+  el("comparisonPanel").classList.toggle("hidden",!useParent);
+  el("parentStartBtn").textContent = useParent?"Redo parent section":"Add parent perspective";
+
+  renderTraits(s); renderProfileNotes(s); renderSchools(s);
+  if(useParent) renderComparison();
 }
+
+function confBar(c){
+  const pct=Math.round(c*100);
+  const lab=c>=0.65?"well measured":c>=0.45?"partly measured":"lightly measured";
+  return `<span class="conf" title="${lab}"><span class="conf-fill" style="width:${pct}%"></span></span><span class="conf-lab">${lab}</span>`;
+}
+
 function renderTraits(s){
-  const order=["teacher","visibility","academic","peerDrive","resilience","structure","autonomy","focus","social","peerInfluence","pressure","music","tech","sport","enterprise","breadth","grounded","mixedGender"];
-  el("traitList").innerHTML=order.map(d=>`<div class="trait-row" title="${DIMS[d].desc}">
-    <div class="trait-label">${DIMS[d].label}</div><div class="bar"><span style="width:${s[d]}%"></span></div><div class="trait-value">${s[d]}</div>
-  </div>`).join("");
+  const order=["resilience","peerInfluence","visibility","teacher","structure","autonomy","focus",
+               "academic","peerDrive","pressure","social","breadth","grounded",
+               "music","tech","sport","enterprise","academicInterest"];
+  el("traitList").innerHTML=order.map(d=>{
+    const x=s[d]||{score:50,confidence:0};
+    return `<div class="trait">
+      <div class="trait-top"><strong>${esc(DIMS[d].label)}</strong><span class="trait-val">${x.score}</span></div>
+      <div class="bar"><div style="width:${x.score}%"></div></div>
+      <div class="trait-meta">${confBar(x.confidence)}</div>
+      <p>${esc(DIMS[d].desc)}</p></div>`;
+  }).join("");
 }
-function renderInsights(s){
-  const insights=[];
-  if(s.teacher>68)insights.push(["Needs visible adult belief","Look for teachers or mentors who actively identify potential, monitor effort and raise expectations."]);
-  if(s.visibility>68)insights.push(["Do not rely entirely on self-advocacy","A large opportunity-rich school may still be a weak fit if students must constantly ask to be noticed or extended."]);
-  if(s.focus>70)insights.push(["Focused peer norms matter","Investigate what ordinary classrooms feel like, not only the extension or specialist brochure."]);
-  if(s.mixedGender>68)insights.push(["Co-ed experience is part of the fit","A same-gender school should offer a compelling benefit strong enough to outweigh the child’s stated preference."]);
-  else if(s.mixedGender<32)insights.push(["Same-gender schooling may feel natural","The child does not appear to need a co-ed setting, though family values and eligibility still matter."]);
-  if(s.peerInfluence>62)insights.push(["Peer culture has unusually high leverage","The child may imitate the effort, interests and habits of close friends. Cohort culture and structured activities matter."]);
-  if(s.resilience<48)insights.push(["Avoid permanent underdog status","A uniformly elite cohort may reduce participation if the child commonly steps back around stronger peers."]);
-  else if(s.resilience>70)insights.push(["Can benefit from exceptional peers","Selective or highly advanced cohorts may energise rather than diminish confidence."]);
-  if(s.structure>65 && s.autonomy>65)insights.push(["Best with structured freedom","Set a demanding goal and checkpoints, but allow choice in method, topic and creative direction."]);
-  else if(s.structure>s.autonomy+12)insights.push(["Clear accountability matters","Regular deadlines, transparent standards and active follow-up are likely to improve consistency."]);
-  else if(s.autonomy>s.structure+12)insights.push(["Over-structuring may flatten motivation","Investigate project learning, flexible pathways and access to studios or workshops."]);
-  if(s.social>70)insights.push(["School life should be bigger than classes","Teams, clubs, performances, leadership and events may be central to engagement."]);
-  const interestTop=[["music","Music and production"],["tech","Technology and making"],["sport","Sport"],["enterprise","Enterprise and leadership"],["academic","Advanced academics"]].sort((a,b)=>s[b[0]]-s[a[0]]).slice(0,2);
-  insights.push(["Protect the strongest opportunity pair",`${interestTop[0][1]} and ${interestTop[1][1]} should both be visible, credible pathways rather than occasional electives.`]);
-  el("environmentInsights").innerHTML=insights.map(x=>`<div class="insight"><strong>${x[0]}</strong>${x[1]}</div>`).join("");
-}
-function desiredSchoolVector(s){
-  return {
-    academic:s.academic,
-    teacher:s.teacher,
-    visibility:s.visibility,
-    peerAmbition:Math.round(s.peerDrive*.62+s.peerInfluence*.38),
-    peerIntensity:Math.round(s.resilience*.65+s.pressure*.35),
-    structure:s.structure,
-    autonomy:s.autonomy,
-    focus:s.focus,
-    social:s.social,
-    music:s.music,
-    tech:s.tech,
-    sport:s.sport,
-    enterprise:s.enterprise,
-    breadth:s.breadth,
-    grounded:s.grounded,
-    mixedGender:s.mixedGender,
-    pressure:s.pressure
-  };
-}
-function riskLabel(n){
-  if(n<25)return "Low";
-  if(n<50)return "Moderate";
-  if(n<72)return "High";
-  return "Very high";
-}
-function schoolMatch(s,school){
-  const want=desiredSchoolVector(s);
-  const keys=["academic","teacher","visibility","peerAmbition","structure","autonomy","focus","social","music","tech","sport","enterprise","breadth","grounded","mixedGender"];
-  let weighted=0,totalW=0;
-  keys.forEach(k=>{
-    let w=1;
-    if(["music","tech","sport","enterprise","academic"].includes(k) && want[k]>72)w=1.6;
-    if(k==="teacher"&&s.teacher>70)w=1.45;
-    if(k==="visibility"&&s.visibility>68)w=1.4;
-    if(k==="focus"&&s.focus>68)w=1.35;
-    if(k==="peerAmbition"&&s.peerInfluence>65)w=1.5;
-    if(k==="mixedGender"&&Math.abs(s.mixedGender-50)>22)w=1.35;
-    weighted+=(100-Math.abs(want[k]-school.attrs[k]))*w; totalW+=w;
-  });
-  let natural=weighted/totalW;
 
-  const interestKeys=["academic","music","tech","sport","enterprise"]
-    .sort((a,b)=>s[b]-s[a]).slice(0,3);
-  const capacity=interestKeys.reduce((sum,k)=>sum+school.attrs[k],0)/interestKeys.length;
-  let developmentalAlignment=0,developmentalParts=0;
-  const addDev=v=>{developmentalAlignment+=v;developmentalParts++;};
-  addDev(s.peerInfluence>65 ? school.attrs.peerAmbition : 100-Math.abs(s.peerDrive-school.attrs.peerAmbition));
-  addDev(s.visibility>65 ? school.attrs.visibility : 100-Math.abs(s.visibility-school.attrs.visibility));
-  addDev(s.focus>65 ? school.attrs.focus : 100-Math.abs(s.focus-school.attrs.focus));
-  const preferredIntensity=s.resilience<45?68:s.resilience<70?78:90;
-  addDev(100-Math.abs(preferredIntensity-school.attrs.peerIntensity));
-  addDev(s.teacher>65?school.attrs.teacher:100-Math.abs(s.teacher-school.attrs.teacher));
-  addDev(s.breadth>65?school.attrs.breadth:100-Math.abs(s.breadth-school.attrs.breadth));
-  let opportunity=capacity*.58+(developmentalAlignment/developmentalParts)*.42;
+/* Constructs with no school-side evidence: reported, never scored. */
+function renderProfileNotes(s){
+  const rows=PROFILE_DIMS.filter(d=>CF(s,d)>=0.4).map(d=>{
+    const x=s[d];
+    const dir=x.score>=60?"high":x.score<=40?"low":"mid";
+    return {d,x,dir};
+  }).filter(r=>r.dir!=="mid").sort((a,b)=>Math.abs(b.x.score-50)-Math.abs(a.x.score-50));
 
-  let risk=5;
-  const risks=[];
-  if(s.resilience<48 && school.attrs.peerIntensity>82){risk+=30;risks.push("The cohort intensity may amplify a tendency to withdraw around stronger peers.");}
-  else if(s.resilience<55 && school.attrs.peerIntensity>75){risk+=15;risks.push("The student may need active support when no longer among the strongest.");}
-  if(s.pressure<45 && school.attrs.pressure>78){risk+=25;risks.push("The school’s pressure profile may exceed current tolerance.");}
-  if(s.peerInfluence>65 && school.attrs.peerAmbition<67){risk+=22;risks.push("Friendship-group ambition may be too variable for a highly peer-sensitive student.");}
-  if(s.visibility>68 && school.attrs.visibility<72){risk+=17;risks.push("The student may need more active noticing and opportunity direction than the school profile guarantees.");}
-  if(s.focus>70 && school.attrs.focus<70){risk+=20;risks.push("Variable classroom focus may undermine effort or engagement.");}
-  if(s.teacher>72 && school.attrs.teacher<70){risk+=12;risks.push("The student may need more active teacher mentorship than the profile guarantees.");}
-  if(s.social>72 && school.attrs.social<68){risk+=10;risks.push("The wider social and co-curricular ecosystem may feel narrow.");}
-  if(s.mixedGender>68 && school.attrs.mixedGender<50){risk+=22;risks.push("The child currently prefers a co-ed experience, while this is a single-sex school.");}
-  if(s.mixedGender<32 && school.attrs.mixedGender>50){risk+=5;risks.push("The child currently leans towards a same-gender environment.");}
-  risk=clamp(Math.round(risk),1,99);
+  el("profileNotes").innerHTML = rows.length
+    ? rows.map(r=>`<div class="insight"><strong>${esc(DIMS[r.d].label)} — ${r.dir==="high"?"high":"low"}</strong>${esc(DIMS[r.d].desc)}<span class="conf-lab" style="display:block;margin-top:6px">${Math.round(r.x.confidence*100)}% measurement confidence · ${r.x.n} question${r.x.n===1?"":"s"}</span></div>`).join("")
+    : `<p class="note">Nothing here stood out strongly enough to report.</p>`;
 
-  let practicalPenalty=0;
-  const fGender=el("filterGender").value,fBudget=el("filterBudget").value,fReligion=el("filterReligion").value,fTravel=el("filterTravel").value;
-  const schoolGender=school.gender || (school.coed ? "coed" : "boys");
-  if(fGender==="coedOnly"&&schoolGender!=="coed"){practicalPenalty+=55;risks.push("Filtered out: co-ed required.");}
-  if(fGender==="coedPreferred"&&schoolGender!=="coed"){practicalPenalty+=12;risks.push("Family preference currently favours co-ed.");}
-  if(fGender==="boysEligible"&&schoolGender==="girls"){practicalPenalty+=60;risks.push("Filtered out: this option is not eligible for the selected student.");}
-  if(fGender==="girlsEligible"&&schoolGender==="boys"){practicalPenalty+=60;risks.push("Filtered out: this option is not eligible for the selected student.");}
-  if(fGender==="boysPreferred"){
-    if(schoolGender==="girls"){practicalPenalty+=60;risks.push("Filtered out: this option is not eligible for the selected student.");}
-    else if(schoolGender==="coed"){practicalPenalty+=7;risks.push("A boys’ school is currently preferred over co-ed.");}
-  }
-  if(fGender==="girlsPreferred"){
-    if(schoolGender==="boys"){practicalPenalty+=60;risks.push("Filtered out: this option is not eligible for the selected student.");}
-    else if(schoolGender==="coed"){practicalPenalty+=7;risks.push("A girls’ school is currently preferred over co-ed.");}
-  }
-  if(fGender==="boysOnly"&&schoolGender!=="boys"){practicalPenalty+=60;risks.push("Filtered out: boys’ schools only.");}
-  if(fGender==="girlsOnly"&&schoolGender!=="girls"){practicalPenalty+=60;risks.push("Filtered out: girls’ schools only.");}
-  if(fBudget==="public"&&school.fee>1000){practicalPenalty+=55;risks.push("Filtered out by public-only budget.");}
-  if(!["public","any"].includes(fBudget)&&school.fee>+fBudget){practicalPenalty+=28;risks.push("Current fees exceed the selected annual tuition range.");}
-  if(fReligion==="avoid"&&school.religion!=="secular"){practicalPenalty+=22;risks.push("Religious setting conflicts with the selected preference.");}
-  if(fReligion==="light"&&school.religion==="strong"){practicalPenalty+=10;risks.push("Religious identity may be more prominent than preferred.");}
-  if(fTravel==="local"&&school.travel!=="local"){practicalPenalty+=13;risks.push("Travel is less local than preferred.");}
-  if(fTravel==="moderate"&&school.travel==="metro"){practicalPenalty+=7;risks.push("Likely a larger commute than preferred.");}
-
-  natural=clamp(Math.round(natural),1,99);
-  opportunity=clamp(Math.round(opportunity),1,99);
-  const score=clamp(Math.round(natural*.55+opportunity*.32-risk*.22-practicalPenalty),1,99);
-  return {score,natural,opportunity,risk,riskLabel:riskLabel(risk),risks};
+  const um=unmappedInterests(answers);
+  el("unmappedNote").innerHTML = um.length
+    ? `<div class="insight warn"><strong>Interests this tool cannot match on</strong>The school dataset has no attribute for ${esc(um.join(", "))}. These interests are shown in the profile and turned into tour questions, but they do not affect any school's score. Ask each school about them directly.</div>`
+    : "";
 }
+
 function renderSchools(s){
-  const ranked=schools.map(sc=>({...sc,match:schoolMatch(s,sc)})).sort((a,b)=>b.match.score-a.match.score);
-  el("topMatchScore").textContent=ranked[0].match.score+"%";
-  el("topMatchName").textContent=ranked[0].short+" · natural "+ranked[0].match.natural+" · growth "+ranked[0].match.opportunity+" · "+ranked[0].match.riskLabel.toLowerCase()+" risk";
-  el("schoolList").innerHTML=ranked.map((sc,i)=>{
-    const cautions=[...sc.cautions,...sc.match.risks].slice(0,5);
-    return `<article class="school-card">
-      <div class="school-head"><div><div class="q-kicker">${i===0?"Highest current match":"School option"}</div><h3 style="margin:5px 0">${sc.name}</h3><div class="note">${sc.type}</div></div><div class="match">${sc.match.score}%</div></div>
-      <div class="school-tags"><span class="tag">${(sc.gender || (sc.coed?"coed":"boys"))==="coed"?"Co-ed":(sc.gender || "boys")==="girls"?"Girls":"Boys"}</span><span class="tag">${sc.fee<1000?"Public fees":"Indicative annual fee $"+sc.fee.toLocaleString()}</span><span class="tag">${sc.religion==="secular"?"Secular":sc.religion==="light"?"Christian setting":"Catholic / Christian setting"}</span><span class="evidence-level ${(sc.evidenceLevel||"Medium").toLowerCase()}">${sc.evidenceLevel||"Medium"} evidence confidence</span></div>
-      <div class="score-trio">
-        <div class="score-mini"><strong>${sc.match.natural}%</strong><span>Natural fit</span></div>
-        <div class="score-mini"><strong>${sc.match.opportunity}%</strong><span>Growth opportunity</span></div>
-        <div class="score-mini risk-${sc.match.riskLabel.toLowerCase().replace(" ","-")}"><strong>${sc.match.risk}%</strong><span>${sc.match.riskLabel} risk</span></div>
+  const fam=familyFilters();
+  const ranked=schools.map(sc=>({sc,m:schoolMatch(s,sc,fam)})).sort((a,b)=>b.m.score-a.m.score);
+  const ok=ranked.filter(r=>r.m.eligible), no=ranked.filter(r=>!r.m.eligible);
+  const tours=profileTours(s);
+
+  const card=(r,dim)=>{
+    const {sc,m}=r;
+    const cautions=[...sc.cautions.slice(0,2),...m.risks].slice(0,5);
+    const allTours=[...sc.tourQuestions,...tours].slice(0,6);
+    const cap=t=>t.charAt(0).toUpperCase()+t.slice(1);
+    return `<article class="school${dim?" dim":""}">
+      <header class="school-head">
+        <div>
+          <h3>${esc(sc.name)}</h3>
+          <p class="school-type">${esc(sc.type)} · about $${sc.fee.toLocaleString()} a year</p>
+        </div>
+        <div class="school-score">
+          <div class="ss-num">${m.score}<span class="ss-band">±${m.band}</span></div>
+          <div class="ss-lab">fit indication</div>
+        </div>
+      </header>
+      ${m.blocks.length?`<div class="blocked">Outside your stated constraints: ${esc(m.blocks.join(" "))}</div>`:""}
+      ${m.softs.length?`<div class="soft">${esc(m.softs.join(" "))}</div>`:""}
+      <div class="align">
+        <div class="align-col ok">
+          <h4>How this could suit</h4>
+          ${m.suits.length?`<ul>${m.suits.map(x=>`<li>${esc(cap(x))}.</li>`).join("")}</ul>`
+            :`<p class="none">Nothing in this child's profile points strongly toward this environment.</p>`}
+        </div>
+        <div class="align-col no">
+          <h4>Where it might not</h4>
+          ${m.watch.length?`<ul>${m.watch.map(x=>`<li>${esc(cap(x))}.</li>`).join("")}</ul>`
+            :`<p class="none">No gap surfaced between what this child needs and what this environment provides. That is not the same as a good sign — read the unknowns below.</p>`}
+          ${m.surplus.length?`<p class="surplus"><b>More than needed:</b> ${esc(m.surplus.join("; "))}. Not a problem, but you would be paying for it.</p>`:""}
+        </div>
       </div>
-      <div class="confidence-note">${sc.evidenceNote||""}</div>
-      <div class="reason-grid"><div><h4>Why it may fit</h4><ul>${sc.strengths.map(x=>`<li>${x}</li>`).join("")}</ul></div>
-      <div><h4>Fit risks</h4><ul>${cautions.map(x=>`<li>${x}</li>`).join("")}</ul></div></div>
-      <div class="dossier-grid">
-        <div class="dossier-box"><h4>Ground-level picture</h4><ul>${(sc.groundThemes||[]).map(x=>`<li>${x}</li>`).join("")}</ul></div>
-        <div class="dossier-box"><h4>Contradictions to hold</h4><ul>${(sc.contradictions||[]).map(x=>`<li>${x}</li>`).join("")}</ul></div>
-        <div class="dossier-box"><h4>Important unknowns</h4><ul>${(sc.unknowns||[]).map(x=>`<li>${x}</li>`).join("")}</ul></div>
-        <div class="dossier-box"><h4>Questions to ask this school</h4><ul>${(sc.tourQuestions||[]).map(x=>`<li>${x}</li>`).join("")}</ul></div>
+      <div class="metrics">
+        <div><span>Natural fit</span><div class="bar"><div style="width:${m.natural}%"></div></div><b>${m.natural}</b></div>
+        <div><span>Growth opportunity</span><div class="bar"><div class="alt" style="width:${m.opportunity}%"></div></div><b>${m.opportunity}</b></div>
+        <div><span>Watch-outs</span><div class="bar"><div class="warn" style="width:${m.risk}%"></div></div><b>${m.riskLabel}</b></div>
       </div>
-      <div class="warning" style="margin-top:14px"><strong>Community-evidence caution:</strong> ${sc.community}</div>
-      <details class="evidence"><summary>Evidence and source links</summary><ul class="source-list">${sc.sources.map(x=>`<li><a href="${x[1]}" target="_blank" rel="noopener">${x[0]}</a></li>`).join("")}</ul></details>
+      <p class="evidence">Evidence: <b>${esc(sc.evidenceLevel)}</b> — ${esc(sc.evidenceNote)} The ± band widens where evidence is thinner or where this child's answers gave us less to go on.</p>
+      <details><summary>Strengths for this child</summary><ul>${sc.strengths.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></details>
+      <details><summary>Things to weigh up</summary><ul>${cautions.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></details>
+      <details><summary>Contradictions in the evidence</summary><ul>${sc.contradictions.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></details>
+      <details><summary>What we don't know</summary><ul>${sc.unknowns.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></details>
+      <details open><summary>Questions to ask on the tour</summary><ul>${allTours.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></details>
+      <details><summary>Sources (${sc.sources.length})</summary><ul>${sc.sources.map(([t,u])=>`<li><a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a></li>`).join("")}</ul></details>
     </article>`;
-  }).join("");
-}
-["filterGender","filterBudget","filterReligion","filterTravel"].forEach(id=>el(id).onchange=()=>renderSchools(activeScores()));
+  };
 
-el("printBtn").onclick=()=>window.print();
-el("restartBtn").onclick=()=>{if(confirm("Clear all answers and restart?")){parentScores=null;parentAnswers={};el("comparisonPanel").classList.add("hidden");showOnly("landing");}};
-el("parentStartBtn").onclick=()=>{parentIndex=0;parentAnswers={};showOnly("parentGame");renderParentQuestion();};
+  /* Plain-language summary of the leading options, built from the same
+     alignment data as the cards so the two can never contradict. */
+  const lead=ok.slice(0,3);
+  el("topSummary").innerHTML = lead.length ? `
+    <div class="summary">
+      <h3>In short</h3>
+      <p class="note">These are the closest matches to the profile, not the best schools. Where the ± bands overlap, this tool cannot tell them apart — treat those as equally worth visiting.</p>
+      ${lead.map((r,i)=>`
+        <div class="sum-row">
+          <div class="sum-rank">${i+1}</div>
+          <div>
+            <strong>${esc(r.sc.name)}</strong>
+            <span class="sum-score">${r.m.score} ± ${r.m.band} · ${esc(r.m.riskLabel.toLowerCase())} watch-outs · ${esc(r.sc.evidenceLevel.toLowerCase())} evidence</span>
+            <p>${esc(schoolBlurb(r.sc,r.m))}</p>
+          </div>
+        </div>`).join("")}
+      ${overlapNote(lead)}
+    </div>` : "";
 
-function renderParentQuestion(){
-  const q=parentQuestions[parentIndex],r=parentAnswers[parentIndex];
-  el("parentProgressText").textContent=`${parentIndex+1} of ${parentQuestions.length}`;
-  el("parentProgressBar").style.width=`${((parentIndex+1)/parentQuestions.length)*100}%`;
-  el("parentQuestionCard").innerHTML=`<div class="q-kicker">Observed behaviour, not an ideal answer</div><h2 class="q-title">${q.prompt}</h2><div class="options">${q.options.map((o,i)=>`<button class="option ${r===i?"selected":""}" data-popt="${i}">${o.text}</button>`).join("")}</div>`;
-  el("parentQuestionCard").querySelectorAll("[data-popt]").forEach(b=>b.onclick=()=>{parentAnswers[parentIndex]=+b.dataset.popt;renderParentQuestion();});
-  el("parentBackBtn").disabled=parentIndex===0;
-  el("parentNextBtn").textContent=parentIndex===parentQuestions.length-1?"Compare profiles":"Next";
+  el("schoolList").innerHTML=ok.map(r=>card(r,false)).join("");
+  el("excludedList").innerHTML = no.length
+    ? `<h3>Outside your stated constraints (${no.length})</h3>
+       <p class="note">These are not ranked against the others. They are here so you can see what a constraint is costing you, not to suggest you should reconsider it.</p>`
+      + no.map(r=>card(r,true)).join("")
+    : "";
 }
-el("parentBackBtn").onclick=()=>{if(parentIndex>0){parentIndex--;renderParentQuestion();}};
-el("parentNextBtn").onclick=()=>{
-  if(!Number.isInteger(parentAnswers[parentIndex])){alert("Choose an answer first.");return;}
-  if(parentIndex<parentQuestions.length-1){parentIndex++;renderParentQuestion();}
-  else{
-    parentScores=scoreQuestions(parentQuestions,parentAnswers);
-    useCombined=false;showOnly("results");el("comparisonPanel").classList.remove("hidden");renderResults();
-  }
-};
+
+/* If the leading scores overlap inside their uncertainty bands, say so
+   rather than letting the ranking order imply a distinction. */
+function overlapNote(lead){
+  if(lead.length<2) return "";
+  const tied=lead.filter(r=>r.m.score+r.m.band >= lead[0].m.score-lead[0].m.band);
+  if(tied.length<2) return "";
+  return `<p class="tie">${tied.length===lead.length?"All three":"The top "+tied.length}
+    overlap inside their uncertainty bands. On this evidence they are not meaningfully separable —
+    the order between them is noise, and the tour questions will tell you far more than the numbers will.</p>`;
+}
+
 function renderComparison(){
-  const dims=["teacher","visibility","peerDrive","resilience","structure","autonomy","focus","social","peerInfluence","pressure","academic","music","tech","sport","enterprise","breadth","grounded","mixedGender"];
-  el("comparisonPanel").classList.remove("hidden");
-  el("comparisonList").innerHTML=dims.map(d=>`<div class="compare-row"><div class="trait-label">${DIMS[d].label}</div>
-    <div title="Child ${childScores[d]}"><div class="compare-bars"><span class="child-bar" style="width:${childScores[d]}%"></span></div></div>
-    <div title="Parent ${parentScores[d]}"><div class="compare-bars"><span class="parent-bar" style="width:${parentScores[d]}%"></span></div></div></div>`).join("");
-  const diffs=dims.map(d=>({d,diff:parentScores[d]-childScores[d],abs:Math.abs(parentScores[d]-childScores[d])})).sort((a,b)=>b.abs-a.abs).slice(0,4);
-  el("differenceInsights").innerHTML=diffs.map(x=>{
-    const direction=x.diff>0?"Parent observations indicate more":"The child reports more";
-    return `<div class="insight"><strong>${DIMS[x.d].label}: ${x.abs}-point difference</strong>${direction} ${DIMS[x.d].label.toLowerCase()} than the other perspective. Treat this as a conversation prompt, not proof that either person is wrong.</div>`;
-  }).join("");
-  el("toggleCombinedBtn").textContent=useCombined?"Show child result only":"Use combined interpretation";
-}
-el("toggleCombinedBtn").onclick=()=>{useCombined=!useCombined;renderResults();};
+  const dims=Object.keys(DIMS).filter(d=>DIMS[d].kind!=="display");
+  const rows=dims.map(d=>{
+    const c=childScores[d], p=parentScores[d];
+    if(!c||!p||c.n===0||p.n===0) return null;
+    return {d, diff:p.observed-c.observed, abs:Math.abs(p.observed-c.observed), c, p};
+  }).filter(Boolean).sort((a,b)=>b.abs-a.abs).slice(0,5);
 
+  el("comparisonList").innerHTML=rows.map(r=>`
+    <div class="cmp">
+      <strong>${esc(DIMS[r.d].label)}</strong>
+      <div class="cmp-bars">
+        <span>Child ${r.c.observed}</span><div class="bar"><div style="width:${r.c.observed}%"></div></div>
+        <span>Parent ${r.p.observed}</span><div class="bar"><div class="alt" style="width:${r.p.observed}%"></div></div>
+      </div>
+      <p>${r.abs<12?"Broad agreement.":r.diff>0?"You see more of this than your child reports.":"Your child reports more of this than you observe."}</p>
+    </div>`).join("");
+
+  const notes=[];
+  if(famConfig.prestige==="high") notes.push("You told us reputation matters a lot. That is a legitimate part of a school decision, and naming it means it is visible here rather than buried inside a number. Worth checking separately whether your child's answers suggest they would be comfortable in a status-conscious cohort.");
+  if(famConfig.setback==="sit" && CF(childScores,"helpSeeking")>=0.45 && S(childScores,"helpSeeking")<=42)
+    notes.push("Your family tends to let a setback sit, and your child's answers suggest they keep difficulty private. Those two together mean a problem could run for a while before anyone acts. Worth asking every school how quickly they would tell you.");
+  if(famConfig.involvement==="minimal") notes.push("You want a school that runs without heavy parent involvement. Several schools here expect the opposite, so it is worth asking directly what is actually expected of families.");
+  if(famConfig.parentFit==="high") notes.push("Feeling at home among the other parents matters to you. Prospectuses do not cover this — ask to meet current families rather than staff.");
+  if(famConfig.coed && famConfig.coed!=="none") notes.push("Your co-ed preference is applied as a filter only. Nothing in your child's answers was used to decide it, and neither model is treated as better.");
+  const coedAns=findCoedAnswer();
+  if(coedAns) notes.push("For reference, your child said this about mixed-gender group work: “"+coedAns+"” This is recorded, not scored.");
+  if(famConfig.success) notes.push("You are optimising for "+famConfig.success.map(x=>({results:"results and post-school options",character:"character",wellbeing:"happiness and wellbeing",opportunity:"opportunities",belonging:"belonging and lasting friendships"}[x])).join(" and ")+". Read the shortlist through that lens rather than through the ranking order.");
+
+  el("differenceInsights").innerHTML=notes.map(n=>`<div class="insight">${esc(n)}</div>`).join("");
+}
+
+function findCoedAnswer(){
+  const qi=childQuestions.findIndex(q=>q.options&&q.options.some(o=>o.w&&"coed" in o.w));
+  if(qi<0||answers[qi]===undefined||answers[qi]==="skip") return null;
+  return childQuestions[qi].options[answers[qi]].text;
+}
+
+/* ---------------- wiring ---------------- */
+window.addEventListener("DOMContentLoaded",()=>{
+  el("startBtn").onclick=startGame;
+  el("aboutBtn").onclick=()=>showOnly("about");
+  el("aboutStart").onclick=startGame;
+  el("aboutBack").onclick=()=>showOnly("intro");
+  el("nextBtn").onclick=next;
+  el("backBtn").onclick=back;
+  el("parentNextBtn").onclick=pNext;
+  el("parentBackBtn").onclick=pBack;
+  el("parentStartBtn").onclick=startParent;
+  el("restartBtn").onclick=()=>{childScores=parentScores=null;useParent=false;famConfig={};showOnly("intro");};
+  el("printBtn").onclick=()=>window.print();
+  ["filterEligible","filterCoed","filterBudget","filterFaith","filterTravel"]
+    .forEach(id=>el(id).onchange=()=>{ if(childScores) renderSchools(activeScores()); });
+});
 </script>
 </body>
 </html>
