@@ -267,7 +267,6 @@
 .filters label{display:block;font-size:.78rem;font-weight:750;color:var(--muted);margin-bottom:5px}
 .filters select{width:100%;padding:11px 13px;border-radius:12px;border:1.5px solid var(--line);background:#fff}
 @media print{.game-nav,.actions,.filters-panel{display:none}.school{break-inside:avoid;box-shadow:none}}
-<<<<<<< HEAD
 
 /* ---- v4.1 sub-domain and interest ladder ---- */
 .opt.clash{font-size:1.08rem;font-weight:650;padding:22px 20px}
@@ -278,5 +277,3 @@
 .sd.gap{background:rgba(200,79,94,.09);border-color:rgba(200,79,94,.35)}
 .sd.unknown{background:var(--paper);border-color:var(--line);color:var(--muted)}
 .sd-note{flex-basis:100%;font-size:.84rem;color:var(--muted);line-height:1.5;margin:4px 0 0}
-=======
->>>>>>> 315cfa5ec93e50ce3fd8adfb96f781b75adcf0fc

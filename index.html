@@ -275,7 +275,6 @@
 .filters label{display:block;font-size:.78rem;font-weight:750;color:var(--muted);margin-bottom:5px}
 .filters select{width:100%;padding:11px 13px;border-radius:12px;border:1.5px solid var(--line);background:#fff}
 @media print{.game-nav,.actions,.filters-panel{display:none}.school{break-inside:avoid;box-shadow:none}}
-<<<<<<< HEAD
 
 /* ---- v4.1 sub-domain and interest ladder ---- */
 .opt.clash{font-size:1.08rem;font-weight:650;padding:22px 20px}
@@ -286,8 +285,6 @@
 .sd.gap{background:rgba(200,79,94,.09);border-color:rgba(200,79,94,.35)}
 .sd.unknown{background:var(--paper);border-color:var(--line);color:var(--muted)}
 .sd-note{flex-basis:100%;font-size:.84rem;color:var(--muted);line-height:1.5;margin:4px 0 0}
-=======
->>>>>>> 315cfa5ec93e50ce3fd8adfb96f781b75adcf0fc
 </style>
 </head>
 <body>
@@ -408,10 +405,7 @@
     <div class="panel section">
       <h3>Schools</h3>
       <p class="note">Ranked by fit indication. The ± band is real uncertainty, not decoration — where two schools overlap inside their bands, this tool cannot tell them apart.</p>
-<<<<<<< HEAD
       <div class="insight"><strong>How much do the interests count?</strong>Less than the culture. A ten-year-old's hobbies often change; the way a school teaches, what it expects, how it treats a struggling kid and what it opens up do not. So teaching, culture and opportunity carry roughly 1.4 times the weight of interest alignment in these rankings, and specific sports and instruments are flagged for you to check rather than being scored at all. Interest fit is a good tiebreaker between schools that already suit your child — it isn't the reason to pick one.</div>
-=======
->>>>>>> 315cfa5ec93e50ce3fd8adfb96f781b75adcf0fc
       <div id="topSummary"></div>
       <div id="schoolList"></div>
       <div id="excludedList"></div>
@@ -423,7 +417,6 @@
   </footer>
 </div>
 <script>
-<<<<<<< HEAD
 /* ===== version check ===== */
 const APP_VERSION = "4.4.0";
 (async () => {
@@ -441,8 +434,6 @@ const APP_VERSION = "4.4.0";
   }
 })();
 
-=======
->>>>>>> 315cfa5ec93e50ce3fd8adfb96f781b75adcf0fc
 /* ===== src/questions.js ===== */
 /* ============================================================
    SchoolFit Quest v4 — dimensions and question bank
@@ -553,7 +544,6 @@ const childQuestions = [
  hint:"Pick any number, including none.",
  options:tileOpts(0.6,{effortSelfdir:1})},
 
-<<<<<<< HEAD
 /* ---------- STAGE 0b · sub-domain, conditional ----------
    Only shown to a child who picked the parent interest. Framed as a
    decision rather than a form. Not scored into any dimension — the
@@ -617,17 +607,6 @@ const childQuestions = [
  {text:"A teacher checks in on you, expects more, and gives you a clear target.",w:{teacher:3,structure:3,peerInfluence:2}},
  {text:"You're allowed to leave the group and do a bigger version on your own.",w:{autonomy:3,resilience:1,peerInfluence:-1}}]},
 
-=======
-/* ---------- STAGE 1 · two-option trade-offs (24) ---------- */
-{stage:1,type:"choice",round:"Challenge",prompt:"You get to pick one class for next term. Which sounds better?",options:[
- {text:"A hard class where you'd probably be one of the best in the room.",w:{academic:2,visibility:2,resilience:-1}},
- {text:"The hardest class in the school, where lots of people would start ahead of you.",w:{academic:3,peerDrive:2,resilience:3,pressure:1}}]},
-
-{stage:1,type:"choice",round:"Motivation",prompt:"Your friends have started taking a group project less seriously. What would help you most?",options:[
- {text:"A teacher checks in on you, expects more, and gives you a clear target.",w:{teacher:3,structure:3,peerInfluence:2}},
- {text:"You're allowed to leave the group and do a bigger version on your own.",w:{autonomy:3,resilience:1,peerInfluence:-1}}]},
-
->>>>>>> 315cfa5ec93e50ce3fd8adfb96f781b75adcf0fc
 {stage:1,type:"choice",round:"Social",prompt:"In a big team project, which job feels better?",options:[
  {text:"Run the group, present the idea and keep everyone going.",w:{enterprise:3,social:3,structure:1}},
  {text:"Be the person who makes the hardest part really well.",w:{tech:1,autonomy:2,academic:1}}]},
@@ -1551,7 +1530,6 @@ sources:[
 const schoolExtraAttrs = {"Melville Senior High School — Academic Extension":{"visibility":66,"focus":68,"mixedGender":100},"All Saints’ College":{"visibility":92,"focus":76,"mixedGender":100},"Perth Modern School":{"visibility":76,"focus":99,"mixedGender":100},"John Curtin College of the Arts":{"visibility":83,"focus":77,"mixedGender":100},"Corpus Christi College":{"visibility":87,"focus":73,"mixedGender":100},"Aquinas College":{"visibility":83,"focus":80,"mixedGender":0},"Rossmoyne Senior High School":{"visibility":71,"focus":86,"mixedGender":100},"Willetton Senior High School":{"visibility":70,"focus":90,"mixedGender":100},"Applecross Senior High School — Academic Extension":{"visibility":73,"focus":76,"mixedGender":100},"Shenton College — HPL / GATE":{"visibility":79,"focus":89,"mixedGender":100},"Fremantle College":{"visibility":83,"focus":67,"mixedGender":100},"Kennedy Baptist College":{"visibility":85,"focus":73,"mixedGender":100},"Carey Baptist College — Harrisdale":{"visibility":85,"focus":79,"mixedGender":100},"Scotch College":{"visibility":87,"focus":88,"mixedGender":0},"Christ Church Grammar School":{"visibility":92,"focus":92,"mixedGender":0},"Hale School":{"visibility":88,"focus":87,"mixedGender":0},"Wesley College":{"visibility":89,"focus":83,"mixedGender":0},"CBC Fremantle":{"visibility":88,"focus":78,"mixedGender":0},"Iona Presentation College":{"visibility":89,"focus":80,"mixedGender":0},"Santa Maria College":{"visibility":90,"focus":78,"mixedGender":0},"Seton Catholic College":{"visibility":89,"focus":68,"mixedGender":100}};
 schools.forEach(sc=>Object.assign(sc.attrs,schoolExtraAttrs[sc.name]||{}));
 
-<<<<<<< HEAD
 /* ===== src/programs.js ===== */
 /* ============================================================
    Sub-domain program data — sport and music, per school.
@@ -1807,55 +1785,6 @@ function bounds(q,dim){
     const lo=neg.slice(0,k).reduce((a,b)=>a+b,0);
     return [lo,hi];
   }
-=======
-/* ===== src/engine.js ===== */
-/* ============================================================
-   SchoolFit Quest v4 — scoring engine
-
-   Changes from v3:
-   1. Every dimension carries a measurement confidence based on how
-      many items informed it. Thinly measured dimensions are shrunk
-      toward neutral instead of swinging to 0 or 100.
-   2. Risk triggers only fire when the dimension driving them was
-      actually measured well enough to justify it.
-   3. School evidence level propagates: weaker-evidence attributes
-      regress toward the dataset mean and widen the reported band.
-   4. Family constraints are hard filters, not score penalties.
-   5. Co-ed is never scored. It is a family filter and a tour note.
-   6. Nothing in the output layer is hardcoded to any one interest.
-   ============================================================ */
-
-const K_SHRINK = 2.5;              // items needed before a dim is trusted
-const EV_CONF  = {High:1.0, Medium:0.78, Low:0.55};
-const RISK_GATE = 0.5;             // min measurement confidence to fire a risk
-
-const clamp=(n,a=0,b=100)=>Math.max(a,Math.min(b,n));
-const el=id=>document.getElementById(id);
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-
-/* ---------- per-question bounds and values ---------- */
-function optW(o,dim){ return (o.w&&o.w[dim])||0; }
-
-function bounds(q,dim){
-  if(q.type==="bestworst"){
-    let lo=Infinity,hi=-Infinity;
-    q.items.forEach((m,mi)=>q.items.forEach((l,li)=>{
-      if(mi===li)return;
-      const v=2*optW(m,dim)-optW(l,dim);
-      if(v<lo)lo=v; if(v>hi)hi=v;
-    }));
-    return [lo,hi];
-  }
-  if(q.type==="multi"){
-    const vals=q.options.map(o=>optW(o,dim));
-    const pos=vals.filter(v=>v>0).sort((a,b)=>b-a);
-    const neg=vals.filter(v=>v<0).sort((a,b)=>a-b);
-    const k=q.pick||vals.length;
-    const hi=pos.slice(0,k).reduce((a,b)=>a+b,0);
-    const lo=neg.slice(0,k).reduce((a,b)=>a+b,0);
-    return [lo,hi];
-  }
->>>>>>> 315cfa5ec93e50ce3fd8adfb96f781b75adcf0fc
   const vals=q.options.map(o=>optW(o,dim));
   return [Math.min(...vals),Math.max(...vals)];
 }
@@ -1874,7 +1803,6 @@ function answered(q,r){
   return true;
 }
 
-<<<<<<< HEAD
 /* ---------- conditional questions ----------
    Sub-domain items only appear for a child who picked that interest.
    Clash items only appear once three interests exist to rank. The bank
@@ -1928,34 +1856,10 @@ function applyInterestRank(scores,ranking){
       if(!out[dim] || tile.d[dim]<=0) return;
       out[dim]={...out[dim], score: clamp(Math.round(50+(out[dim].score-50)*RANK_MULT[i]))};
     });
-=======
-/* ---------- scoring with confidence ---------- */
-function scoreQuestions(qs,responses){
-  const out={};
-  Object.keys(DIMS).forEach(dim=>{
-    let raw=0,lo=0,hi=0,n=0;
-    qs.forEach((q,i)=>{
-      if(!q.options && !q.items) return;
-      const r=responses[i];
-      if(!answered(q,r)) return;
-      const b=bounds(q,dim);
-      if(b[0]===b[1]) return;                 // dim not present in this item
-      raw+=value(q,r,dim); lo+=b[0]; hi+=b[1]; n++;
-    });
-    if(n===0){ out[dim]={score:50,observed:50,n:0,confidence:0}; return; }
-    const observed=clamp(Math.round((raw-lo)/(hi-lo)*100));
-    const confidence=n/(n+K_SHRINK);
-    out[dim]={
-      score: clamp(Math.round(50+(observed-50)*confidence)),
-      observed, n,
-      confidence: Math.round(confidence*100)/100
-    };
->>>>>>> 315cfa5ec93e50ce3fd8adfb96f781b75adcf0fc
   });
   return out;
 }
 
-<<<<<<< HEAD
 /* Interests named in Q1 but NOT confirmed by Q3 ("what have you
    actually done unprompted"). Named-but-not-done is the aspiration
    /behaviour gap, and it is worth showing a parent rather than
@@ -2041,24 +1945,6 @@ function blend(child,parent,mode){
   return out;
 }
 
-=======
-/* Blend child and parent profiles by the family's chosen weighting. */
-function blend(child,parent,mode){
-  if(!parent) return child;
-  const wC = mode==="parent"?0.35 : mode==="child"?0.8 : 0.55;
-  const out={};
-  Object.keys(DIMS).forEach(d=>{
-    const c=child[d], p=parent[d];
-    if(!p || p.n===0) { out[d]=c; return; }
-    if(!c || c.n===0) { out[d]=p; return; }
-    const n=c.n+p.n, confidence=n/(n+K_SHRINK);
-    const observed=Math.round(c.observed*wC + p.observed*(1-wC));
-    out[d]={score:clamp(Math.round(50+(observed-50)*confidence)),observed,n,confidence:Math.round(confidence*100)/100};
-  });
-  return out;
-}
-
->>>>>>> 315cfa5ec93e50ce3fd8adfb96f781b75adcf0fc
 const S  = (s,d)=> (s[d]?s[d].score:50);
 const CF = (s,d)=> (s[d]?s[d].confidence:0);
 
@@ -2294,12 +2180,8 @@ function schoolMatch(s,school,fam){
   keys.forEach(k=>{
     const strength=Math.abs(want[k]-50)/50;
     const c=conf[k]||0;
-<<<<<<< HEAD
     const isInterest=["music","tech","sport","enterprise"].includes(k);
     const w=(0.4+1.6*strength*c)*(isInterest?INTEREST_DAMP:1);
-=======
-    const w=0.4+1.6*strength*c;
->>>>>>> 315cfa5ec93e50ce3fd8adfb96f781b75adcf0fc
     acc+=(100-Math.abs(want[k]-A[k]))*w; totW+=w; measSum+=c;
   });
   const natural=totW>0?acc/totW:50;
@@ -2319,15 +2201,11 @@ function schoolMatch(s,school,fam){
   dev.push(100-Math.abs(wantIntensity-A.peerIntensity));
   dev.push(S(s,"teacher")>65 ? A.teacher : 100-Math.abs(want.teacher-A.teacher));
   dev.push(S(s,"breadth")>65 ? A.breadth : 100-Math.abs(want.breadth-A.breadth));
-<<<<<<< HEAD
   /* Interests are deliberately the smaller share. A ten-year-old's
      hobbies change; culture, teaching style and the opportunities a
      school actually creates do not, and they matter for six years.
      Interest alignment is a tiebreaker, not a driver. */
   const opportunity=capacity*INTEREST_SHARE+(dev.reduce((a,b)=>a+b,0)/dev.length)*(1-INTEREST_SHARE);
-=======
-  const opportunity=capacity*0.55+(dev.reduce((a,b)=>a+b,0)/dev.length)*0.45;
->>>>>>> 315cfa5ec93e50ce3fd8adfb96f781b75adcf0fc
 
   /* --- risk: only from dimensions we measured well enough --- */
   let risk=4; const risks=[];
@@ -2473,7 +2351,6 @@ function startGame(){ ci=0; answers={}; order={}; tokens=2; showOnly("game"); re
 
 const STAGE_NAME={0:"What you're into",1:"Quick choices",2:"What you'd actually do",3:"What matters most"};
 
-<<<<<<< HEAD
 /* Swap {TOP} for the child's own number-one interest, so the academic
    clash reads "and your music has something big on" rather than the
    vaguer "the thing you care most about". */
@@ -2502,16 +2379,6 @@ function renderQ(){
 
   let h=`<div class="q-kicker">${q.type==="bestworst"?"Pick one MOST and one LEAST":q.type==="multi"?(q.pick?("Pick "+q.pick):"Pick any number"):"Choose what feels most true"}</div>`;
   h+=`<h2 class="q-title">${esc(fillTokens(q.prompt))}</h2>`;
-=======
-function renderQ(){
-  const q=childQuestions[ci], r=answers[ci];
-  el("roundLabel").textContent="Part "+(q.stage+1)+" · "+STAGE_NAME[q.stage];
-  el("progressText").textContent=(ci+1)+" of "+childQuestions.length;
-  el("progressBar").style.width=((ci+1)/childQuestions.length*100)+"%";
-
-  let h=`<div class="q-kicker">${q.type==="bestworst"?"Pick one MOST and one LEAST":q.type==="multi"?(q.pick?("Pick "+q.pick):"Pick any number"):"Choose what feels most true"}</div>`;
-  h+=`<h2 class="q-title">${esc(q.prompt)}</h2>`;
->>>>>>> 315cfa5ec93e50ce3fd8adfb96f781b75adcf0fc
   if(q.hint) h+=`<p class="note">${esc(q.hint)}</p>`;
 
   if(q.type==="bestworst"){
@@ -2532,7 +2399,6 @@ function renderQ(){
     });
     h+=`</div>`;
     if(q.pick) h+=`<p class="note" id="pickCount">${sel.length} of ${q.pick} chosen</p>`;
-<<<<<<< HEAD
   } else if(q.type==="clash"){
     const tiles=pickedTiles(answers);
     h+=`<div class="opt-list">`;
@@ -2542,8 +2408,6 @@ function renderQ(){
       h+=`<button class="opt clash${r===side?" on":""}" data-opt="${side}">${esc(tile.t)}</button>`;
     });
     h+=`</div>`;
-=======
->>>>>>> 315cfa5ec93e50ce3fd8adfb96f781b75adcf0fc
   } else {
     h+=`<div class="opt-list">`;
     orderFor(order,ci,q.options.length).forEach(idx=>{
@@ -2589,7 +2453,6 @@ function renderQ(){
 function next(){
   const q=childQuestions[ci];
   if(!answered(q,answers[ci])&&answers[ci]!=="skip") return;
-<<<<<<< HEAD
   let i=ci+1;
   while(i<childQuestions.length && !isActive(childQuestions[i],answers)) i++;
   if(i<childQuestions.length){ ci=i; renderQ(); } else finishChild();
@@ -2603,16 +2466,6 @@ function back(){
 function finishChild(){
   const clean={}; Object.keys(answers).forEach(k=>{ if(answers[k]!=="skip") clean[k]=answers[k]; });
   childScores=applyInterestRank(scoreQuestions(childQuestions,clean), interestRanking(answers));
-=======
-  if(ci<childQuestions.length-1){ ci++; renderQ(); }
-  else finishChild();
-}
-function back(){ if(ci>0){ci--;renderQ();} }
-
-function finishChild(){
-  const clean={}; Object.keys(answers).forEach(k=>{ if(answers[k]!=="skip") clean[k]=answers[k]; });
-  childScores=scoreQuestions(childQuestions,clean);
->>>>>>> 315cfa5ec93e50ce3fd8adfb96f781b75adcf0fc
   useParent=false; showOnly("results"); renderResults();
 }
 
@@ -2793,7 +2646,6 @@ function renderProfileNotes(s){
     ? rows.map(r=>`<div class="insight"><strong>${esc(DIMS[r.d].label)} — ${r.dir==="high"?"high":"low"}</strong>${esc(DIMS[r.d].desc)}<span class="conf-lab" style="display:block;margin-top:6px">${Math.round(r.x.confidence*100)}% measurement confidence · ${r.x.n} question${r.x.n===1?"":"s"}</span></div>`).join("")
     : `<p class="note">Nothing here stood out strongly enough to report.</p>`;
 
-<<<<<<< HEAD
   /* The interest ladder, shown plainly — this is the bit parents find
      most surprising, and it is worth showing the working. */
   const rank=interestRanking(answers), subs=subDomains(answers);
@@ -2825,8 +2677,6 @@ function renderProfileNotes(s){
   }
   el("profileNotes").innerHTML = bits.join("") + el("profileNotes").innerHTML;
 
-=======
->>>>>>> 315cfa5ec93e50ce3fd8adfb96f781b75adcf0fc
   const um=unmappedInterests(answers);
   el("unmappedNote").innerHTML = um.length
     ? `<div class="insight warn"><strong>Interests this tool cannot match on</strong>The school dataset has no attribute for ${esc(um.join(", "))}. These interests are shown in the profile and turned into tour questions, but they do not affect any school's score. Ask each school about them directly.</div>`
@@ -2835,10 +2685,7 @@ function renderProfileNotes(s){
 
 function renderSchools(s){
   const fam=familyFilters();
-<<<<<<< HEAD
   const subs=subDomains(answers);
-=======
->>>>>>> 315cfa5ec93e50ce3fd8adfb96f781b75adcf0fc
   const ranked=schools.map(sc=>({sc,m:schoolMatch(s,sc,fam)})).sort((a,b)=>b.m.score-a.m.score);
   const ok=ranked.filter(r=>r.m.eligible), no=ranked.filter(r=>!r.m.eligible);
   const tours=profileTours(s);
@@ -2861,12 +2708,9 @@ function renderSchools(s){
       </header>
       ${m.blocks.length?`<div class="blocked">Outside your stated constraints: ${esc(m.blocks.join(" "))}</div>`:""}
       ${m.softs.length?`<div class="soft">${esc(m.softs.join(" "))}</div>`:""}
-<<<<<<< HEAD
       ${(()=>{const c=subDomainCheck(sc.name,subs);return c.length?
         `<div class="subdomain">${c.map(x=>`<span class="sd ${x.level}">${esc(x.text)}</span>`).join("")}
          ${programNote(sc.name)?`<p class="sd-note">${esc(programNote(sc.name))}</p>`:""}</div>`:"";})()}
-=======
->>>>>>> 315cfa5ec93e50ce3fd8adfb96f781b75adcf0fc
       <div class="align">
         <div class="align-col ok">
           <h4>How this could suit</h4>
