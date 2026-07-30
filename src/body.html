@@ -1,0 +1,128 @@
+<div class="app">
+  <div class="topbar">
+    <div class="brand"><div class="mark">SF</div><span>SchoolFit Quest</span></div>
+    <div class="badge">v4 · Perth · 21 schools · confidence-weighted</div>
+  </div>
+
+  <section id="intro">
+    <div class="panel hero">
+      <div>
+        <div class="badge">A school-fit game, not a school ranking</div>
+        <h1>Which school environment actually suits your child?</h1>
+        <p class="lede">Fifty forced choices — no agree/disagree scales, no obviously right answers. The game asks what your child would <em>actually do</em>, not what sounds best, and it tells you how confident it is in every reading it gives you.</p>
+        <div class="actions">
+          <button class="btn btn-primary" id="startBtn">Start the child game</button>
+          <button class="btn btn-ghost" id="aboutBtn">How it works</button>
+        </div>
+        <p class="note">About 15–20 minutes. There are no good answers. Pick what feels most true, even when both options sound fine.</p>
+      </div>
+      <div class="panel section">
+        <div class="mini">What this will not do</div>
+        <p style="font-size:.92rem;line-height:1.55;margin:0">It will not tell you the best school. It will not treat expensive, selective, private, public, co-ed or single-sex as better. It has never been checked against how children actually went at these schools, so treat every number as a conversation starter rather than a finding.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="panel section hidden">
+    <h2>How it works</h2>
+    <p class="lede">Three rounds: what your child is into, quick trade-offs, then what they would actually do in specific situations, finishing with most-and-least priorities.</p>
+    <div class="grid-2">
+      <div class="insight"><strong>Confidence, not false precision</strong>Every dimension records how many questions informed it. A dimension measured by one question is pulled back toward neutral instead of swinging to an extreme, and it is not allowed to trigger a risk warning.</div>
+      <div class="insight"><strong>Interests kept separate</strong>What your child likes is asked once, directly, across sixteen areas. The behavioural questions never name an interest, so they measure how your child operates rather than what they enjoy.</div>
+      <div class="insight"><strong>Evidence carried through</strong>Schools with thinner supporting evidence get a wider ± band and their attributes are pulled toward the dataset average. The tool does not pretend to know a school it has read little about.</div>
+      <div class="insight"><strong>Constraints are filters</strong>Fees, faith, travel and co-ed preference exclude schools from the ranking. They never quietly reduce a school's score, and co-ed is never inferred from your child's answers.</div>
+    </div>
+    <div class="actions"><button class="btn btn-primary" id="aboutStart">Start</button><button class="btn btn-ghost" id="aboutBack">Back</button></div>
+  </section>
+
+  <section id="game" class="game-shell hidden">
+    <div class="progress-wrap">
+      <div class="progress-meta"><span id="roundLabel">Part 1</span><span id="progressText">1 of 50</span></div>
+      <div class="progress"><div id="progressBar"></div></div>
+    </div>
+    <div id="questionCard" class="panel question"></div>
+    <div class="game-nav">
+      <button class="btn btn-ghost" id="backBtn">Back</button>
+      <button class="btn btn-primary" id="nextBtn">Next</button>
+    </div>
+  </section>
+
+  <section id="parentGame" class="game-shell hidden">
+    <div class="progress-wrap">
+      <div class="progress-meta"><span id="parentPartLabel">Part 1</span><span id="parentProgressText">1 of 32</span></div>
+      <div class="progress"><div id="parentProgressBar"></div></div>
+    </div>
+    <div id="parentQuestionCard" class="panel question"></div>
+    <div class="game-nav">
+      <button class="btn btn-ghost" id="parentBackBtn">Back</button>
+      <button class="btn btn-primary" id="parentNextBtn">Next</button>
+    </div>
+  </section>
+
+  <section id="results" class="results hidden">
+    <div class="panel section">
+      <div class="badge" id="modeLabel">Child answers only</div>
+      <h2 id="profileName" class="profile-name"></h2>
+      <p id="profileSummary" class="profile-summary lede"></p>
+      <div class="actions">
+        <button class="btn btn-primary" id="parentStartBtn">Add parent perspective</button>
+        <button class="btn btn-secondary" id="printBtn">Print / save PDF</button>
+        <button class="btn btn-ghost" id="restartBtn">Restart</button>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="panel section">
+        <h3>Profile</h3>
+        <p class="note">The grey bar under each trait shows how much of the questionnaire actually informed it.</p>
+        <div class="trait-list" id="traitList"></div>
+      </div>
+      <div class="panel section">
+        <h3>Measured, but not matched on</h3>
+        <p class="note">These say something real about your child, but the school dataset holds no comparable evidence — so they shape the profile and the tour questions, and never touch a school's score.</p>
+        <div id="profileNotes"></div>
+        <div id="unmappedNote"></div>
+      </div>
+    </div>
+
+    <div id="comparisonPanel" class="panel section hidden">
+      <h3>Where you and your child see it differently</h3>
+      <p class="note">Differences are not errors. They are usually the most useful thing on this page.</p>
+      <div id="comparisonList" class="compare-grid"></div>
+      <div id="differenceInsights" style="margin-top:18px"></div>
+    </div>
+
+    <div class="panel section filters-panel">
+      <h3>Practical constraints</h3>
+      <p class="note">These do not change your child's profile. They decide which schools are on the list at all.</p>
+      <div class="filters">
+        <div><label for="filterEligible">Student</label><select id="filterEligible">
+          <option value="any">Any</option><option value="boy">Boy</option><option value="girl">Girl</option></select></div>
+        <div><label for="filterCoed">Co-ed or single-sex</label><select id="filterCoed">
+          <option value="none">No preference</option><option value="leanCoed">Lean co-ed</option><option value="coed">Co-ed only</option>
+          <option value="leanSingle">Lean single-sex</option><option value="single">Single-sex only</option></select></div>
+        <div><label for="filterBudget">Annual fees up to</label><select id="filterBudget">
+          <option value="any">No limit</option><option value="1500">Public only</option><option value="8000">$8,000</option>
+          <option value="16000">$16,000</option><option value="25000">$25,000</option><option value="40000">$40,000</option></select></div>
+        <div><label for="filterFaith">Faith</label><select id="filterFaith">
+          <option value="fine">No preference</option><option value="want">Want a faith community</option>
+          <option value="light">Prefer it minimal</option><option value="none">Secular only</option></select></div>
+        <div><label for="filterTravel">Travel</label><select id="filterTravel">
+          <option value="any">Any</option><option value="moderate">Moderate</option><option value="local">Local only</option></select></div>
+      </div>
+    </div>
+
+    <div class="panel section">
+      <h3>Schools</h3>
+      <p class="note">Ranked by fit indication. The ± band is real uncertainty, not decoration — where two schools overlap inside their bands, this tool cannot tell them apart.</p>
+      <div class="insight"><strong>How much do the interests count?</strong>Less than the culture. A ten-year-old's hobbies often change; the way a school teaches, what it expects, how it treats a struggling kid and what it opens up do not. So teaching, culture and opportunity carry roughly 1.4 times the weight of interest alignment in these rankings, and specific sports and instruments are flagged for you to check rather than being scored at all. Interest fit is a good tiebreaker between schools that already suit your child — it isn't the reason to pick one.</div>
+      <div id="topSummary"></div>
+      <div id="schoolList"></div>
+      <div id="excludedList"></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    Prototype. School profiles are interpretive summaries built from public information and limited community commentary, not verified assessments of any school. This tool has not been validated against student outcomes. Programs, fees and entry rules change — verify everything directly with each school.
+  </footer>
+</div>
