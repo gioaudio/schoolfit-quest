@@ -1,0 +1,1595 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SchoolFit Quest — Perth School Matcher</title>
+  <style>
+    :root{
+      --ink:#18212f;
+      --muted:#617087;
+      --paper:#fbfaf7;
+      --panel:#ffffff;
+      --line:#dfe4eb;
+      --accent:#6257d5;
+      --accent2:#1f9d8a;
+      --warm:#f2a65a;
+      --danger:#c84f5e;
+      --shadow:0 16px 50px rgba(30,42,67,.10);
+      --radius:22px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at 8% 5%, rgba(98,87,213,.12), transparent 27%),
+        radial-gradient(circle at 92% 10%, rgba(31,157,138,.12), transparent 24%),
+        var(--paper);
+      min-height:100vh;
+    }
+    button,input,select{font:inherit}
+    button{cursor:pointer}
+    a{color:inherit}
+    .app{max-width:1120px;margin:0 auto;padding:24px}
+    .topbar{
+      display:flex;align-items:center;justify-content:space-between;gap:16px;
+      margin-bottom:24px
+    }
+    .brand{display:flex;align-items:center;gap:12px;font-weight:850;letter-spacing:-.03em;font-size:1.12rem}
+    .mark{
+      width:40px;height:40px;border-radius:14px;display:grid;place-items:center;
+      background:linear-gradient(135deg,var(--accent),#8d83ef);color:white;box-shadow:var(--shadow)
+    }
+    .badge{
+      display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid var(--line);
+      border-radius:999px;background:rgba(255,255,255,.75);color:var(--muted);font-size:.78rem;font-weight:700
+    }
+    .panel{
+      background:rgba(255,255,255,.94);border:1px solid rgba(223,228,235,.95);
+      border-radius:var(--radius);box-shadow:var(--shadow)
+    }
+    .hero{
+      padding:clamp(26px,5vw,64px);
+      display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:center
+    }
+    h1,h2,h3,p{margin-top:0}
+    h1{font-size:clamp(2.2rem,6vw,4.7rem);line-height:.96;letter-spacing:-.065em;margin-bottom:20px}
+    h2{font-size:clamp(1.65rem,3vw,2.5rem);letter-spacing:-.04em}
+    h3{letter-spacing:-.025em}
+    .lede{font-size:1.08rem;line-height:1.65;color:var(--muted);max-width:700px}
+    .hero-card{
+      padding:24px;border-radius:20px;background:linear-gradient(145deg,#202a3a,#313e54);color:white;
+      transform:rotate(1deg)
+    }
+    .hero-card .mini{color:#c8d1df;font-size:.85rem;text-transform:uppercase;letter-spacing:.12em;font-weight:800}
+    .hero-card blockquote{font-size:1.25rem;line-height:1.45;margin:20px 0 0;font-weight:700}
+    .actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+    .btn{
+      border:0;border-radius:14px;padding:13px 18px;font-weight:800;
+      transition:.18s transform,.18s box-shadow,.18s background
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn-primary{background:var(--accent);color:white;box-shadow:0 9px 24px rgba(98,87,213,.25)}
+    .btn-secondary{background:#eef0f7;color:var(--ink)}
+    .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+    .btn-danger{background:#fff0f2;color:var(--danger)}
+    .input-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px}
+    label{display:block;font-weight:750;font-size:.84rem;color:var(--muted);margin-bottom:7px}
+    input,select{
+      width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:12px;background:white;color:var(--ink)
+    }
+    .note{font-size:.82rem;line-height:1.5;color:var(--muted)}
+    .hidden{display:none!important}
+    .game-shell{max-width:820px;margin:0 auto}
+    .progress-wrap{margin:8px 0 18px}
+    .progress-meta{display:flex;justify-content:space-between;gap:14px;color:var(--muted);font-size:.82rem;font-weight:750;margin-bottom:8px}
+    .progress{height:10px;background:#e7eaf0;border-radius:999px;overflow:hidden}
+    .progress > div{height:100%;background:linear-gradient(90deg,var(--accent),#8b7ff0);width:0%;transition:width .25s ease}
+    .question{padding:clamp(22px,5vw,42px)}
+    .q-kicker{color:var(--accent);font-size:.78rem;font-weight:850;text-transform:uppercase;letter-spacing:.1em}
+    .q-title{font-size:clamp(1.45rem,4vw,2.25rem);line-height:1.15;margin:10px 0 24px;letter-spacing:-.04em}
+    .options{display:grid;gap:12px}
+    .option{
+      width:100%;text-align:left;border:1.5px solid var(--line);border-radius:16px;background:#fff;
+      color:var(--ink);padding:17px 18px;font-weight:720;line-height:1.35
+    }
+    .option:hover{border-color:#aaa3ec;background:#faf9ff}
+    .option.selected{border-color:var(--accent);background:#f0eefe;box-shadow:inset 0 0 0 1px var(--accent)}
+    .bw-grid{display:grid;gap:10px}
+    .bw-item{
+      display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:10px;
+      padding:13px 14px;border:1px solid var(--line);border-radius:15px;background:white
+    }
+    .chip{
+      border:1px solid var(--line);background:#f8f9fb;border-radius:999px;padding:7px 10px;font-size:.78rem;font-weight:800
+    }
+    .chip.most.active{background:#e8f7f3;color:#167b6d;border-color:#77cabb}
+    .chip.least.active{background:#fff1f2;color:#a83d4a;border-color:#e2a3aa}
+    .game-nav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:16px}
+    .results{display:grid;gap:22px}
+    .result-hero{padding:clamp(24px,5vw,46px);display:grid;grid-template-columns:1.2fr .8fr;gap:24px}
+    .profile-name{font-size:clamp(2rem,5vw,4rem);line-height:1;letter-spacing:-.055em;margin-bottom:16px}
+    .profile-summary{color:var(--muted);font-size:1.04rem;line-height:1.65}
+    .score-orb{
+      min-height:220px;display:grid;place-items:center;text-align:center;border-radius:20px;
+      background:linear-gradient(145deg,#f0eefe,#ecfaf7)
+    }
+    .score-orb strong{display:block;font-size:3.4rem;letter-spacing:-.06em}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+    .section{padding:26px}
+    .trait-list{display:grid;gap:15px}
+    .trait-row{display:grid;grid-template-columns:190px 1fr 48px;gap:12px;align-items:center}
+    .trait-label{font-size:.86rem;font-weight:780}
+    .bar{height:9px;border-radius:999px;background:#e8ebef;overflow:hidden}
+    .bar span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent),#9389ef)}
+    .trait-value{text-align:right;font-size:.8rem;color:var(--muted);font-weight:800}
+    .insight{
+      padding:15px 16px;border:1px solid var(--line);border-radius:15px;background:#fbfcfd;line-height:1.5
+    }
+    .insight strong{display:block;margin-bottom:5px}
+    .school-list{display:grid;gap:16px}
+    .school-card{padding:22px;border:1px solid var(--line);border-radius:18px;background:white}
+    .school-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
+    .match{
+      min-width:76px;text-align:center;padding:10px;border-radius:14px;background:#eef8f5;color:#167b6d;font-weight:900
+    }
+    .score-trio{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0 4px}
+    .score-mini{padding:10px;border:1px solid var(--line);border-radius:13px;background:#fafbfc;text-align:center}
+    .score-mini strong{display:block;font-size:1.2rem;letter-spacing:-.03em}
+    .score-mini span{font-size:.69rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+    .risk-low{background:#eaf7f3}.risk-moderate{background:#fff7e9}.risk-high,.risk-very-high{background:#fff0f2}
+    
+    .school-tags{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0}
+    .tag{font-size:.75rem;padding:6px 8px;border-radius:999px;background:#f0f2f6;color:#536076;font-weight:750}
+    .reason-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:15px}
+    .reason-grid h4{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 7px}
+    .reason-grid ul{padding-left:19px;margin:0;color:#3d4b5f;line-height:1.5;font-size:.9rem}
+
+    .evidence-level{
+      display:inline-flex;align-items:center;gap:7px;padding:6px 9px;border-radius:999px;
+      font-size:.72rem;font-weight:850;border:1px solid var(--line);background:#f7f8fa
+    }
+    .evidence-level.high{background:#e9f7f3;color:#166f63;border-color:#a7d9cf}
+    .evidence-level.medium{background:#fff6e9;color:#805c2a;border-color:#e8c99b}
+    .evidence-level.low{background:#fff0f2;color:#9c4050;border-color:#e4adb6}
+    .dossier-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:15px}
+    .dossier-box{padding:14px;border-radius:14px;background:#fafbfc;border:1px solid var(--line)}
+    .dossier-box h4{margin:0 0 8px;font-size:.77rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+    .dossier-box ul{margin:0;padding-left:18px;color:#3d4b5f;line-height:1.48;font-size:.87rem}
+    .confidence-note{font-size:.8rem;color:var(--muted);line-height:1.5;margin-top:8px}
+
+    .evidence{margin-top:14px;padding-top:13px;border-top:1px dashed var(--line)}
+    .evidence summary{cursor:pointer;color:var(--muted);font-weight:800;font-size:.82rem}
+    .source-list{font-size:.78rem;line-height:1.5;color:var(--muted);padding-left:18px}
+    .filters{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    .compare-grid{display:grid;gap:12px}
+    .compare-row{display:grid;grid-template-columns:170px 1fr 1fr;gap:12px;align-items:center}
+    .compare-bars{height:12px;border-radius:999px;background:#e8ebef;overflow:hidden}
+    .compare-bars span{display:block;height:100%}
+    .child-bar{background:var(--accent)}
+    .parent-bar{background:var(--accent2)}
+    .footer{padding:20px 0 8px;color:var(--muted);font-size:.78rem;line-height:1.5}
+    .pill-row{display:flex;gap:8px;flex-wrap:wrap}
+    .warning{
+      padding:14px 16px;border-left:4px solid var(--warm);background:#fff8ef;border-radius:10px;color:#674c2f;line-height:1.5
+    }
+    @media(max-width:800px){
+      .hero,.result-hero,.grid-2{grid-template-columns:1fr}
+      .input-grid,.filters{grid-template-columns:1fr}
+      .trait-row{grid-template-columns:120px 1fr 38px}
+      .reason-grid,.dossier-grid{grid-template-columns:1fr}
+      .compare-row{grid-template-columns:110px 1fr 1fr}
+      .hero-card{transform:none}
+    }
+    @media print{
+      body{background:white}
+      .topbar,.actions,.filters-panel,.parent-cta,.game-nav{display:none!important}
+      .panel{box-shadow:none;break-inside:avoid}
+      .app{max-width:none;padding:0}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand"><div class="mark">SF</div><span>SchoolFit Quest</span></div>
+    <div class="badge">Deep-research prototype · Perth · 21 schools · updated July 2026</div>
+  </div>
+
+  <main id="landing" class="panel hero">
+    <section>
+      <div class="badge">A school-fit game, not a school ranking</div>
+      <h1>Which school environment brings out their best?</h1>
+      <p class="lede">A scenario-based game that tests trade-offs: challenge or confidence, teacher direction or independence, ambitious peers or room to lead, sport or music, breadth or specialisation.</p>
+      <div class="input-grid">
+        <div>
+          <label for="childName">Child’s name (optional)</label>
+          <input id="childName" placeholder="e.g. Hugo" />
+        </div>
+        <div>
+          <label for="childYear">Current school year</label>
+          <select id="childYear">
+            <option>Year 3</option><option selected>Year 4</option><option>Year 5</option>
+            <option>Year 6</option><option>Year 7</option>
+          </select>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" id="startBtn">Start the child game</button>
+        <button class="btn btn-ghost" id="aboutBtn">How it works</button>
+      </div>
+      <p class="note">About 18–22 minutes. There are no “good” answers. Choose what feels most true, even when both choices sound appealing.</p>
+    </section>
+    <aside class="hero-card">
+      <div class="mini">The question behind the game</div>
+      <blockquote>“Does this child need the most impressive school, or the environment that consistently makes them lean forward?”</blockquote>
+    </aside>
+  </main>
+
+  <section id="about" class="panel section hidden">
+    <h2>How the prototype works</h2>
+    <p class="lede">The game progresses from simple forced choices, into richer behaviour scenarios, and finishes with best–worst priority selections. The same trait is tested in several different contexts, reducing the chance that one obvious answer controls the result.</p>
+    <div class="grid-2">
+      <div class="insight"><strong>Child profile</strong>Interests, motivation, response to challenge, social influence, structure, independence and pressure tolerance.</div>
+      <div class="insight"><strong>School matching</strong>Each school is profiled against the same dimensions, with cautions and links to supporting evidence.</div>
+      <div class="insight"><strong>Optional parent lens</strong>A shorter observation-based extension compares what the child chose with patterns adults have actually seen.</div>
+      <div class="insight"><strong>Not a diagnosis</strong>This is an exploratory decision aid. It has not yet been psychometrically validated and should not replace tours, conversations or professional advice.</div>
+    </div>
+    <div class="actions"><button class="btn btn-primary" id="aboutStart">Start</button><button class="btn btn-ghost" id="aboutBack">Back</button></div>
+  </section>
+
+  <section id="game" class="game-shell hidden">
+    <div class="progress-wrap">
+      <div class="progress-meta"><span id="roundLabel">Round 1</span><span id="progressText">1 of 44</span></div>
+      <div class="progress"><div id="progressBar"></div></div>
+    </div>
+    <div id="questionCard" class="panel question"></div>
+    <div class="game-nav">
+      <button class="btn btn-ghost" id="backBtn">Back</button>
+      <button class="btn btn-primary" id="nextBtn">Next</button>
+    </div>
+  </section>
+
+  <section id="results" class="results hidden">
+    <div class="panel result-hero">
+      <div>
+        <div class="badge">Child profile</div>
+        <h2 id="profileName" class="profile-name"></h2>
+        <p id="profileSummary" class="profile-summary"></p>
+        <div class="pill-row" id="topPills"></div>
+        <div class="actions">
+          <button class="btn btn-primary parent-cta" id="parentStartBtn">Add parent perspective</button>
+          <button class="btn btn-secondary" id="printBtn">Print / save PDF</button>
+          <button class="btn btn-ghost" id="restartBtn">Restart</button>
+        </div>
+      </div>
+      <div class="score-orb">
+        <div><span class="note">Best overall balance</span><strong id="topMatchScore">—</strong><span id="topMatchName"></span></div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="panel section">
+        <h3>Profile dimensions</h3>
+        <div class="trait-list" id="traitList"></div>
+      </div>
+      <div class="panel section">
+        <h3>Best-fit environment</h3>
+        <div id="environmentInsights" class="trait-list"></div>
+      </div>
+    </div>
+
+    <div id="comparisonPanel" class="panel section hidden">
+      <h3>Child and parent comparison</h3>
+      <p class="note">Differences are not errors. They often reveal the questions worth investigating.</p>
+      <div id="comparisonList" class="compare-grid"></div>
+      <div id="differenceInsights" class="trait-list" style="margin-top:18px"></div>
+      <div class="actions">
+        <button class="btn btn-secondary" id="toggleCombinedBtn">Use combined interpretation</button>
+      </div>
+    </div>
+
+    <div class="panel section filters-panel">
+      <h3>Family filters</h3>
+      <p class="note">These do not change the child profile. They adjust the practical school shortlist.</p>
+      <div class="filters">
+        <div>
+          <label>School gender</label>
+          <select id="filterGender">
+            <option value="any">No preference</option>
+            <option value="coedPreferred" selected>Co-ed preferred</option>
+            <option value="coedOnly">Co-ed only</option>
+            <option value="boysEligible">Co-ed or boys’ schools</option>
+            <option value="girlsEligible">Co-ed or girls’ schools</option>
+            <option value="boysPreferred">Boys’ school preferred</option>
+            <option value="girlsPreferred">Girls’ school preferred</option>
+            <option value="boysOnly">Boys’ schools only</option>
+            <option value="girlsOnly">Girls’ schools only</option>
+          </select>
+        </div>
+        <div>
+          <label>Annual tuition</label>
+          <select id="filterBudget">
+            <option value="public">Public only</option>
+            <option value="10000">Up to $10,000</option>
+            <option value="18000">Up to $18,000</option>
+            <option value="30000" selected>Up to $30,000</option>
+            <option value="40000">Up to $40,000</option>
+            <option value="any">No limit</option>
+          </select>
+        </div>
+        <div>
+          <label>Religious setting</label>
+          <select id="filterReligion">
+            <option value="any" selected>No preference</option>
+            <option value="light">Comfortable if not dominant</option>
+            <option value="avoid">Prefer secular</option>
+          </select>
+        </div>
+        <div>
+          <label>Travel tolerance</label>
+          <select id="filterTravel">
+            <option value="local">Prefer very local</option>
+            <option value="moderate" selected>Moderate commute</option>
+            <option value="metro">Anywhere in metro Perth</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel section">
+      <h3>How the school dossiers are weighted</h3>
+      <div class="grid-2">
+        <div class="insight"><strong>Verified structure</strong>Public School Reviews, annual reports, entry rules, subject pathways, scholarships, fees and published support structures receive the greatest weight.</div>
+        <div class="insight"><strong>Ground-level themes</strong>Student, parent, alumni and staff commentary is included only as anecdotal context. Repeated themes are more useful than isolated praise or criticism.</div>
+        <div class="insight"><strong>Contradictions</strong>The app deliberately preserves opposing evidence, such as strong formal wellbeing systems alongside reports of comparison pressure.</div>
+        <div class="insight"><strong>Unknowns</strong>Where dependable evidence is unavailable, the app generates questions for tours and current-family conversations rather than inventing a culture score.</div>
+      </div>
+    </div>
+
+    <div class="panel section">
+      <h2>Suggested Perth schools</h2>
+      <p class="lede">Matches are comparative, not verdicts. Each dossier separates verified structure, recurring ground-level themes, contradictions and important unknowns. Matches now show natural fit, developmental opportunity and risk separately. Evidence confidence varies by school.</p>
+      <div id="schoolList" class="school-list"></div>
+    </div>
+  </section>
+
+  <section id="parentGame" class="game-shell hidden">
+    <div class="progress-wrap">
+      <div class="progress-meta"><span>Optional parent perspective</span><span id="parentProgressText">1 of 18</span></div>
+      <div class="progress"><div id="parentProgressBar"></div></div>
+    </div>
+    <div id="parentQuestionCard" class="panel question"></div>
+    <div class="game-nav">
+      <button class="btn btn-ghost" id="parentBackBtn">Back</button>
+      <button class="btn btn-primary" id="parentNextBtn">Next</button>
+    </div>
+  </section>
+
+  <footer class="footer">
+    Prototype only. School profiles are interpretive summaries based on public information and limited community commentary. Some community links may require a platform login. Programs, fees and entry rules change; verify directly with each school.
+  </footer>
+</div>
+
+<script>
+const DIMS = {
+  academic:{label:"Academic challenge",desc:"Enjoys demanding ideas, advanced work and intellectual stretch."},
+  teacher:{label:"Teacher mentorship",desc:"Performs best when a respected adult notices potential and raises the bar."},
+  peerDrive:{label:"Ambitious peers",desc:"Gains energy from capable, engaged students nearby."},
+  resilience:{label:"Outperformance resilience",desc:"Stays engaged when others are currently stronger."},
+  structure:{label:"Structure and accountability",desc:"Benefits from clear standards, checkpoints and follow-through."},
+  autonomy:{label:"Creative independence",desc:"Wants room to choose methods, topics and direction."},
+  social:{label:"Social energy",desc:"Draws motivation and identity from groups, events and belonging."},
+  peerInfluence:{label:"Peer-culture sensitivity",desc:"Tends to absorb the habits and priorities of close friends."},
+  pressure:{label:"Pressure tolerance",desc:"Can sustain effort under selection, deadlines and visible comparison."},
+  music:{label:"Music and production",desc:"Prioritises performance, composition, production and sound."},
+  tech:{label:"Technology and making",desc:"Prioritises computing, media, design and building things."},
+  sport:{label:"Sport and movement",desc:"Values teams, competition, physical challenge and active school life."},
+  enterprise:{label:"Leadership and enterprise",desc:"Enjoys leading, pitching, organising and turning ideas into action."},
+  breadth:{label:"Breadth of identity",desc:"Wants several strong pathways rather than one defining specialty."},
+  grounded:{label:"Grounded social culture",desc:"Values social breadth, community connection and low status-consciousness."},
+  visibility:{label:"Need to be actively noticed",desc:"Benefits when teachers identify potential and personally direct opportunities."},
+  focus:{label:"Focused learning culture",desc:"Needs classrooms and peers where effort and attention are consistently normal."},
+  mixedGender:{label:"Co-ed preference",desc:"Prefers learning and socialising in a mixed-gender secondary-school environment."}
+};
+
+const childQuestions = [
+{type:"choice",round:"Challenge",prompt:"You can choose one class for next term. Which sounds better?",options:[
+{text:"A demanding class where you would probably be one of the strongest students.",w:{academic:2,structure:1,resilience:-1}},
+{text:"The hardest class available, where many students would begin ahead of you.",w:{academic:3,peerDrive:2,resilience:3,pressure:1}}
+]},
+{type:"choice",round:"Challenge",prompt:"You have one free afternoon each week. Which would you choose?",options:[
+{text:"A teacher-led program preparing a team for a real competition.",w:{teacher:2,structure:3,peerDrive:1,pressure:1}},
+{text:"A studio and equipment to develop any project you choose.",w:{autonomy:3,tech:1,music:1}}
+]},
+{type:"choice",round:"Interests",prompt:"Two important events happen at the same time. Which do you attend?",options:[
+{text:"A close sports final where your team needs you.",w:{sport:3,social:2,pressure:1}},
+{text:"A live showcase where you perform or present original music.",w:{music:3,social:1,pressure:1}}
+]},
+{type:"choice",round:"Interests",prompt:"Which project would you rather spend six weeks completing?",options:[
+{text:"Build and pitch a useful app, product or interactive object.",w:{tech:3,enterprise:3,autonomy:1}},
+{text:"Investigate a difficult question and present the strongest answer.",w:{academic:3,teacher:1,structure:1}}
+]},
+{type:"choice",round:"Motivation",prompt:"Your friends have started taking a group project less seriously. What would help you most?",options:[
+{text:"A teacher checks in, expects more and gives you a clear target.",w:{teacher:3,structure:3,peerInfluence:2}},
+{text:"You are allowed to leave the group and complete an ambitious version alone.",w:{autonomy:3,resilience:1,peerInfluence:-1}}
+]},
+{type:"choice",round:"Social",prompt:"In a major team project, which role feels more satisfying?",options:[
+{text:"Coordinate the group, present the idea and keep everyone moving.",w:{enterprise:3,social:3,structure:1}},
+{text:"Become the specialist who makes the most technically impressive part.",w:{tech:2,music:1,autonomy:2,academic:1}}
+]},
+
+
+{type:"choice",round:"Motivation",prompt:"After doing excellent work, which response would matter more?",options:[
+{text:"A teacher you respect says they expected that level from you.",w:{teacher:3,structure:1}},
+{text:"You know privately that it is the best work you have ever done.",w:{autonomy:3,resilience:1}}
+]},
+{type:"choice",round:"Challenge",prompt:"You are paired with someone much more advanced than you. Which option sounds better?",options:[
+{text:"Work together and learn how they approach the task.",w:{resilience:3,peerDrive:3,social:1}},
+{text:"Work separately so you can control the whole result.",w:{autonomy:3,resilience:-1}}
+]},
+
+{type:"choice",round:"Structure",prompt:"A teacher gives you a large project. Which setup helps you do your best?",options:[
+{text:"A clear standard, weekly checkpoints and direct feedback.",w:{structure:3,teacher:3}},
+{text:"A broad goal and freedom to invent your own process.",w:{autonomy:3,enterprise:1}}
+]},
+
+
+{type:"choice",round:"Identity",prompt:"By Year 10, which would you prefer?",options:[
+{text:"Be known as exceptional in one main area.",w:{breadth:-2,pressure:1}},
+{text:"Be strong across academics, activities and several interests.",w:{breadth:3,social:1}}
+]},
+{type:"choice",round:"Social",prompt:"A new club interests you, but none of your friends are joining. What sounds more like you?",options:[
+{text:"Join anyway and see who is there.",w:{resilience:2,autonomy:2,peerInfluence:-2}},
+{text:"Choose a different activity that friends are doing.",w:{social:2,peerInfluence:3}}
+]},
+{type:"choice",round:"Challenge",prompt:"Which accomplishment sounds more satisfying?",options:[
+{text:"Winning a short, competitive challenge against strong entrants.",w:{pressure:3,peerDrive:2,enterprise:1}},
+{text:"Finishing a complex project that took months to improve.",w:{structure:2,autonomy:2,resilience:1}}
+]},
+{type:"choice",round:"Social",prompt:"Your closest friends become obsessed with a new hobby. What is more likely?",options:[
+{text:"I would probably become interested too.",w:{peerInfluence:3,social:2,breadth:1}},
+{text:"I would keep spending most of my time on my existing interests.",w:{autonomy:2,peerInfluence:-2,resilience:1}}
+]},
+{type:"choice",round:"Challenge",prompt:"Which class position feels more motivating?",options:[
+{text:"Near the top, with a real chance to lead and be recognised.",w:{teacher:1,enterprise:2,resilience:-2}},
+{text:"Around the middle, surrounded by students doing extraordinary work.",w:{peerDrive:3,resilience:3,academic:2}}
+]},
+{type:"choice",round:"Feedback",prompt:"Which feedback would make you act sooner?",options:[
+{text:"A teacher explains exactly what is holding the work back.",w:{teacher:3,structure:2}},
+{text:"Other students choose someone else’s work as the strongest.",w:{peerDrive:2,pressure:2,resilience:2}}
+]},
+{type:"choice",round:"Interests",prompt:"Which creative challenge sounds better?",options:[
+{text:"Produce an original song with strong sound, arrangement and performance.",w:{music:3,autonomy:2}},
+{text:"Code or build an interactive gadget that surprises people.",w:{tech:3,enterprise:2}}
+]},
+
+{type:"choice",round:"Pressure",prompt:"Which opportunity would you rather take?",options:[
+{text:"A selective audition or trial where not everyone gets in.",w:{pressure:3,resilience:2,peerDrive:1}},
+{text:"An open program where everyone can join and improve.",w:{grounded:2,social:2,pressure:-1}}
+]},
+{type:"choice",round:"Practical",prompt:"Which would you prefer for secondary school?",options:[
+{text:"A nearby school where friends, activities and community stay connected.",w:{grounded:3,social:2}},
+{text:"A longer commute for a highly specialised opportunity.",w:{academic:1,music:1,tech:1,pressure:1,breadth:-1}}
+]},
+{type:"choice",round:"School environment",prompt:"Two schools offer equally good subjects. Which environment sounds better?",options:[
+{text:"A large school with many programs, where you need to seek out the best opportunities.",w:{autonomy:2,breadth:3,visibility:-3}},
+{text:"A school where teachers are more likely to notice your strengths and suggest opportunities.",w:{teacher:2,structure:1,visibility:3}}
+]},
+{type:"choice",round:"School environment",prompt:"Which trade-off would you rather accept?",options:[
+{text:"Some distracted students in ordinary classes, but access to advanced classes and a broad social mix.",w:{grounded:2,breadth:2,resilience:1,focus:-3}},
+{text:"Most students are highly focused, but the atmosphere is more competitive and pressured.",w:{peerDrive:3,pressure:2,focus:3}}
+]},
+{type:"choice",round:"School culture",prompt:"Which student culture would suit you better?",options:[
+{text:"Sport is a major part of school life and top athletes are especially visible.",w:{sport:3,social:2,breadth:-1}},
+{text:"Academic, creative, sporting and leadership achievements are all similarly visible.",w:{breadth:3,grounded:2,enterprise:1}}
+]},
+{type:"choice",round:"School culture",prompt:"Which school event sounds more appealing?",options:[
+{text:"A formal ceremony with uniforms, traditions, awards and strong school identity.",w:{structure:3,pressure:1,grounded:1}},
+{text:"A relaxed showcase where students present performances, projects and unusual new ideas.",w:{autonomy:3,enterprise:2,music:1,tech:1}}
+]},
+{type:"choice",round:"Belonging",prompt:"You are accepted into a selective program. Which experience sounds better?",options:[
+{text:"Most of your classes and friendships are built around that shared strength.",w:{peerDrive:3,focus:2,breadth:-2}},
+{text:"The program matters, but you keep mixing widely with students who have different strengths.",w:{breadth:3,grounded:2,social:1}}
+]},
+{type:"choice",round:"Workload",prompt:"Which secondary-school week sounds more satisfying?",options:[
+{text:"Sport, music, clubs and academic activities on most afternoons.",w:{breadth:3,social:2,pressure:2,structure:1}},
+{text:"One or two serious commitments, with enough time to become excellent at them.",w:{autonomy:2,structure:1,pressure:-1}}
+]},
+{type:"choice",round:"Challenge",prompt:"At the end of a year, which experience would feel more successful?",options:[
+{text:"You earned excellent results and were often one of the strongest students.",w:{pressure:1,teacher:1,resilience:-2}},
+{text:"Your results were lower than before, but you learned much harder material.",w:{academic:3,resilience:3,peerDrive:1}}
+]},
+{type:"choice",round:"Creative pathways",prompt:"Which matters more in a school?",options:[
+{text:"Music and technology are excellent activities alongside the main academic program.",w:{breadth:2,music:1,tech:1}},
+{text:"Music and technology are treated as serious pathways where students create ambitious original work.",w:{music:3,tech:3,academic:1,autonomy:1}}
+]},
+{type:"choice",round:"School life",prompt:"Which social environment feels more natural for secondary school?",options:[
+{text:"Learning and socialising with boys and girls together.",w:{social:1,mixedGender:3}},
+{text:"Learning mainly with students of the same gender, with other friendships outside school.",w:{structure:1,mixedGender:-3}}
+]},
+{type:"choice",round:"Belonging",prompt:"How would you rather be grouped across the school day?",options:[
+{text:"Stay with one strong cohort for most important subjects and build close shared expectations.",w:{peerDrive:2,focus:3,breadth:-1}},
+{text:"Move between different groups depending on the subject, activity and level.",w:{breadth:3,social:1,autonomy:1}}
+]},
+{type:"scenario",round:"Real behaviour",prompt:"Another student is clearly better than you at something you care about. What are you most likely to do?",options:[
+{text:"Ask how they trained and try their approach.",w:{resilience:3,peerDrive:3}},
+{text:"Practise privately until I feel ready to compete.",w:{resilience:2,pressure:2,autonomy:1}},
+{text:"Contribute in a different area where I am strong.",w:{breadth:2,social:1,resilience:1}},
+{text:"Become quieter and let them take over.",w:{resilience:-3,peerInfluence:1}},
+{text:"Lose interest and move towards something else.",w:{resilience:-2,breadth:1}}
+]},
+{type:"scenario",round:"Real behaviour",prompt:"Your friendship group decides doing the minimum is good enough. What happens to your effort?",options:[
+{text:"It stays the same; my own goals matter more.",w:{autonomy:2,peerInfluence:-3,resilience:1}},
+{text:"I try to lift the group.",w:{enterprise:3,social:2,peerInfluence:-1}},
+{text:"It probably drops a little without me noticing.",w:{peerInfluence:3}},
+{text:"It drops unless a teacher keeps me accountable.",w:{teacher:3,structure:2,peerInfluence:2}},
+{text:"I find another group for the things I care about.",w:{resilience:2,peerDrive:2}}
+]},
+{type:"scenario",round:"Real behaviour",prompt:"You start an exciting project with no deadline. After three weeks, what is most likely?",options:[
+{text:"It is finished and I have started improving it.",w:{autonomy:3,structure:1}},
+{text:"I have made lots of it, but it may not be finished.",w:{autonomy:3,breadth:1,structure:-1}},
+{text:"I need a reminder or checkpoint to keep moving.",w:{teacher:1,structure:3}},
+{text:"I have moved to a newer idea.",w:{breadth:2,structure:-2}},
+{text:"I invite people in so the project has momentum.",w:{social:2,enterprise:2}}
+]},
+{type:"scenario",round:"Real behaviour",prompt:"A teacher gives direct criticism of work you were proud of. What happens next?",options:[
+{text:"I want to know exactly how to fix it.",w:{teacher:3,resilience:3,structure:1}},
+{text:"I feel annoyed first, then improve it later.",w:{resilience:1,autonomy:1}},
+{text:"I defend my choices and keep most of it.",w:{autonomy:2,resilience:-1}},
+{text:"I worry I have disappointed them.",w:{teacher:2,pressure:-2,resilience:-1}},
+{text:"I compare the feedback with what classmates received.",w:{peerDrive:2,pressure:1}}
+]},
+{type:"scenario",round:"Real behaviour",prompt:"You arrive at a camp or program where you know nobody. What are you most likely to do?",options:[
+{text:"Start conversations and find a group quickly.",w:{social:3,resilience:2}},
+{text:"Join through an activity or shared task.",w:{social:2,structure:1}},
+{text:"Wait for someone confident to include me.",w:{peerInfluence:2,social:1,resilience:-1}},
+{text:"Focus on the activity and friendships can come later.",w:{autonomy:2,academic:1,tech:1,music:1}},
+{text:"Feel uncomfortable enough that I participate less.",w:{resilience:-2,social:-1}}
+]},
+{type:"scenario",round:"Real behaviour",prompt:"A week contains a test, a performance and a sports final. How do you react?",options:[
+{text:"I love having several important things happening.",w:{pressure:3,breadth:3,social:1}},
+{text:"I make a plan and work through each one.",w:{structure:3,pressure:2}},
+{text:"I focus mainly on the one that matters most to me.",w:{pressure:1,breadth:-1,autonomy:1}},
+{text:"I need adults to help organise the week.",w:{teacher:2,structure:2,pressure:-1}},
+{text:"I become overwhelmed and enjoy none of them.",w:{pressure:-3}}
+]},
+{type:"scenario",round:"Real behaviour",prompt:"A teacher says you could be exceptional at something if you work much harder. What is your first reaction?",options:[
+{text:"Excited — I want to prove them right.",w:{teacher:3,pressure:2,structure:1}},
+{text:"Curious — I want to know what the next level looks like.",w:{academic:2,teacher:2,resilience:1}},
+{text:"Proud, but I still want to choose how much time it gets.",w:{autonomy:2}},
+{text:"Worried that expectations will keep increasing.",w:{pressure:-2,teacher:1}},
+{text:"More motivated if friends are doing it too.",w:{peerDrive:2,peerInfluence:2}}
+]},
+{type:"scenario",round:"Real behaviour",prompt:"You do not make a team, ensemble or selective program. What is most likely?",options:[
+{text:"Ask what I need to improve and try again.",w:{resilience:3,teacher:2,pressure:2}},
+{text:"Train privately and try again without much discussion.",w:{resilience:2,autonomy:2}},
+{text:"Choose another activity where I have a better chance.",w:{breadth:2,resilience:-1}},
+{text:"Avoid that activity for a while.",w:{resilience:-3,pressure:-1}},
+{text:"Join an open version so I can keep participating.",w:{grounded:1,social:2,resilience:1}}
+]},
+{type:"scenario",round:"Real behaviour",prompt:"Your class publishes rankings after a major task. What effect does that have?",options:[
+{text:"It makes me want to climb higher.",w:{peerDrive:3,pressure:3,resilience:2}},
+{text:"It helps me understand the standard, but I do not obsess over it.",w:{academic:2,resilience:2}},
+{text:"I enjoy it mainly when I rank highly.",w:{pressure:1,resilience:-2}},
+{text:"It distracts me from learning.",w:{pressure:-2,autonomy:1}},
+{text:"I would rather receive private feedback.",w:{teacher:2,pressure:-1}}
+]},
+{type:"scenario",round:"Real behaviour",prompt:"A subject feels boring, but the teacher expects excellent work from you. What happens?",options:[
+{text:"I still work hard because I respect the teacher.",w:{teacher:3,structure:2}},
+{text:"I find a way to connect it to my interests.",w:{autonomy:2,breadth:1}},
+{text:"I do enough to keep a good result.",w:{structure:1}},
+{text:"My effort drops because the work itself does not interest me.",w:{autonomy:1,structure:-2}},
+{text:"I work harder if classmates take it seriously.",w:{peerDrive:2,peerInfluence:2}}
+]},
+{type:"scenario",round:"Real behaviour",prompt:"A confident teammate begins controlling the project. What do you do?",options:[
+{text:"Challenge them and share leadership.",w:{enterprise:3,resilience:2,social:1}},
+{text:"Negotiate a clear area that I control.",w:{autonomy:2,structure:1,resilience:1}},
+{text:"Let them lead if the result will be strong.",w:{peerDrive:1,peerInfluence:1}},
+{text:"Become less involved.",w:{resilience:-2,peerInfluence:2}},
+{text:"Ask the teacher to clarify roles.",w:{teacher:2,structure:2}}
+]},
+{type:"scenario",round:"Real behaviour",prompt:"You get to design one new school activity. What do you create?",options:[
+{text:"A music production and live performance lab.",w:{music:3,tech:1,social:1}},
+{text:"A startup challenge where teams solve a real problem.",w:{enterprise:3,tech:2,academic:1}},
+{text:"A high-level academic competition club.",w:{academic:3,peerDrive:2,pressure:1}},
+{text:"A social sports league with serious finals.",w:{sport:3,social:2,pressure:1}},
+{text:"A rotating program so students try all of these.",w:{breadth:3,grounded:1}}
+]},
+{type:"scenario",round:"Real behaviour",prompt:"Your schoolwork feels too easy, but the teacher has not noticed. What are you most likely to do?",options:[
+{text:"Ask directly for harder work.",w:{academic:2,autonomy:2,visibility:-2}},
+{text:"Make the task harder or more interesting in my own way.",w:{autonomy:3,academic:1,visibility:-1}},
+{text:"Finish quickly and move on.",w:{structure:1,visibility:1}},
+{text:"Wait until the teacher challenges me.",w:{teacher:2,visibility:3}},
+{text:"Become distracted or put in less effort.",w:{peerInfluence:1,structure:-2,visibility:2}}
+]},
+{type:"scenario",round:"Real behaviour",prompt:"You are in a class where several students are distracting others. What is most likely?",options:[
+{text:"I keep working and mostly ignore it.",w:{resilience:3,autonomy:1,focus:-1}},
+{text:"I work well if the teacher maintains clear control.",w:{structure:3,teacher:2,focus:2}},
+{text:"My effort gradually drops with the group.",w:{peerInfluence:3,focus:3}},
+{text:"I become frustrated and want a more focused class.",w:{academic:1,focus:3}},
+{text:"I use the social energy but still complete strong work.",w:{social:2,resilience:2,focus:-2}}
+]},
+{type:"bestworst",round:"Priorities",prompt:"Which would matter MOST and LEAST at a school?",items:[
+{text:"Teachers who know what I am capable of.",w:{teacher:2,structure:1}},
+{text:"Students who take achievement seriously.",w:{peerDrive:2,academic:1}},
+{text:"Excellent creative and technical equipment.",w:{music:1,tech:2,autonomy:1}},
+{text:"A busy, friendly social life.",w:{social:2,grounded:1}}
+]},
+{type:"bestworst",round:"Priorities",prompt:"Choose the MOST and LEAST valuable opportunity.",items:[
+{text:"Strong sports teams and training.",w:{sport:2,social:1}},
+{text:"Advanced academic classes.",w:{academic:2,peerDrive:1}},
+{text:"Music studios, ensembles and performances.",w:{music:2,social:1}},
+{text:"Innovation, enterprise and product programs.",w:{tech:1,enterprise:2}}
+]},
+{type:"bestworst",round:"Priorities",prompt:"Which school quality matters MOST and LEAST?",items:[
+{text:"Clear standards and firm follow-up.",w:{structure:2,teacher:1}},
+{text:"Freedom to create unusual projects.",w:{autonomy:2,tech:1,music:1}},
+{text:"Competitions, auditions and awards.",w:{pressure:2,peerDrive:1}},
+{text:"A kind, grounded community.",w:{grounded:2,social:1}}
+]},
+{type:"bestworst",round:"Priorities",prompt:"Which student experience sounds MOST and LEAST appealing?",items:[
+{text:"Keeping local friendships and community links.",w:{grounded:2,social:1}},
+{text:"Belonging to a highly specialised cohort.",w:{peerDrive:2,breadth:-1}},
+{text:"Meeting students with very different strengths.",w:{breadth:2,grounded:1}},
+{text:"Belonging to a school with a prestigious reputation.",w:{pressure:1,academic:1,grounded:-1}}
+]},
+{type:"bestworst",round:"Priorities",prompt:"After completing hard work, which matters MOST and LEAST?",items:[
+{text:"A respected teacher gives detailed feedback.",w:{teacher:2,structure:1}},
+{text:"The work is publicly recognised.",w:{pressure:2,social:1}},
+{text:"I had freedom to make it my own.",w:{autonomy:2}},
+{text:"The whole team succeeded together.",w:{social:2,enterprise:1}}
+]},
+{type:"bestworst",round:"Priorities",prompt:"Which weekly activity would matter MOST and LEAST?",items:[
+{text:"Focused music practice or production.",w:{music:2,structure:1}},
+{text:"Open workshop time for making and coding.",w:{tech:2,autonomy:1}},
+{text:"Team training for a competitive sport.",w:{sport:2,peerDrive:1}},
+{text:"Debating, quizzes or academic challenges.",w:{academic:2,pressure:1}}
+]},
+{type:"bestworst",round:"Priorities",prompt:"Which role would you MOST and LEAST like to be known for?",items:[
+{text:"The person who quietly produces excellent work.",w:{autonomy:1,resilience:1}},
+{text:"The performer who energises the room.",w:{music:1,social:2}},
+{text:"The leader who turns ideas into action.",w:{enterprise:2,social:1}},
+{text:"The inventor who makes something new.",w:{tech:2,autonomy:1}}
+]},
+{type:"bestworst",round:"Priorities",prompt:"Which balance matters MOST and LEAST?",items:[
+{text:"Low stress and plenty of space.",w:{pressure:-2,autonomy:1}},
+{text:"High expectations and regular challenge.",w:{academic:1,teacher:1,pressure:2}},
+{text:"Many different pathways to explore.",w:{breadth:2}},
+{text:"A strong identity built around one talent.",w:{breadth:-2,pressure:1}}
+]}
+];
+
+const parentQuestions = [
+{type:"scenario",prompt:"When your child realises another child is significantly more capable, what usually happens?",options:[
+{text:"They become more determined and seek ideas from them.",w:{resilience:3,peerDrive:3}},
+{text:"They practise privately but remain involved.",w:{resilience:2,pressure:1}},
+{text:"They find another way to contribute.",w:{breadth:2,resilience:1}},
+{text:"They become quieter or step back.",w:{resilience:-3,peerInfluence:2}},
+{text:"They lose interest in the activity.",w:{resilience:-3}}
+]},
+{type:"scenario",prompt:"Without a deadline or adult follow-up, what usually happens to a self-directed project?",options:[
+{text:"It is completed independently.",w:{autonomy:3,structure:1}},
+{text:"They work intensely but may not finish.",w:{autonomy:3,structure:-1}},
+{text:"They need occasional checkpoints.",w:{structure:2,teacher:1}},
+{text:"They lose momentum quickly.",w:{structure:-3}},
+{text:"They recruit others to keep it moving.",w:{social:2,enterprise:2}}
+]},
+{type:"scenario",prompt:"How strongly does their friendship group affect effort and interests?",options:[
+{text:"Very little; they maintain their own direction.",w:{peerInfluence:-3,autonomy:2}},
+{text:"Somewhat, but adults and existing goals still matter.",w:{peerInfluence:1,teacher:1}},
+{text:"A lot; they absorb the group’s habits.",w:{peerInfluence:3,social:2}},
+{text:"It depends on whether they feel confident in the activity.",w:{peerInfluence:2,resilience:-1}}
+]},
+{type:"scenario",prompt:"Which adults have produced their strongest work?",options:[
+{text:"Warm teachers who build confidence.",w:{teacher:2,pressure:-1}},
+{text:"Demanding teachers who clearly expect more.",w:{teacher:3,structure:2,pressure:1}},
+{text:"Teachers who give them freedom and resources.",w:{autonomy:3,teacher:1}},
+{text:"Adult influence matters less than the peer group.",w:{peerDrive:2,peerInfluence:2}}
+]},
+{type:"scenario",prompt:"When praised publicly, what is the usual effect?",options:[
+{text:"They become noticeably more motivated.",w:{pressure:2,teacher:2,social:1}},
+{text:"They enjoy it but work similarly either way.",w:{resilience:1}},
+{text:"They become anxious about maintaining the standard.",w:{pressure:-2,teacher:1}},
+{text:"They dislike the attention.",w:{social:-1,pressure:-1}}
+]},
+{type:"scenario",prompt:"When a teacher says the work is not yet good enough, what usually follows?",options:[
+{text:"They rapidly improve it.",w:{teacher:3,resilience:3,structure:1}},
+{text:"They feel hurt but return to it later.",w:{resilience:1,teacher:1}},
+{text:"They argue or defend the work.",w:{autonomy:2,resilience:-1}},
+{text:"They disengage.",w:{resilience:-3,pressure:-2}}
+]},
+{type:"scenario",prompt:"How do they handle a crowded week of commitments?",options:[
+{text:"They become energised by it.",w:{pressure:3,breadth:2}},
+{text:"They manage well with a plan.",w:{structure:3,pressure:2}},
+{text:"They manage if an adult organises it.",w:{teacher:2,structure:2}},
+{text:"They become overwhelmed.",w:{pressure:-3}}
+]},
+{type:"scenario",prompt:"In group activities, which role appears most often?",options:[
+{text:"Leader or organiser.",w:{enterprise:3,social:2}},
+{text:"Social connector who keeps everyone involved.",w:{social:3,grounded:1}},
+{text:"Specialist who makes a key contribution.",w:{autonomy:2,tech:1,music:1}},
+{text:"Follower who joins the group’s direction.",w:{peerInfluence:2}},
+{text:"Observer who may step back.",w:{resilience:-1,social:-1}}
+]},
+{type:"scenario",prompt:"How often do they choose an activity without friends joining?",options:[
+{text:"Often.",w:{autonomy:2,peerInfluence:-3,resilience:2}},
+{text:"Sometimes, if very interested.",w:{autonomy:1,peerInfluence:-1}},
+{text:"Rarely.",w:{peerInfluence:3,social:1}},
+{text:"They join, but participate less confidently.",w:{resilience:-1,peerInfluence:1}}
+]},
+{type:"scenario",prompt:"What most reliably turns ability into sustained effort?",options:[
+{text:"A teacher relationship and high expectation.",w:{teacher:3,structure:2}},
+{text:"A competition, ranking or public goal.",w:{pressure:3,peerDrive:2}},
+{text:"Deep personal interest.",w:{autonomy:3}},
+{text:"Friends who are equally committed.",w:{peerDrive:3,peerInfluence:2}},
+{text:"A busy routine with fixed commitments.",w:{structure:3}}
+]},
+{type:"scenario",prompt:"Which concern feels most realistic in a highly selective cohort?",options:[
+{text:"They would thrive and learn from stronger peers.",w:{resilience:3,peerDrive:3}},
+{text:"They would work hard but become stressed.",w:{pressure:-1,peerDrive:2}},
+{text:"They may become less visible or confident.",w:{resilience:-3,peerInfluence:1}},
+{text:"They would not care much about comparisons.",w:{peerDrive:-1,resilience:2}}
+]},
+{type:"scenario",prompt:"When schoolwork is easy, what tends to happen?",options:[
+{text:"They ask for more or extend it themselves.",w:{academic:3,autonomy:2}},
+{text:"They complete it well but do not seek more.",w:{structure:1}},
+{text:"They coast unless an adult raises the standard.",w:{teacher:3,structure:2}},
+{text:"They become distracted by friends or other interests.",w:{peerInfluence:2,breadth:1}}
+]},
+{type:"scenario",prompt:"Which interest currently survives without adult prompting?",options:[
+{text:"Academic learning or puzzles.",w:{academic:3,autonomy:1}},
+{text:"Music, performance or production.",w:{music:3,autonomy:1}},
+{text:"Technology, building or computing.",w:{tech:3,autonomy:1}},
+{text:"Sport or physical activity.",w:{sport:3,social:1}},
+{text:"Organising, selling or leading projects.",w:{enterprise:3}}
+]},
+{type:"scenario",prompt:"Which setting most often brings out their social confidence?",options:[
+{text:"A broad mixed group.",w:{grounded:2,social:3}},
+{text:"A group built around a shared talent.",w:{peerDrive:2,social:2}},
+{text:"A team with clear roles.",w:{structure:1,social:2}},
+{text:"One-to-one or small groups.",w:{teacher:1,social:-1}}
+]},
+{type:"scenario",prompt:"How important is being among the strongest to their confidence?",options:[
+{text:"Not very; strong peers usually energise them.",w:{resilience:3,peerDrive:2}},
+{text:"Somewhat; they need regular evidence of success.",w:{resilience:1,teacher:1}},
+{text:"Very; they can withdraw when clearly outperformed.",w:{resilience:-3,peerInfluence:1}},
+{text:"It varies greatly by activity.",w:{breadth:2}}
+]},
+{type:"scenario",prompt:"Which learning structure most consistently works?",options:[
+{text:"Clear steps, deadlines and checks.",w:{structure:3,teacher:2}},
+{text:"A difficult goal with freedom inside it.",w:{structure:1,autonomy:3}},
+{text:"Full independence.",w:{autonomy:3,structure:-1}},
+{text:"Collaborative work with committed peers.",w:{peerDrive:2,social:2}}
+]},
+{type:"scenario",prompt:"What type of school culture would most likely shape them positively?",options:[
+{text:"Ambitious, academically focused peers.",w:{peerDrive:3,academic:2}},
+{text:"Active, social students involved in many things.",w:{social:3,breadth:2}},
+{text:"Creative and technically adventurous students.",w:{music:1,tech:2,autonomy:2}},
+{text:"Grounded students from varied backgrounds.",w:{grounded:3}},
+{text:"A traditional, highly structured community.",w:{structure:3}}
+]},
+{type:"scenario",prompt:"Which risk should a school choice guard against most?",options:[
+{text:"Coasting because peers do not value effort.",w:{peerInfluence:3,peerDrive:2}},
+{text:"Losing confidence among exceptional peers.",w:{resilience:-3,pressure:-1}},
+{text:"Losing interest because everything is over-structured.",w:{autonomy:3,structure:-2}},
+{text:"Becoming overwhelmed by too many commitments.",w:{pressure:-3,breadth:-1}},
+{text:"Narrowing too early into one identity.",w:{breadth:3}}
+]}
+,
+{type:"scenario",prompt:"When opportunities are not personally offered, what usually happens?",options:[
+{text:"They seek them out and ask directly.",w:{autonomy:2,visibility:-3}},
+{text:"They notice opportunities but need a small prompt.",w:{visibility:1,structure:1}},
+{text:"They usually wait for a teacher or adult to identify them.",w:{teacher:2,visibility:3}},
+{text:"They may miss opportunities even when highly capable.",w:{visibility:3,structure:-1}}
+]},
+{type:"scenario",prompt:"Which secondary-school social setting appears more natural for them?",options:[
+{text:"A co-ed environment.",w:{mixedGender:3,social:1}},
+{text:"A same-gender environment.",w:{mixedGender:-3,structure:1}},
+{text:"There is no clear preference.",w:{mixedGender:0}},
+{text:"Their comfort depends much more on the particular peer group.",w:{peerInfluence:2}}
+]},
+{type:"scenario",prompt:"How strongly does unfocused classroom behaviour affect their effort?",options:[
+{text:"Very little; they maintain their own standard.",w:{resilience:3,focus:-1}},
+{text:"They work well when the teacher maintains firm control.",w:{structure:3,teacher:2,focus:2}},
+{text:"Their effort gradually follows the group.",w:{peerInfluence:3,focus:3}},
+{text:"They become frustrated or disengaged.",w:{focus:3,resilience:-1}}
+]}
+];
+
+const schools = [
+{
+name:"Melville Senior High School — Academic Extension",
+short:"Melville AEP",type:"Public · co-ed · local comprehensive",coed:true,fee:500,religion:"secular",travel:"local",
+attrs:{academic:76,teacher:66,peerAmbition:69,peerIntensity:60,structure:79,autonomy:62,social:84,music:76,tech:78,sport:80,enterprise:62,breadth:92,grounded:90,pressure:59},
+strengths:["Academic Extension across Mathematics, English, Science and Humanities in Years 7–10.","Broad co-ed environment with music, media, technology, sport and specialist pathways.","Local community and a wider social mix may help preserve perspective."],
+cautions:["Peer ambition is less uniform outside extension classes.","A socially adaptable student may need deliberate involvement in ambitious activities and strong teacher relationships.","Family advocacy may matter more than in a highly curated independent setting."],
+community:"Community evidence located for Melville was too thin and mixed to score confidently. Treat the peer-culture assessment as a structural inference, not a verified reputation.",
+evidenceLevel:"High",
+evidenceNote:"2024 Public School Review, 2024–25 annual reporting and current program information; independent community evidence remains limited.",
+groundThemes:["A credible high-performing public option rather than merely the convenient local default.", "Academic Extension and specialist programs create ambitious sub-groups inside a socially broad, multicultural school.", "Recent school reporting shows strong WACE completion and a meaningful group of high-ATAR students."],
+contradictions:["Strong upper academic outcomes coexist with a broader mainstream cohort whose motivation and behaviour will naturally vary.", "Program structures are clear, but the lived quality of teacher mentorship may depend on the class and teacher."],
+unknowns:["How consistently capable students are noticed and challenged before they begin coasting.", "Whether Academic Extension students form a socially ambitious peer group outside their core classes.", "How easy it is to move into the highest pathways later if a student develops rapidly."],
+tourQuestions:["What happens when a capable student is meeting the standard but you believe they could do much more?", "How are students selected, reviewed and moved between Academic Extension and mainstream classes?", "Which teachers or structures provide an ongoing mentoring relationship from Years 7–10?"],
+sources:[
+["Annual reports and Public School Reviews","https://melville.wa.edu.au/about/annual-reports-business-plans-and-school-reviews/"],
+["2025 Annual Report","https://melville.wa.edu.au/wp-content/uploads/2026/03/Annual-Report-2025-Schools-Online-Upload.pdf"],
+["Community discussion: Melville and nearby options","https://www.reddit.com/r/perth/comments/1dfizdk/help_with_choice_of_high_school/"],
+["Academic Extension Course","https://melville.wa.edu.au/school-programs/school-based-programs/academic-extension-course/"],
+["Learning and specialist pathways","https://melville.wa.edu.au/learning/"],
+["Music in Focus","https://melville.wa.edu.au/school-programs/school-based-programs/music-in-focus/"],
+["Awards and achievements","https://melville.wa.edu.au/about/awards-and-achievements/"]
+]
+},
+{
+name:"All Saints’ College",
+short:"All Saints",type:"Independent Anglican · co-ed",coed:true,fee:26716,religion:"light",travel:"local",
+attrs:{academic:79,teacher:89,peerAmbition:75,peerIntensity:65,structure:73,autonomy:89,social:86,music:94,tech:88,sport:82,enterprise:94,breadth:91,grounded:71,pressure:63},
+strengths:["Strong personalisation, teacher visibility and flexible pathways.","Excellent fit for a student combining music, production, technology and enterprise.","Large co-curricular ecosystem makes active participation easy to sustain."],
+cautions:["High fees remain substantial even with a partial scholarship.","Not academically selective, so private fees do not guarantee an ambitious friendship group.","The socioeconomic environment is less socially broad than a comprehensive public school."],
+community:"Recent public community commentary was limited. The prototype therefore gives official program evidence far more weight than anecdotal claims about culture.",
+evidenceLevel:"High",
+evidenceNote:"Current annual report, scholarship and program information, plus limited alumni and parent discussion. Culture claims still rely more on school evidence than broad independent sampling.",
+groundThemes:["Personalisation, teacher visibility and flexible pathways are genuine structural features, not just a single specialist program.", "Older alumni commentary describes teachers encouraging difficult subjects and providing tutoring rather than protecting headline results.", "The school has unusually strong alignment across music, production, innovation, enterprise and broad co-curricular participation."],
+contradictions:["A progressive, individualised educational philosophy still operates within an expensive independent-school socioeconomic environment.", "Not being academically selective means an ambitious institutional culture does not guarantee an ambitious friendship group."],
+unknowns:["How consistently contemporary production and DAW expertise are valued alongside conventional performance.", "How scholarship students and families from ordinary incomes experience the social culture.", "Whether highly able students receive firm accountability as well as freedom and personalisation."],
+tourQuestions:["How do you respond when a talented student uses flexibility to coast rather than extend themselves?", "Can contemporary composition, production and DAW work materially influence music or innovation scholarship selection?", "What does the school do to keep achievement culture grounded rather than status-driven?"],
+sources:[
+["2025 Annual Report","https://www.allsaints.wa.edu.au/fs/resource-manager/view/9175261e-5fab-465c-bebc-513e5bfc3391"],
+["Community discussion: All Saints Bull Creek","https://www.reddit.com/r/perth/comments/sup9p1/all_saints_college_bull_creek/"],
+["Alumni discussion of academic support","https://www.reddit.com/r/perth/comments/2rtfrj/all_saints_college_tops_school_league_tables/"],
+["Scholarships overview","https://www.allsaints.wa.edu.au/enrolments/scholarships"],
+["Academic scholarship","https://www.allsaints.wa.edu.au/enrolments/scholarships/academic-scholarship"],
+["Music scholarship","https://www.allsaints.wa.edu.au/enrolments/scholarships/music-scholarship"],
+["Innovation and entrepreneurship scholarship","https://www.allsaints.wa.edu.au/enrolments/scholarships/innovation-and-entrepreneurship-scholarship"],
+["Fee calculator","https://www.allsaints.wa.edu.au/enrolments/fee-calculator"]
+]
+},
+{
+name:"Perth Modern School",
+short:"Perth Modern",type:"Public · co-ed · fully academically selective",coed:true,fee:500,religion:"secular",travel:"metro",
+attrs:{academic:100,teacher:76,peerAmbition:100,peerIntensity:99,structure:83,autonomy:73,social:73,music:69,tech:74,sport:55,enterprise:64,breadth:69,grounded:69,pressure:91},
+strengths:["WA’s only fully academically selective co-ed secondary school.","Exceptionally strong peer ambition and sustained intellectual challenge.","Official materials emphasise gifted education, belonging, wellbeing and community service."],
+cautions:["A child who needs to feel near the top may become quieter or overly pressured.","Academic comparison is difficult to escape because the whole cohort is selective.","Less natural fit when sport, broad social identity or contemporary creative production are central."],
+community:"Reddit accounts are sharply mixed: some describe exceptional peers and opportunities; others describe intense comparison, burnout or past workplace-culture concerns. These are anecdotes, not representative survey data.",
+evidenceLevel:"High",
+evidenceNote:"Department of Education Public School Review, official gifted-education information, socioeconomic reporting and multiple current student or parent discussions.",
+groundThemes:["Students commonly describe relief at being in a place where academic ability is normal and socially accepted.", "The official review describes a high-performance environment with strong wellbeing, advocacy and belonging structures.", "The student body is highly socio-educationally advantaged despite the school being public."],
+contradictions:["Some current students report little school-generated pressure, while other alumni and community accounts describe intense comparison or burnout.", "Formal wellbeing structures can be strong while the ambient effect of constant exceptional peers remains demanding for particular personalities."],
+unknowns:["How a child who withdraws when outperformed adjusts during the first two years.", "How much pressure differs between friendship groups, families and subject areas.", "Whether a student can sustain a broad music, sport and social identity without academics becoming the dominant identity."],
+tourQuestions:["How do you support students who were previously top of their cohort and become average here?", "What evidence do you track about perfectionism, comparison and withdrawal in Years 7–9?", "How do advocacy teachers identify quiet disengagement rather than obvious academic struggle?"],
+sources:[
+["Current-student discussion of pressure and belonging","https://www.reddit.com/r/perth/comments/1ptqck2/perth_modern_school_celebrates_83_students_with/"],
+["ABC report on socio-educational advantage","https://www.abc.net.au/news/2019-07-09/perth-modern-school-ranks-second-in-australia-socio-advantage/11288146"],
+["Official school overview","https://www.perthmodern.wa.edu.au/"],
+["Vision and values","https://www.perthmodern.wa.edu.au/vision-values/"],
+["Public School Review (2023)","https://www.perthmodern.wa.edu.au/wp-content/uploads/2024/07/Perth-Modern-School-Public-School-Review-report-June-2023.pdf"],
+["Reddit: thoughts for a new Year 7","https://www.reddit.com/r/perth/comments/1lg1nxo/perth_modern_thoughts_for_a_new_year_7/"],
+["Reddit: Perth Modern or another GAT school","https://www.reddit.com/r/perth/comments/v255re/schooling_perth_modern_or_other_gat_school/"]
+]
+},
+{
+name:"John Curtin College of the Arts",
+short:"John Curtin",type:"Public · co-ed · selective arts pathways",coed:true,fee:700,religion:"secular",travel:"moderate",
+attrs:{academic:73,teacher:83,peerAmbition:86,peerIntensity:79,structure:79,autonomy:85,social:90,music:100,tech:93,sport:72,enterprise:82,breadth:84,grounded:84,pressure:74},
+strengths:["Exceptional music, media and arts ecosystem with selective peers who care deeply about making things.","Strong potential fit for a social child whose music identity includes production and technology.","Public and co-ed, with a broad creative community rather than a purely academic hierarchy."],
+cautions:["Admission requires the ASET plus a specialist audition or portfolio for GAT Arts.","The specialist identity can become demanding and time-intensive.","Traditional audition criteria may not fully recognise advanced DAW skills without strong performance or portfolio evidence."],
+community:"Available Reddit discussions commonly praise the arts programs and community culture, while also noting that the larger school still contains varied behaviour and student groups.",
+evidenceLevel:"High",
+evidenceNote:"Current annual reporting, formal selective-program information and several detailed community discussions comparing specialist and local-intake experiences.",
+groundThemes:["Specialist arts cohorts are repeatedly described as strong communities where creative commitment is socially normal.", "Students can be surrounded by peers who take music, media, performance and making seriously without an entirely academic hierarchy.", "Community accounts distinguish the excellent specialist-program experience from the greater variability of a large public school."],
+contradictions:["The selective arts culture can be highly cohesive, while mainstream behaviour and experience may differ considerably.", "Creative belonging can increase confidence, but the specialist workload and auditions can still create pressure."],
+unknowns:["How advanced beatmaking and DAW production are weighed within the Music audition rather than Media Arts.", "How easily students cross between specialist cohorts and broader social groups.", "Whether academic extension is strong enough for a student who is both creative and highly academic."],
+tourQuestions:["Where would an advanced young producer fit best: Music, Media Arts or another pathway?", "How much original composition, recording and DAW production occurs in Years 7–10 Music?", "How do specialist students balance intensive arts commitments with top academic pathways?"],
+sources:[
+["Annual Reports","https://www.jc.wa.edu.au/resource/annual-report/"],
+["Gifted and Talented Arts programs","https://www.jc.wa.edu.au/programs/gifted-talented-programs/"],
+["Music program","https://www.jc.wa.edu.au/programs/gifted-talented-programs/music/"],
+["Application process","https://www.jc.wa.edu.au/join-us/how-to-apply/"],
+["Reddit: JCCA review and feedback","https://www.reddit.com/r/perth/comments/1mx4rkm/john_curtin_college_arts_jcca_reviewfeedback/"],
+["Reddit: John Curtin or private Catholic","https://www.reddit.com/r/perth/comments/1dqjvzd/john_curtin_college_of_the_arts_or_private/"]
+]
+},
+{
+name:"Corpus Christi College",
+short:"Corpus Christi",type:"Catholic independent · co-ed",coed:true,fee:9390,religion:"strong",travel:"local",
+attrs:{academic:73,teacher:83,peerAmbition:71,peerIntensity:63,structure:87,autonomy:63,social:83,music:76,tech:72,sport:83,enterprise:67,breadth:78,grounded:76,pressure:65},
+strengths:["Structured co-ed environment with strong pastoral and participation systems.","Lower fees than All Saints while still providing an independent-school framework.","Potential fit for a child who benefits from routines, monitoring and active school life."],
+cautions:["Catholic identity is a real part of the school, not merely branding.","Less obvious fit for advanced contemporary music production and enterprise than All Saints or John Curtin.","Current public community evidence is too limited for confident claims about cohort culture."],
+community:"The prototype found insufficient recurring community commentary to make a reliable culture claim. A tour and current-family conversations would be essential.",
+evidenceLevel:"Medium",
+evidenceNote:"Current annual reports and official program information are available; independent cultural commentary is sparse and mostly anecdotal.",
+groundThemes:["Corpus has a credible academic focus, broad upper-school subject choice and substantial arts, theatre and sporting facilities.", "Pastoral structure and whole-person development are prominent parts of its model.", "One local discussion characterised it as academically focused, while also noting ordinary school-level behaviour and accountability concerns."],
+contradictions:["It offers extension and strong pathways but remains non-selective, so peer ambition is not uniform.", "High-quality facilities and pastoral structures do not by themselves establish how aggressively top students are extended."],
+unknowns:["How the Academic Excellence pathway operates day to day and how students retain their place.", "Whether contemporary music production is a serious pathway or mainly performance and classroom music.", "How strongly peer culture rewards academic, artistic and sporting achievement."],
+tourQuestions:["How are high-achieving students grouped, monitored and extended in Years 7–10?", "What happens when an academically capable student begins doing only enough?", "Which contemporary music, recording or production opportunities exist before Year 11?"],
+sources:[
+["Annual Reports and school profile","https://www.corpus.wa.edu.au/school-profile"],
+["Community comparison: central-south high schools","https://www.reddit.com/r/perth/comments/1jothya/high_schools_central_south/"],
+["Fees and charges","https://www.corpus.wa.edu.au/fees-charges"],
+["College website","https://www.corpus.wa.edu.au/"],
+["Indicative Year 7 fee listing","https://www.goodschools.com.au/compare-schools/in-bateman-6150/corpus-christi-college/fees"]
+]
+},
+{
+name:"Aquinas College",
+short:"Aquinas",type:"Catholic independent · boys",coed:false,fee:18000,religion:"strong",travel:"moderate",
+attrs:{academic:78,teacher:81,peerAmbition:77,peerIntensity:70,structure:89,autonomy:65,social:84,music:84,tech:74,sport:96,enterprise:75,breadth:82,grounded:72,pressure:72},
+strengths:["Very structured culture with major sport, music, co-curricular and extension opportunities.","Academic and music scholarships currently offer up to 50% tuition remission.","Could suit a boy strongly activated by tradition, teams, visible standards and teacher expectation."],
+cautions:["Single-sex and Catholic, which may conflict with a family preference for co-ed social development.","Traditional boys’ school culture needs direct evaluation rather than assumptions from programs alone.","Music scholarships require substantial ensemble, choral and school-program commitment."],
+community:"Included as a contrasting school type. The prototype has not yet completed a systematic community-feedback review for Aquinas.",
+evidenceLevel:"Medium",
+evidenceNote:"Strong official evidence on structure, sport, music, service and scholarships; limited recent independent evidence about everyday student culture.",
+groundThemes:["A highly structured boys’ environment with visible ladders across sport, music, academics, service and leadership.", "The school’s Edmund Rice identity stresses character and contribution as well as achievement.", "Relative to the highest-fee PSA schools, it may draw a somewhat broader family base, but this is not verified social evidence."],
+contradictions:["Grounded service language coexists with a traditional, prestigious boys’ school and boarding culture.", "Strong teams and traditions can provide belonging while also narrowing accepted models of masculinity."],
+unknowns:["How students who are musical, technical and social but not sport-dominant experience the peer hierarchy.", "How overt wealth and status are in ordinary student life.", "How scholarship students integrate socially."],
+tourQuestions:["What kinds of boys are socially respected here beyond elite athletes?", "How does the College actively challenge unhealthy versions of boys’ culture?", "How are high-potential students mentored when they are doing well but could do more?"],
+sources:[
+["College overview","https://www.aquinas.wa.edu.au/"],
+["CEWA school profile","https://www.cewa.edu.au/school/aquinas-college-salter-point-salter-point/"],
+["Scholarships","https://www.aquinas.wa.edu.au/apply/scholarships"],
+["Student life and extension","https://www.aquinas.wa.edu.au/studentlife"],
+["Extended day and co-curricular program","https://www.aquinas.wa.edu.au/studentlife/extendedday"],
+["Arts","https://www.aquinas.wa.edu.au/studentlife/arts"]
+]
+},
+{
+name:"Rossmoyne Senior High School",
+short:"Rossmoyne",type:"Public · co-ed · high-performing comprehensive",coed:true,fee:650,religion:"secular",travel:"moderate",
+attrs:{academic:89,teacher:72,peerAmbition:88,peerIntensity:77,structure:84,autonomy:64,social:82,music:91,tech:79,sport:86,enterprise:60,breadth:90,grounded:81,pressure:76},
+strengths:["Strong academic culture with specialist Mathematics, Classical Music and Volleyball pathways.","Large, established music program and broad technology, media and arts choices.","Offers a high-achievement environment without making the entire school academically selective."],
+cautions:["The specialist music pathway is classical and ensemble-centred rather than focused on contemporary production.","Access generally depends on the intake area or successful specialist-program entry.","A strong academic reputation can still create comparison pressure in upper pathways."],
+community:"Public reputation is strongly achievement-oriented, but accessible community commentary was too fragmented to make reliable claims about current student culture.",
+evidenceLevel:"High",
+evidenceNote:"Current official program information, Schools Online context and extensive public reputation evidence; independent culture commentary is mixed and less systematic.",
+groundThemes:["Rossmoyne is widely regarded as academically challenging, diverse and rich in extracurricular opportunity.", "It combines a strong comprehensive-school academic culture with specialist Classical Music, Mathematics and Volleyball.", "Its parent population is highly socio-educationally advantaged for a public school."],
+contradictions:["Academic strength and diversity are widely praised, while isolated discussions raise concerns about bullying or the pressures of a large high-performing school.", "The specialist music strength is classical and ensemble-based, which may not directly serve a producer-first student."],
+unknowns:["How much academic challenge differs between local mainstream, extension and specialist cohorts.", "How effectively quieter students are protected in a very large school.", "Whether contemporary music production has a meaningful pathway."],
+tourQuestions:["How are academically strong local-intake students extended if they are not in a specialist program?", "What pastoral structures identify bullying, withdrawal or loss of confidence early?", "How could a contemporary pianist-producer contribute within the Classical Music ecosystem?"],
+sources:[
+["Schools Online overview","https://www.det.wa.edu.au/schoolsonline/overview.do?schoolID=4048"],
+["Community comparison: Rossmoyne and Willetton","https://www.reddit.com/r/perth/comments/1jkdt1k/high_schools_in_perth/"],
+["Community discussion: public versus private options","https://www.reddit.com/r/perth/comments/1dfizdk/help_with_choice_of_high_school/"],
+["Academic extension and specialist programs","https://www.rossmoyne.wa.edu.au/learning/academic-extension/"],
+["Music program","https://www.rossmoyne.wa.edu.au/learning/learning-areas/music/"],
+["Specialist Classical Music","https://www.rossmoyne.wa.edu.au/enrolment/specialist-programs/specialist-classical-music-program/"],
+["Student pathways","https://www.rossmoyne.wa.edu.au/learning/student-pathways/year-8-student-pathways/"]
+]
+},
+{
+name:"Willetton Senior High School",
+short:"Willetton",type:"Public · co-ed · selective academic pathway",coed:true,fee:650,religion:"secular",travel:"moderate",
+attrs:{academic:93,teacher:76,peerAmbition:93,peerIntensity:84,structure:86,autonomy:66,social:85,music:78,tech:82,sport:90,enterprise:64,breadth:92,grounded:80,pressure:82},
+strengths:["Highly developed Gifted and Talented academic cohort with access to music, computer science, languages, arts and specialist basketball.","Strong peer ambition while students still mix with a broad comprehensive-school population.","University-linked extension and academic competition opportunities."],
+cautions:["The selective academic cohort may reproduce some of the comparison risks of Perth Modern, although within a broader school.","Out-of-area access is generally tied to selective entry.","Music is a credible pathway but not as contemporary-production focused as Fremantle College or John Curtin."],
+community:"The school’s academic reputation is strong, but current student-culture evidence located publicly was insufficient for a confident social assessment.",
+evidenceLevel:"High",
+evidenceNote:"Strong official evidence on GATE, scale and outcomes, plus limited but recurring community comparison with Rossmoyne.",
+groundThemes:["Willetton offers a highly ambitious GATE cohort inside one of Perth’s largest and most diverse public secondary schools.", "Academic, robotics, music, sport and competition opportunities are extensive.", "Community discussions often pair it with Rossmoyne as a serious public academic option."],
+contradictions:["The large, diverse comprehensive environment provides breadth but may make individual experience heavily cohort-dependent.", "Anecdotal concerns about bullying appear in public discussion, while official material emphasises positivity, responsibility and resilience."],
+unknowns:["How the social world of GATE students intersects with the wider 2,000-plus-student school.", "How students who dislike not being the best respond inside the selective cohort.", "How consistently high achievers receive individual adult mentorship."],
+tourQuestions:["How do GATE students mix socially with the wider school?", "What support exists for students whose confidence drops when they are no longer near the top?", "How does the school preserve individual teacher knowledge in such a large cohort?"],
+sources:[
+["Schools Online overview","https://www.det.wa.edu.au/schoolsonline/overview.do?schoolID=4126"],
+["Community comparison: Willetton and Rossmoyne","https://www.reddit.com/r/perth/comments/1jkdt1k/high_schools_in_perth/"],
+["Gifted and Talented program","https://www.willettonshs.wa.edu.au/gifted-and-talented/"],
+["Selective programs","https://www.willettonshs.wa.edu.au/selective-programs/"],
+["Gifted and Talented news and university extension","https://www.willettonshs.wa.edu.au/gifted-talented-buzz/"],
+["School website","https://www.willettonshs.wa.edu.au/"]
+]
+},
+{
+name:"Applecross Senior High School — Academic Extension",
+short:"Applecross",type:"Public · co-ed · local extension and specialist arts",coed:true,fee:650,religion:"secular",travel:"local",
+attrs:{academic:83,teacher:74,peerAmbition:79,peerIntensity:68,structure:80,autonomy:80,social:85,music:77,tech:74,sport:86,enterprise:66,breadth:92,grounded:83,pressure:66},
+strengths:["Academic Extension operates across Mathematics, English, Science and Humanities for Years 7–10.","Strong arts identity through the selective Visual Arts program, plus music and specialist tennis.","Broad co-ed environment with a less uniformly intense academic identity."],
+cautions:["Academic Extension is an in-house pathway and does not provide out-of-area entry.","Its strongest selective arts identity is visual art rather than music production.","Peer ambition will vary more widely than in a fully selective cohort."],
+community:"Accessible feedback was too limited and inconsistent for a reliable culture rating; the profile is based mainly on program structure.",
+evidenceLevel:"Medium",
+evidenceNote:"Good official evidence on Academic Extension, Visual Arts, tennis and curriculum breadth; limited current independent commentary.",
+groundThemes:["Applecross offers strong local academic extension without requiring the entire student identity to be selective.", "Its arts, chess and tennis traditions create several respected forms of achievement.", "The broad co-ed setting may suit a socially versatile student who needs both challenge and room to lead."],
+contradictions:["Academic Extension is a school-based pathway rather than an out-of-area selective intake.", "The school is high-performing, but peer ambition will vary substantially beyond extension classes."],
+unknowns:["How demanding the extension curriculum is compared with Melville AEP, Willetton GATE or Shenton HPL.", "How frequently movement between extension and mainstream occurs.", "Whether music and production are culturally prominent enough for a serious young musician."],
+tourQuestions:["What distinguishes Academic Extension work from the mainstream curriculum in practice?", "How are extension placements reviewed and can students move in later?", "Which music, media and technology activities attract the school’s most engaged students?"],
+sources:[
+["Academic Extension programs","https://applecross.wa.edu.au/specialist-programs/academic-extension-and-enrichment-programs/"],
+["Specialist programs","https://applecross.wa.edu.au/specialist-programs/"],
+["Gifted and Talented Visual Art","https://applecross.wa.edu.au/specialist-programs/gifted-and-talented-program/"],
+["The Arts","https://applecross.wa.edu.au/teaching-and-learning/the-arts/"]
+]
+},
+{
+name:"Shenton College — HPL / GATE",
+short:"Shenton",type:"Public · co-ed · selective and high-performance pathways",coed:true,fee:700,religion:"secular",travel:"metro",
+attrs:{academic:92,teacher:81,peerAmbition:94,peerIntensity:86,structure:82,autonomy:78,social:88,music:78,tech:84,sport:78,enterprise:74,breadth:91,grounded:79,pressure:80},
+strengths:["Offers both Gifted and Talented Education and a High Performance Learning pathway across the four core areas.","Selective students spend substantial time together but still mix across arts, technologies, languages and physical education.","Strong breadth and high expectations without the entire school being academically selective."],
+cautions:["GATE remains a demanding selective cohort and may be too comparison-heavy for some children.","Out-of-area entry is limited to GATE.","Travel from the southern suburbs may reduce local friendships and spontaneous participation."],
+community:"Public commentary generally reflects a strong academic reputation, but this prototype has not found enough current, specific evidence to rate everyday culture confidently.",
+evidenceLevel:"High",
+evidenceNote:"Strong official evidence on GATE, High Performance Learning, broad pathways and catchment; limited detailed current student commentary.",
+groundThemes:["Shenton combines selective academic pathways with a broader high-performing school and unusually wide co-curricular options.", "The catchment itself is highly socio-educationally advantaged, so strong achievement culture extends beyond GATE.", "Students can retain broader identities through arts, technologies, languages, sport and service."],
+contradictions:["A public-school model avoids tuition fees but not necessarily an affluent western-suburbs bubble.", "GATE can be demanding, while HPL may provide a less intense route for students needing challenge without full selective immersion."],
+unknowns:["How different the peer and pressure cultures are between GATE, HPL and local-intake students.", "How actively teachers mentor students who are capable but socially inclined to coast.", "Whether the commute would materially weaken local belonging."],
+tourQuestions:["For this child, how would you distinguish HPL from GATE as the healthier level of challenge?", "How do students move between pathways if their needs change?", "What does pastoral support look like for quiet withdrawal rather than low marks?"],
+sources:[
+["Academic programs","https://www.shenton.wa.edu.au/join-us/academic-programs/"],
+["GATE program","https://www.shenton.wa.edu.au/information/structure/academic-programs/gate/"],
+["Co-curricular learning","https://www.shenton.wa.edu.au/learning/co-curricular/"],
+["Catchment and out-of-area entry","https://www.shenton.wa.edu.au/join-us/catchment-area/"]
+]
+},
+{
+name:"Fremantle College",
+short:"Fremantle College",type:"Public · co-ed · selective, contemporary and specialist",coed:true,fee:750,religion:"secular",travel:"moderate",
+attrs:{academic:78,teacher:80,peerAmbition:76,peerIntensity:66,structure:77,autonomy:88,social:89,music:98,tech:96,sport:82,enterprise:84,breadth:94,grounded:91,pressure:64},
+strengths:["Unusually strong combination of Gifted and Talented academics, Contemporary Music, ICT, Marine Studies and AFL pathways.","Contemporary Music explicitly includes writing, arranging, recording, performing and access to digital recording facilities.","A broad, socially mixed co-ed environment with multiple ways to belong and excel."],
+cautions:["The whole-school academic culture is likely less consistently ambitious than at Rossmoyne, Willetton or Shenton.","A highly peer-sensitive student may still need the right specialist or extension cohort and active adult mentorship.","Specialist Music entry expects instrumental or vocal learning, audition and evidence of practice."],
+community:"Community commentary was limited, so the strong creative fit is based on verified program design rather than claims about the whole student cohort.",
+evidenceLevel:"High",
+evidenceNote:"2025 Public School Review, 2024 annual reporting and detailed specialist-program information; community reputation remains mixed.",
+groundThemes:["Fremantle has one of the clearest contemporary-music and ICT combinations in the Perth public system.", "The official review and current messaging emphasise students being known, specialist identity and a culture of improvement.", "Community discussions reveal a lingering mixed reputation, while several comments distinguish the current school and specialist cohorts from older perceptions."],
+contradictions:["Creative and specialist pathways are impressive, while whole-school academic consistency may be less automatic than at Rossmoyne or Shenton.", "A welcoming broad community can be a strength for social development and a risk for a highly peer-sensitive student if the wrong group becomes dominant."],
+unknowns:["How strong the highest academic pathway feels for a student capable of top-tier ATAR work.", "How much specialist Contemporary Music uses modern DAWs, production aesthetics and original release workflows.", "How behaviour and ambition differ between specialist and mainstream cohorts."],
+tourQuestions:["Can we see examples of student production, recording and original contemporary work from Years 7–10?", "How are high-achieving specialist students extended academically?", "What structures keep specialist students connected to committed peers beyond their program classes?"],
+sources:[
+["2025 Public School Review","https://fremantlecollege.wa.edu.au/wp-content/uploads/2026/04/Fremantle-College-Public-School-Review-report-June-2025.pdf"],
+["2024 Annual Report","https://fremantlecollege.wa.edu.au/wp-content/uploads/2025/04/Annual-Report-2024-Website.pdf"],
+["Community discussion: Fremantle College reputation","https://www.reddit.com/r/perth/comments/15a0meh/is_fremantle_college_that_bad/"],
+["Learning and specialist pathways","https://fremantlecollege.wa.edu.au/programs/"],
+["Specialist Contemporary Music","https://fremantlecollege.wa.edu.au/programs/specialist-contemporary-music/"],
+["Specialist ICT","https://fremantlecollege.wa.edu.au/programs/specialist-ict/"],
+["Specialist program applications","https://fremantlecollege.wa.edu.au/applications-for-approved-specialist-programs/"]
+]
+},
+{
+name:"Kennedy Baptist College",
+short:"Kennedy",type:"Independent Baptist · co-ed",coed:true,fee:11990,religion:"strong",travel:"local",
+attrs:{academic:77,teacher:85,peerAmbition:75,peerIntensity:65,structure:89,autonomy:67,social:87,music:85,tech:77,sport:90,enterprise:70,breadth:88,grounded:75,pressure:66},
+strengths:["Structured, co-ed independent environment with academic, sport, music and broad extracurricular pathways.","Instrumental music includes piano, contemporary instruments, voice, ensembles and senior ATAR or General Music.","Fees are substantially below Perth’s highest-fee independent schools."],
+cautions:["Scholarships are currently needs-based rather than open academic or music merit awards for all families.","Christian identity is explicit and should align with family values.","The peer cohort is not academically selective, so ambition will still vary."],
+community:"Current public commentary was insufficient for a reliable culture profile. The app therefore scores Kennedy mainly from its structure, programs and stated expectations.",
+evidenceLevel:"Medium",
+evidenceNote:"Current official evidence on fees, programs and Christian identity; very limited independent cultural evidence, including one critical parent-style comment.",
+groundThemes:["Kennedy provides a structured, comparatively affordable co-ed independent environment with broad activities and contemporary instruments.", "Its university-campus location and large extracurricular offering may suit academically and socially active students.", "One public parent discussion described the culture as polished or corporate despite inclusive messaging; this is a single anecdote."],
+contradictions:["Strong community language and formal structure do not establish whether students feel individually known.", "The school offers broad opportunity but not a selective academic peer cohort."],
+unknowns:["How prominent Baptist belief and practice feel to students from non-religious families.", "Whether ambitious students form a visible, socially attractive peer group.", "How strongly contemporary production, enterprise and technology are integrated."],
+tourQuestions:["How is Christian belief expressed in everyday classes and expectations?", "What structures identify and challenge students who are achieving comfortably but coasting?", "Which co-curricular groups attract the most academically and creatively ambitious students?"],
+sources:[
+["Parent discussion: Kennedy culture","https://www.facebook.com/groups/554043600212251/posts/1042395488043724/"],
+["Fees and charges","https://kennedy.wa.edu.au/enrol/fees/"],
+["Scholarships","https://kennedy.wa.edu.au/enrol/scholarships/"],
+["Specialist programs","https://kennedy.wa.edu.au/discover/specialist-programs/"],
+["Academic and extracurricular offering","https://kennedy.wa.edu.au/discover/"]
+]
+},
+{
+name:"Carey Baptist College — Harrisdale",
+short:"Carey Harrisdale",type:"Independent Baptist · co-ed · GATE pathways",coed:true,fee:11928,religion:"strong",travel:"metro",
+attrs:{academic:85,teacher:85,peerAmbition:83,peerIntensity:72,structure:87,autonomy:77,social:85,music:93,tech:94,sport:84,enterprise:78,breadth:92,grounded:75,pressure:72},
+strengths:["GATE pathways in STEM, Music and academic enrichment create ambitious sub-cohorts within a broad co-ed school.","Music Specialist education includes contemporary popular music, classical music, jazz and musical theatre.","Current GATE scholarships can substantially reduce tuition for successful applicants."],
+cautions:["The Baptist identity is substantive and should be considered directly.","The school is not fully selective outside GATE pathways.","The commute from Melville may weaken local friendship and community benefits."],
+community:"There was not enough recent, school-specific community evidence to draw firm conclusions about culture; program evidence carries most of the weight.",
+evidenceLevel:"Medium",
+evidenceNote:"Strong official evidence on GATE Music, STEM and scholarships; limited current independent student and parent commentary.",
+groundThemes:["Carey’s GATE pathways create targeted high-ability cohorts inside a broad co-ed Christian school.", "The Music pathway explicitly spans contemporary popular music, classical, jazz and musical theatre.", "The wider campus community is active and institutionally connected through church and community services."],
+contradictions:["A broad, growing campus can offer many opportunities while making individual culture difficult to infer from marketing.", "GATE pathways may be excellent, while the rest of the school remains non-selective."],
+unknowns:["How deeply advanced production and DAW practice sit within GATE Music.", "How strong the academic peer culture is outside GATE.", "How the explicit Baptist identity affects students from families who do not share it."],
+tourQuestions:["Can production and original DAW work be a major component of GATE Music selection and study?", "How much of the timetable is shared with the GATE cohort?", "How do you maintain individual mentoring in a campus of this size?"],
+sources:[
+["GATE programs and scholarships","https://carey.wa.edu.au/harrisdale/secondary/"],
+["Music Specialist program","https://carey.wa.edu.au/harrisdale/gatemusic/"],
+["STEM program","https://carey.wa.edu.au/harrisdale/gatestem/"],
+["Student scholarships","https://carey.wa.edu.au/scholarships/"]
+]
+},
+{
+name:"Scotch College",
+short:"Scotch",type:"Independent Presbyterian tradition · boys",coed:false,fee:35932,religion:"light",travel:"metro",
+attrs:{academic:89,teacher:88,peerAmbition:89,peerIntensity:83,structure:92,autonomy:76,social:91,music:92,tech:82,sport:99,enterprise:84,breadth:96,grounded:59,pressure:84},
+strengths:["Extremely broad co-curricular ecosystem with more than 100 enrichment activities and over 30 music ensembles.","Academic, music and other scholarships provide pathways for high-potential students.","Strong pastoral structures, sport and visible ladders for achievement."],
+cautions:["Single-sex and a high-fee, prestigious environment may conflict with family preferences around social breadth and wealth culture.","Compulsory PSA sport and extensive commitments may shape the student experience strongly.","High peer ambition and status signals may be energising for some children and distorting for others."],
+community:"Claims about wealth culture are a structural risk inference, not a finding about every family or student. Direct observation and current-family conversations are essential.",
+evidenceLevel:"High",
+evidenceNote:"Extensive official information on IB, scholarships, music and co-curricular life; cultural interpretation is supported mainly by socioeconomic structure and broader private-school discussion rather than representative student data.",
+groundThemes:["Scotch provides extraordinary breadth, with deep music, sport, IB, service, leadership and more than 100 enrichment activities.", "Achievement and participation are highly visible parts of the institutional identity.", "The social environment is structurally affluent and tradition-rich."],
+contradictions:["The school explicitly promotes service and grounded character, while fees, location, networks and tradition create a powerful prestige context.", "Exceptional opportunity can broaden a child or make the institution itself central to identity."],
+unknowns:["How socially comfortable scholarship and middle-income students feel.", "Which types of boys hold social status beyond sport, wealth and extroversion.", "How the school handles entitlement, gender attitudes and unhealthy group norms in practice."],
+tourQuestions:["What evidence do you have that boys from varied financial backgrounds feel equal belonging?", "How do music, academics and service compare with sport in the student social hierarchy?", "How are boys explicitly taught to challenge entitlement and status-driven masculinity?"],
+sources:[
+["Scholarships","https://www.scotch.wa.edu.au/admissions/scholarships/"],
+["Secondary school","https://www.scotch.wa.edu.au/a-broad-education/secondary-school/"],
+["Co-curricular program","https://www.scotch.wa.edu.au/a-broad-education/co-curricular/"],
+["Fees","https://www.scotch.wa.edu.au/admissions/fees/"]
+]
+},
+{
+name:"Christ Church Grammar School",
+short:"Christ Church",type:"Independent Anglican · boys",coed:false,fee:35000,religion:"light",travel:"metro",
+attrs:{academic:92,teacher:91,peerAmbition:92,peerIntensity:88,structure:94,autonomy:76,social:92,music:94,tech:86,sport:99,enterprise:86,breadth:97,grounded:58,pressure:90},
+strengths:["High expectations, extensive academic extension, sport, arts, service and leadership opportunities.","Music scholarships currently combine major tuition remission with instrumental tuition.","A strong fit for boys motivated by respected teachers, visible standards and institutional recognition."],
+cautions:["Single-sex and deeply embedded in Perth’s elite independent-school ecosystem.","A highly approval-driven child may thrive academically while absorbing a culture the family does not value.","High intensity, cost and status context make cultural fit at least as important as program quality."],
+community:"The culture cautions are not claims that individual students are entitled or ungrounded. They reflect the family’s stated concern about socioeconomic bubbles and prestige-centred identity.",
+evidenceLevel:"High",
+evidenceNote:"Strong official evidence on academic, music, pastoral and scholarship structures, plus current socioeconomic reporting showing an exceptionally affluent parent body.",
+groundThemes:["Christ Church offers intense academic extension, major sport, music, leadership, service and highly visible teacher expectations.", "Music scholarships provide substantial tuition remission and instrumental support.", "Recent reporting places its parent-income profile among the most affluent in Australia."],
+contradictions:["The environment could activate a praise-responsive high achiever exceptionally well while also normalising a wealth and prestige culture the family rejects.", "Strong pastoral language and ‘good men’ formation must be weighed against the social power of an elite single-sex network."],
+unknowns:["How much scholarship students experience class or status difference.", "Whether students can reject dominant wealth signals without social penalty.", "How the school responds when high expectation becomes perfectionism."],
+tourQuestions:["How do you prevent wealth and family status from shaping student hierarchy?", "What support is provided to scholarship students beyond the financial award?", "How do teachers distinguish healthy ambition from approval-driven perfectionism?"],
+sources:[
+["Music scholarship details","https://www.ccgs.wa.edu.au/enrolments/scholarships/council-entrance-academic-scholarships"],
+["Student-created financial-need scholarship","https://www.perth.anglican.org/news-and-events/news/scholarship"],
+["Scholarships","https://www.ccgs.wa.edu.au/enrolments/scholarships"],
+["Council academic and music scholarships","https://www.ccgs.wa.edu.au/enrolments/scholarships/council-entrance-academic-scholarships"],
+["Senior School learning","https://www.ccgs.wa.edu.au/learning-at-christ-church/senior-school"],
+["Fees","https://www.ccgs.wa.edu.au/enrolments/fees"]
+]
+},
+{
+name:"Hale School",
+short:"Hale",type:"Independent Anglican tradition · boys",coed:false,fee:34000,religion:"light",travel:"metro",
+attrs:{academic:91,teacher:87,peerAmbition:89,peerIntensity:85,structure:92,autonomy:74,social:89,music:92,tech:84,sport:99,enterprise:81,breadth:95,grounded:61,pressure:86},
+strengths:["Strong academic enrichment, music, creative arts, service, leadership, outdoor education and PSA sport.","Academic and music scholarship pathways can materially reduce fees, with some needs-based awards offering deeper remission.","Highly structured boys’ education with substantial institutional resources."],
+cautions:["Single-sex and high-fee culture may not suit a family prioritising co-ed social development and socioeconomic breadth.","A non-refundable endowment fee adds significantly to entry cost.","Strong tradition and competition can become identity-forming beyond the classroom."],
+community:"The school presents a contemporary approach within a traditional boys’ institution. The app does not treat marketing claims or isolated anecdotes as proof of everyday culture.",
+evidenceLevel:"Medium",
+evidenceNote:"Extensive official program evidence and public financial reporting; relatively little current independent evidence about ordinary student experience.",
+groundThemes:["Hale provides substantial academic, music, sport, outdoor, service and leadership pathways within a traditional boys’ institution.", "Pastoral and wellbeing programs have been reviewed and formalised over time.", "The school has major resources and a powerful alumni identity."],
+contradictions:["Contemporary learning and wellbeing initiatives sit inside a high-fee, historic and socially exclusive structure.", "Strong institutional belonging can be protective while also making tradition and hierarchy unusually influential."],
+unknowns:["How the current student culture treats boys who are creative, technical or non-sporting.", "How visible wealth and alumni status are in everyday peer life.", "Whether the school’s stated pastoral model consistently reaches quiet students."],
+tourQuestions:["Which boys tend to be socially influential, and how has that changed in recent years?", "How do you support boys who are not primarily identified through sport?", "What does financial and social inclusion look like for scholarship families?"],
+sources:[
+["Pastoral and learning Annual Report","https://www.hale.wa.edu.au/wp-content/uploads/2020/10/Annual-Report-2019-abridged.pdf"],
+["Scholarships","https://www.hale.wa.edu.au/scholarships/"],
+["Learning support and enrichment","https://www.hale.wa.edu.au/learning/learning-support-enrichment/"],
+["Music and creative arts","https://www.hale.wa.edu.au/learning/performing-and-creative-arts/music/"],
+["Fees","https://www.hale.wa.edu.au/fees/"]
+]
+},
+{
+name:"Wesley College",
+short:"Wesley",type:"Uniting Church independent · boys in secondary years",coed:false,fee:33000,religion:"light",travel:"moderate",
+attrs:{academic:85,teacher:88,peerAmbition:84,peerIntensity:76,structure:88,autonomy:82,social:95,music:93,tech:83,sport:98,enterprise:87,breadth:98,grounded:69,pressure:78},
+strengths:["Very broad all-round offering across academics, sport, music, service, leadership and enterprise.","The Year 8 Katitjin experience and extensive co-curricular program emphasise independence, community and personal development.","Music scholarships recognise piano and contemporary instruments as well as traditional orchestral instruments."],
+cautions:["Secondary schooling is single-sex despite the College being co-ed in early years.","High fees and PSA-school culture remain significant contextual factors.","Compulsory sport and a very busy program may overwhelm children who prefer fewer, deeper commitments."],
+community:"Wesley’s stated culture places unusual emphasis on breadth, service and personal development, but the socioeconomic environment remains less broad than a public school.",
+evidenceLevel:"Medium",
+evidenceNote:"Strong official evidence on scholarships, Katitjin, music and breadth; limited independent evidence includes positive parent discussion about pastoral support.",
+groundThemes:["Wesley’s distinctive strength is breadth: sport, music, enterprise, service, outdoor learning and the Year 8 Katitjin experience.", "Community commentary located for the prototype was notably positive about pastoral care and supportive teachers, though not representative.", "Music scholarships recognise piano and contemporary instruments."],
+contradictions:["The school’s whole-child and community emphasis sits within a high-fee PSA environment.", "It is co-ed in early years but boys only in secondary years, which may be obscured by the broader College identity."],
+unknowns:["How academically demanding the environment is for a child needing strong external push.", "How status and wealth shape the secondary peer culture.", "Whether breadth leads to meaningful depth for an advanced producer."],
+tourQuestions:["How are high-achieving students held accountable when they are involved in many activities?", "What is the actual secondary-school social culture for scholarship and middle-income families?", "How far can a student progress in contemporary production, not only instrumental performance?"],
+sources:[
+["Parent discussion: pastoral care and culture","https://www.facebook.com/groups/554043600212251/posts/1314607947489142/"],
+["Scholarships","https://www.wesley.wa.edu.au/enrolment/scholarships/"],
+["Katitjin","https://www.wesley.wa.edu.au/learning/what-is-katitjin/"],
+["Co-curricular activities","https://www.wesley.wa.edu.au/learning/co-curricular/"],
+["Fees","https://www.wesley.wa.edu.au/enrolment/fee-schedule-business-arrangements/"]
+]
+},
+{
+name:"CBC Fremantle",
+short:"CBC Fremantle",type:"Catholic independent · boys",coed:false,fee:11900,religion:"strong",travel:"moderate",
+attrs:{academic:80,teacher:87,peerAmbition:78,peerIntensity:70,structure:92,autonomy:67,social:90,music:88,tech:79,sport:95,enterprise:75,breadth:87,grounded:79,pressure:73},
+strengths:["Academic Excellence Program uses enriched and accelerated classes for top-achieving students, with continued entry tied to performance.","Strong boys’ school structure, sport, service, music, arts and pastoral identity at a mid-tier independent-school cost.","Music scholarships support individual tuition and require active involvement in ensembles, choir and music classes."],
+cautions:["CBC does not currently offer academic scholarships.","Single-sex and explicitly Catholic, with a strong ‘how boys learn’ philosophy.","Music scholarships support tuition rather than providing a major reduction in school fees."],
+community:"CBC may offer a more grounded alternative to Perth’s highest-fee boys’ schools, but this remains an inference from fee level, location and institutional model rather than representative social data.",
+evidenceLevel:"High",
+evidenceNote:"Current performance reporting, Academic Excellence and music scholarship information, plus contrasting alumni and community commentary.",
+groundThemes:["CBC offers a structured, local boys’ environment with academic extension, sport, service, music and a strong institutional identity at a lower fee than PSA schools.", "The Academic Excellence Program has performance-based continuation, which may create useful accountability.", "One older alumni account strongly criticised embedded toxic masculinity; this is important but cannot establish the current culture by itself."],
+contradictions:["The College presents a modern Edmund Rice model of good men and service, while some former-student commentary describes a traditional masculine culture negatively.", "It may be more financially and geographically grounded than elite boys’ schools while still carrying single-sex cultural risks."],
+unknowns:["How much the boys’ culture has changed since older alumni experiences.", "Whether music and creative students hold meaningful social status.", "How scholarship or non-Catholic students experience belonging."],
+tourQuestions:["How have you explicitly addressed unhealthy masculine norms in recent years?", "How do creative, academic and non-sporting boys experience the school socially?", "What evidence shows the Academic Excellence Program improves learning rather than simply sorting students?"],
+sources:[
+["2024 School Performance Report","https://www.cbcfremantle.wa.edu.au/download/upload/pages/school-performance-information/performance-report-2024-25-01-07.pdf"],
+["Alumni discussion: Fremantle-area schools","https://www.reddit.com/r/perth/comments/f8kqli/opinions_on_high_schools_around_freo/"],
+["Academic Excellence Program","https://www.cbcfremantle.wa.edu.au/view/learning-support-and-extension/academic-excellence-program"],
+["Music scholarships and bursaries","https://www.cbcfremantle.wa.edu.au/view/enrolments/scholarships-and-bursaries"],
+["Learning at CBC","https://www.cbcfremantle.wa.edu.au/view/learning-at-cbc/learning-at-cbc"],
+["Arts","https://www.cbcfremantle.wa.edu.au/view/co-curricular/co-curricular-arts"],
+["Enrolments and fees","https://www.cbcfremantle.wa.edu.au/view/enrolments"]
+]
+},
+{
+name:"Iona Presentation College",
+short:"Iona",type:"Catholic independent · girls in Years 7–12",coed:false,gender:"girls",fee:12000,religion:"strong",travel:"metro",
+attrs:{academic:84,teacher:88,peerAmbition:82,peerIntensity:72,structure:88,autonomy:75,social:91,music:94,tech:80,sport:91,enterprise:74,breadth:95,grounded:73,pressure:72},
+strengths:["Academic Excellence includes differentiated learning, advanced classes and a substantial academic co-curricular program.","Strong performing-arts culture with choirs, orchestras, bands, rock bands, production crews and composition opportunities.","Academic, General Excellence and Music scholarship pathways recognise broad contribution as well as achievement."],
+cautions:["The Senior School is girls only and Catholic identity is explicit.","The Mosman Park location may mean a significant commute from the southern suburbs.","Its music ecosystem is broad and performance-rich, but advanced DAW production should be checked directly."],
+community:"Iona publicly emphasises inclusion, participation and more than 80 co-curricular groups. Independent community evidence was too limited for stronger claims about peer culture.",
+evidenceLevel:"High",
+evidenceNote:"Strong official evidence on Academic Excellence, music, co-curricular life and scholarships, plus limited positive workplace and parent discussion.",
+groundThemes:["Iona has a deep performing-arts culture with orchestras, choirs, bands, rock groups, productions and visible celebration of achievement.", "Academic, General Excellence and Music scholarships allow several kinds of high-potential student to be recognised.", "Limited workplace commentary praises caring students, staff culture and the music department."],
+contradictions:["A broad, participatory girls’ culture may support confidence, while western-suburbs location and independent fees still narrow socioeconomic breadth.", "Performance opportunities are extensive, but advanced production depth is not yet clear."],
+unknowns:["How competitive the peer culture feels to students who dislike not being the best.", "How strongly teachers push already successful students.", "How DAW production and composition are valued relative to ensembles and performance."],
+tourQuestions:["Can contemporary production and composition form a substantial part of a music scholarship portfolio?", "How do you support high achievers who become anxious or withdraw around exceptional peers?", "What does Academic Excellence look like in ordinary classroom grouping?"],
+sources:[
+["Community comparison: Iona and PLC","https://www.reddit.com/r/perth/comments/1g7na0z/plc_school_vs_iona_presentation/"],
+["Staff review summary","https://au.seek.com/companies/iona-presentation-college-798500"],
+["Academic Excellence","https://www.iona.wa.edu.au/life-at-iona/enriched-learning/academic-excellence"],
+["Senior School academics","https://www.iona.wa.edu.au/life-at-iona/senior-school-2/academics-2"],
+["Senior School arts and music","https://www.iona.wa.edu.au/life-at-iona/senior-school-2/arts-2"],
+["Scholarships","https://www.iona.wa.edu.au/enrolments/scholarships"],
+["Fees","https://www.iona.wa.edu.au/enrolments/fees"]
+]
+},
+{
+name:"Santa Maria College",
+short:"Santa Maria",type:"Catholic independent · girls · day and boarding",coed:false,gender:"girls",fee:17349,religion:"strong",travel:"local",
+attrs:{academic:84,teacher:89,peerAmbition:83,peerIntensity:73,structure:90,autonomy:73,social:93,music:94,tech:82,sport:93,enterprise:78,breadth:96,grounded:77,pressure:73},
+strengths:["Strong local girls’ school combining academic achievement, wellbeing, service, leadership and broad participation.","Extensive instrumental, ensemble, choir, contemporary performance, podcasting, media, STEM and academic-extension activities.","Large co-curricular ecosystem makes it easier for a social student to build several positive peer groups."],
+cautions:["The school is non-selective, so academic ambition will still vary across friendship groups.","Catholic and Mercy identity is central to school life.","Current scholarships and bursaries appear more financially targeted than a broad open merit-scholarship system."],
+community:"The school reports a strong participation and recognition culture, but current independent parent and alumni commentary was not sufficient for a dependable social-culture score.",
+evidenceLevel:"High",
+evidenceNote:"Current official academic, co-curricular, performance and fee reporting, plus limited but positive local staff and parent commentary.",
+groundThemes:["Santa Maria combines strong academics, music, sport, media, leadership, service and social activity in a large local girls’ school.", "Its breadth makes it possible to belong to several positive peer groups rather than one narrow identity.", "One long-term former staff member publicly described it as a school they would readily choose for their own daughters."],
+contradictions:["A very broad non-selective school offers social range but cannot guarantee a uniformly ambitious friendship group.", "Traditional uniform, Catholic practice and institutional expectations may feel supportive or restrictive depending on the student."],
+unknowns:["How firmly top students are pushed in Years 7–10 before senior ATAR pathways.", "How socially influential academic and creative students are relative to sport and general popularity.", "Whether production and beatmaking have a meaningful home within the music and media ecosystem."],
+tourQuestions:["How are high-achieving girls grouped and challenged before senior school?", "Which student groups make academic and creative effort socially visible?", "Where would an advanced pianist-producer find depth in Years 7–10?"],
+sources:[
+["Community discussion: Santa Maria and All Saints","https://www.facebook.com/groups/554043600212251/posts/777197874563488/"],
+["College overview","https://santamaria.wa.edu.au/"],
+["Academic program","https://santamaria.wa.edu.au/academic/"],
+["Cultural and music opportunities","https://santamaria.wa.edu.au/cultural/"],
+["Co-curricular opportunities","https://santamaria.wa.edu.au/unleashing-student-potential-the-benefits-of-co-curricular-activities/"],
+["Scholarships and bursaries","https://santamaria.wa.edu.au/scholarship-bursary/"],
+["2026 fees and charges","https://santamaria.wa.edu.au/wp-content/uploads/2025/12/2026-Fees-Charges-vs1.pdf"]
+]
+},
+{
+name:"Seton Catholic College",
+short:"Seton",type:"Catholic independent · co-ed",coed:true,gender:"coed",fee:6029,religion:"strong",travel:"local",
+attrs:{academic:74,teacher:86,peerAmbition:70,peerIntensity:60,structure:88,autonomy:71,social:86,music:78,tech:78,sport:91,enterprise:67,breadth:87,grounded:86,pressure:61},
+strengths:["Co-ed, local and comparatively affordable, with accelerated classes and an Excellence and Creativity program.","Strong pastoral emphasis, smaller-class claims, Sport Excellence and broad extracurricular participation.","Music tuition, ensembles and internal music scholarships support active school musicians."],
+cautions:["The overall peer environment is not academically selective, so the risk of coasting depends heavily on class placement and friendship group.","Music scholarships contribute to music fees rather than substantially reducing tuition.","Catholic identity and Religious Education are part of the core experience."],
+community:"Seton presents itself as close-knit and inclusive. Accessible independent feedback was limited, so this should be tested through tours and current-family conversations.",
+evidenceLevel:"Medium",
+evidenceNote:"Current official evidence on personal attention, Excellence and Creativity, sport and music; independent commentary is sparse and includes one local perception about stronger general and trade pathways.",
+groundThemes:["Seton presents a comparatively affordable, close-knit co-ed Catholic environment with strong personal attention.", "Excellence and Creativity, accelerated classes, arts and Sport Excellence provide targeted pathways.", "One local discussion characterised the school as more general or vocational than ATAR-focused while praising its arts area; this is anecdotal."],
+contradictions:["Officially it offers a full range of academic and vocational subjects, while community perception may not place it among Perth’s strongest academic cultures.", "Close pastoral attention may be a major strength, but the peer ambition level is uncertain."],
+unknowns:["How rigorous and stable the accelerated classes are.", "Whether top-tier academic students form a sufficiently ambitious peer group.", "How contemporary and technically advanced the music offering becomes."],
+tourQuestions:["What proportion of students enter and remain in accelerated academic classes?", "How are students prepared for Methods, Specialist, Physics and Chemistry pathways?", "What happens when a highly capable student begins coasting socially?"],
+sources:[
+["Community comparison: central-south high schools","https://www.reddit.com/r/perth/comments/1jothya/high_schools_central_south/"],
+["CEWA school profile","https://www.cewa.edu.au/school/seton-catholic-college-samson/"],
+["Teaching and lower-secondary pathways","https://www.seton.wa.edu.au/overview-of-lower-and-upper-school"],
+["Excellence and Creativity","https://www.seton.wa.edu.au/excellence-and-creativity-at-seton"],
+["Music scholarships","https://www.seton.wa.edu.au/music-scholarships-1"],
+["Sports Excellence","https://www.seton.wa.edu.au/sports-excellence-program"],
+["Fees and charges","https://www.seton.wa.edu.au/fees-and-charges"]
+]
+}
+];
+
+const schoolExtraAttrs = {"Melville Senior High School — Academic Extension":{"visibility":66,"focus":68,"mixedGender":100},"All Saints’ College":{"visibility":92,"focus":76,"mixedGender":100},"Perth Modern School":{"visibility":76,"focus":99,"mixedGender":100},"John Curtin College of the Arts":{"visibility":83,"focus":77,"mixedGender":100},"Corpus Christi College":{"visibility":87,"focus":73,"mixedGender":100},"Aquinas College":{"visibility":83,"focus":80,"mixedGender":0},"Rossmoyne Senior High School":{"visibility":71,"focus":86,"mixedGender":100},"Willetton Senior High School":{"visibility":70,"focus":90,"mixedGender":100},"Applecross Senior High School — Academic Extension":{"visibility":73,"focus":76,"mixedGender":100},"Shenton College — HPL / GATE":{"visibility":79,"focus":89,"mixedGender":100},"Fremantle College":{"visibility":83,"focus":67,"mixedGender":100},"Kennedy Baptist College":{"visibility":85,"focus":73,"mixedGender":100},"Carey Baptist College — Harrisdale":{"visibility":85,"focus":79,"mixedGender":100},"Scotch College":{"visibility":87,"focus":88,"mixedGender":0},"Christ Church Grammar School":{"visibility":92,"focus":92,"mixedGender":0},"Hale School":{"visibility":88,"focus":87,"mixedGender":0},"Wesley College":{"visibility":89,"focus":83,"mixedGender":0},"CBC Fremantle":{"visibility":88,"focus":78,"mixedGender":0},"Iona Presentation College":{"visibility":89,"focus":80,"mixedGender":0},"Santa Maria College":{"visibility":90,"focus":78,"mixedGender":0},"Seton Catholic College":{"visibility":89,"focus":68,"mixedGender":100}};
+schools.forEach(sc=>Object.assign(sc.attrs,schoolExtraAttrs[sc.name]||{}));
+
+let currentIndex=0, answers={}, parentIndex=0, parentAnswers={}, childScores=null, parentScores=null, useCombined=false;
+
+const el=id=>document.getElementById(id);
+const clamp=(n,a=0,b=100)=>Math.max(a,Math.min(b,n));
+
+function showOnly(id){
+  ["landing","about","game","results","parentGame"].forEach(x=>el(x).classList.toggle("hidden",x!==id));
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function startGame(){currentIndex=0;answers={};showOnly("game");renderQuestion();}
+el("startBtn").onclick=startGame;
+el("aboutBtn").onclick=()=>showOnly("about");
+el("aboutBack").onclick=()=>showOnly("landing");
+el("aboutStart").onclick=startGame;
+
+function renderQuestion(){
+  const q=childQuestions[currentIndex], card=el("questionCard"), response=answers[currentIndex];
+  el("roundLabel").textContent=q.round;
+  el("progressText").textContent=`${currentIndex+1} of ${childQuestions.length}`;
+  el("progressBar").style.width=`${((currentIndex+1)/childQuestions.length)*100}%`;
+  let html=`<div class="q-kicker">${q.type==="bestworst"?"Priority round":"Choose what feels most true"}</div><h2 class="q-title">${q.prompt}</h2>`;
+  if(q.type==="bestworst"){
+    html+=`<p class="note">Select one MOST important and one LEAST important.</p><div class="bw-grid">`;
+    q.items.forEach((it,i)=>{
+      html+=`<div class="bw-item"><span>${it.text}</span>
+      <button class="chip most ${response?.most===i?"active":""}" data-most="${i}">Most</button>
+      <button class="chip least ${response?.least===i?"active":""}" data-least="${i}">Least</button></div>`;
+    });
+    html+=`</div>`;
+  }else{
+    html+=`<div class="options">`;
+    q.options.forEach((o,i)=>html+=`<button class="option ${response===i?"selected":""}" data-opt="${i}">${o.text}</button>`);
+    html+=`</div>`;
+  }
+  card.innerHTML=html;
+  card.querySelectorAll("[data-opt]").forEach(b=>b.onclick=()=>{answers[currentIndex]=+b.dataset.opt;renderQuestion();});
+  card.querySelectorAll("[data-most]").forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.most, r=answers[currentIndex]||{};
+    answers[currentIndex]={most:i,least:r.least===i?undefined:r.least};renderQuestion();
+  });
+  card.querySelectorAll("[data-least]").forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.least, r=answers[currentIndex]||{};
+    answers[currentIndex]={most:r.most===i?undefined:r.most,least:i};renderQuestion();
+  });
+  el("backBtn").disabled=currentIndex===0;
+  el("nextBtn").textContent=currentIndex===childQuestions.length-1?"See my profile":"Next";
+}
+function answered(q,r){
+  if(q.type==="bestworst")return r && Number.isInteger(r.most)&&Number.isInteger(r.least)&&r.most!==r.least;
+  return Number.isInteger(r);
+}
+el("backBtn").onclick=()=>{if(currentIndex>0){currentIndex--;renderQuestion();}};
+el("nextBtn").onclick=()=>{
+  const q=childQuestions[currentIndex];
+  if(!answered(q,answers[currentIndex])){alert(q.type==="bestworst"?"Choose both MOST and LEAST.":"Choose an answer first.");return;}
+  if(currentIndex<childQuestions.length-1){currentIndex++;renderQuestion();}
+  else finishChild();
+};
+
+function enumerateBounds(q,dim){
+  if(q.type==="bestworst"){
+    let vals=[];
+    q.items.forEach((m,mi)=>q.items.forEach((l,li)=>{if(mi!==li)vals.push(2*(m.w[dim]||0)-(l.w[dim]||0));}));
+    return [Math.min(...vals),Math.max(...vals)];
+  }
+  const vals=q.options.map(o=>o.w[dim]||0);
+  return [Math.min(...vals),Math.max(...vals)];
+}
+function responseValue(q,r,dim){
+  if(q.type==="bestworst")return 2*(q.items[r.most].w[dim]||0)-(q.items[r.least].w[dim]||0);
+  return q.options[r].w[dim]||0;
+}
+function scoreQuestions(qs,responses){
+  const out={};
+  Object.keys(DIMS).forEach(dim=>{
+    let raw=0,min=0,max=0,used=0;
+    qs.forEach((q,i)=>{
+      const r=responses[i]; if(!answered(q,r))return;
+      const b=enumerateBounds(q,dim);
+      raw+=responseValue(q,r,dim);min+=b[0];max+=b[1];used++;
+    });
+    out[dim]=max===min?50:clamp(Math.round((raw-min)/(max-min)*100));
+  });
+  return out;
+}
+function finishChild(){
+  childScores=scoreQuestions(childQuestions,answers);
+  useCombined=false;
+  showOnly("results");
+  renderResults();
+}
+function activeScores(){
+  if(useCombined && parentScores){
+    const s={};
+    Object.keys(DIMS).forEach(d=>s[d]=Math.round(childScores[d]*.7+parentScores[d]*.3));
+    return s;
+  }
+  return childScores;
+}
+function topDims(scores,n=5){
+  return Object.entries(scores).sort((a,b)=>b[1]-a[1]).slice(0,n);
+}
+function profileTitle(s){
+  const creative=(s.music+s.tech+s.enterprise)/3;
+  if(s.teacher>72 && creative>68 && s.social>65)return "The Mentored Creative Achiever";
+  if(s.academic>78 && s.resilience>65 && s.peerDrive>70)return "The Competitive Intellectual Explorer";
+  if(s.social>78 && s.peerInfluence>65)return "The Social Chameleon";
+  if(s.autonomy>78 && creative>70)return "The Independent Maker";
+  if(s.structure>76 && s.teacher>70)return "The Structured High-Potential Learner";
+  if(s.breadth>76 && s.social>65)return "The Multi-Pathway All-Rounder";
+  return "The Responsive, Multi-Interest Learner";
+}
+function profileText(s){
+  const parts=[];
+  if(s.teacher>68)parts.push("responds strongly when respected adults notice potential and set a clear standard");
+  if(s.visibility>68)parts.push("benefits when opportunities and expectations are actively brought to their attention");
+  if(s.autonomy>68)parts.push("still needs meaningful room to make work their own");
+  if(s.peerInfluence>62)parts.push("is likely to absorb the habits and ambitions of the surrounding friendship group");
+  if(s.resilience<48)parts.push("may step back when surrounded by people who are clearly stronger");
+  else if(s.resilience>68)parts.push("is relatively comfortable learning among stronger peers");
+  if(s.focus>70)parts.push("is likely to be affected by whether focused effort feels normal in the surrounding cohort");
+  if(s.social>68)parts.push("draws energy from a busy, socially connected school life");
+  return "This profile "+(parts.length?parts.join(", "):"shows a relatively balanced mix of motivations")+". The strongest fit is likely to combine challenge with confidence, rather than maximising prestige or selectivity for its own sake.";
+}
+function renderResults(){
+  const s=activeScores();
+  el("profileName").textContent=profileTitle(s);
+  el("profileSummary").textContent=profileText(s);
+  el("topPills").innerHTML=topDims(s,5).map(([d])=>`<span class="tag">${DIMS[d].label}</span>`).join("");
+  renderTraits(s);
+  renderInsights(s);
+  renderSchools(s);
+  if(parentScores)renderComparison();
+}
+function renderTraits(s){
+  const order=["teacher","visibility","academic","peerDrive","resilience","structure","autonomy","focus","social","peerInfluence","pressure","music","tech","sport","enterprise","breadth","grounded","mixedGender"];
+  el("traitList").innerHTML=order.map(d=>`<div class="trait-row" title="${DIMS[d].desc}">
+    <div class="trait-label">${DIMS[d].label}</div><div class="bar"><span style="width:${s[d]}%"></span></div><div class="trait-value">${s[d]}</div>
+  </div>`).join("");
+}
+function renderInsights(s){
+  const insights=[];
+  if(s.teacher>68)insights.push(["Needs visible adult belief","Look for teachers or mentors who actively identify potential, monitor effort and raise expectations."]);
+  if(s.visibility>68)insights.push(["Do not rely entirely on self-advocacy","A large opportunity-rich school may still be a weak fit if students must constantly ask to be noticed or extended."]);
+  if(s.focus>70)insights.push(["Focused peer norms matter","Investigate what ordinary classrooms feel like, not only the extension or specialist brochure."]);
+  if(s.mixedGender>68)insights.push(["Co-ed experience is part of the fit","A same-gender school should offer a compelling benefit strong enough to outweigh the child’s stated preference."]);
+  else if(s.mixedGender<32)insights.push(["Same-gender schooling may feel natural","The child does not appear to need a co-ed setting, though family values and eligibility still matter."]);
+  if(s.peerInfluence>62)insights.push(["Peer culture has unusually high leverage","The child may imitate the effort, interests and habits of close friends. Cohort culture and structured activities matter."]);
+  if(s.resilience<48)insights.push(["Avoid permanent underdog status","A uniformly elite cohort may reduce participation if the child commonly steps back around stronger peers."]);
+  else if(s.resilience>70)insights.push(["Can benefit from exceptional peers","Selective or highly advanced cohorts may energise rather than diminish confidence."]);
+  if(s.structure>65 && s.autonomy>65)insights.push(["Best with structured freedom","Set a demanding goal and checkpoints, but allow choice in method, topic and creative direction."]);
+  else if(s.structure>s.autonomy+12)insights.push(["Clear accountability matters","Regular deadlines, transparent standards and active follow-up are likely to improve consistency."]);
+  else if(s.autonomy>s.structure+12)insights.push(["Over-structuring may flatten motivation","Investigate project learning, flexible pathways and access to studios or workshops."]);
+  if(s.social>70)insights.push(["School life should be bigger than classes","Teams, clubs, performances, leadership and events may be central to engagement."]);
+  const interestTop=[["music","Music and production"],["tech","Technology and making"],["sport","Sport"],["enterprise","Enterprise and leadership"],["academic","Advanced academics"]].sort((a,b)=>s[b[0]]-s[a[0]]).slice(0,2);
+  insights.push(["Protect the strongest opportunity pair",`${interestTop[0][1]} and ${interestTop[1][1]} should both be visible, credible pathways rather than occasional electives.`]);
+  el("environmentInsights").innerHTML=insights.map(x=>`<div class="insight"><strong>${x[0]}</strong>${x[1]}</div>`).join("");
+}
+function desiredSchoolVector(s){
+  return {
+    academic:s.academic,
+    teacher:s.teacher,
+    visibility:s.visibility,
+    peerAmbition:Math.round(s.peerDrive*.62+s.peerInfluence*.38),
+    peerIntensity:Math.round(s.resilience*.65+s.pressure*.35),
+    structure:s.structure,
+    autonomy:s.autonomy,
+    focus:s.focus,
+    social:s.social,
+    music:s.music,
+    tech:s.tech,
+    sport:s.sport,
+    enterprise:s.enterprise,
+    breadth:s.breadth,
+    grounded:s.grounded,
+    mixedGender:s.mixedGender,
+    pressure:s.pressure
+  };
+}
+function riskLabel(n){
+  if(n<25)return "Low";
+  if(n<50)return "Moderate";
+  if(n<72)return "High";
+  return "Very high";
+}
+function schoolMatch(s,school){
+  const want=desiredSchoolVector(s);
+  const keys=["academic","teacher","visibility","peerAmbition","structure","autonomy","focus","social","music","tech","sport","enterprise","breadth","grounded","mixedGender"];
+  let weighted=0,totalW=0;
+  keys.forEach(k=>{
+    let w=1;
+    if(["music","tech","sport","enterprise","academic"].includes(k) && want[k]>72)w=1.6;
+    if(k==="teacher"&&s.teacher>70)w=1.45;
+    if(k==="visibility"&&s.visibility>68)w=1.4;
+    if(k==="focus"&&s.focus>68)w=1.35;
+    if(k==="peerAmbition"&&s.peerInfluence>65)w=1.5;
+    if(k==="mixedGender"&&Math.abs(s.mixedGender-50)>22)w=1.35;
+    weighted+=(100-Math.abs(want[k]-school.attrs[k]))*w; totalW+=w;
+  });
+  let natural=weighted/totalW;
+
+  const interestKeys=["academic","music","tech","sport","enterprise"]
+    .sort((a,b)=>s[b]-s[a]).slice(0,3);
+  const capacity=interestKeys.reduce((sum,k)=>sum+school.attrs[k],0)/interestKeys.length;
+  let developmentalAlignment=0,developmentalParts=0;
+  const addDev=v=>{developmentalAlignment+=v;developmentalParts++;};
+  addDev(s.peerInfluence>65 ? school.attrs.peerAmbition : 100-Math.abs(s.peerDrive-school.attrs.peerAmbition));
+  addDev(s.visibility>65 ? school.attrs.visibility : 100-Math.abs(s.visibility-school.attrs.visibility));
+  addDev(s.focus>65 ? school.attrs.focus : 100-Math.abs(s.focus-school.attrs.focus));
+  const preferredIntensity=s.resilience<45?68:s.resilience<70?78:90;
+  addDev(100-Math.abs(preferredIntensity-school.attrs.peerIntensity));
+  addDev(s.teacher>65?school.attrs.teacher:100-Math.abs(s.teacher-school.attrs.teacher));
+  addDev(s.breadth>65?school.attrs.breadth:100-Math.abs(s.breadth-school.attrs.breadth));
+  let opportunity=capacity*.58+(developmentalAlignment/developmentalParts)*.42;
+
+  let risk=5;
+  const risks=[];
+  if(s.resilience<48 && school.attrs.peerIntensity>82){risk+=30;risks.push("The cohort intensity may amplify a tendency to withdraw around stronger peers.");}
+  else if(s.resilience<55 && school.attrs.peerIntensity>75){risk+=15;risks.push("The student may need active support when no longer among the strongest.");}
+  if(s.pressure<45 && school.attrs.pressure>78){risk+=25;risks.push("The school’s pressure profile may exceed current tolerance.");}
+  if(s.peerInfluence>65 && school.attrs.peerAmbition<67){risk+=22;risks.push("Friendship-group ambition may be too variable for a highly peer-sensitive student.");}
+  if(s.visibility>68 && school.attrs.visibility<72){risk+=17;risks.push("The student may need more active noticing and opportunity direction than the school profile guarantees.");}
+  if(s.focus>70 && school.attrs.focus<70){risk+=20;risks.push("Variable classroom focus may undermine effort or engagement.");}
+  if(s.teacher>72 && school.attrs.teacher<70){risk+=12;risks.push("The student may need more active teacher mentorship than the profile guarantees.");}
+  if(s.social>72 && school.attrs.social<68){risk+=10;risks.push("The wider social and co-curricular ecosystem may feel narrow.");}
+  if(s.mixedGender>68 && school.attrs.mixedGender<50){risk+=22;risks.push("The child currently prefers a co-ed experience, while this is a single-sex school.");}
+  if(s.mixedGender<32 && school.attrs.mixedGender>50){risk+=5;risks.push("The child currently leans towards a same-gender environment.");}
+  risk=clamp(Math.round(risk),1,99);
+
+  let practicalPenalty=0;
+  const fGender=el("filterGender").value,fBudget=el("filterBudget").value,fReligion=el("filterReligion").value,fTravel=el("filterTravel").value;
+  const schoolGender=school.gender || (school.coed ? "coed" : "boys");
+  if(fGender==="coedOnly"&&schoolGender!=="coed"){practicalPenalty+=55;risks.push("Filtered out: co-ed required.");}
+  if(fGender==="coedPreferred"&&schoolGender!=="coed"){practicalPenalty+=12;risks.push("Family preference currently favours co-ed.");}
+  if(fGender==="boysEligible"&&schoolGender==="girls"){practicalPenalty+=60;risks.push("Filtered out: this option is not eligible for the selected student.");}
+  if(fGender==="girlsEligible"&&schoolGender==="boys"){practicalPenalty+=60;risks.push("Filtered out: this option is not eligible for the selected student.");}
+  if(fGender==="boysPreferred"){
+    if(schoolGender==="girls"){practicalPenalty+=60;risks.push("Filtered out: this option is not eligible for the selected student.");}
+    else if(schoolGender==="coed"){practicalPenalty+=7;risks.push("A boys’ school is currently preferred over co-ed.");}
+  }
+  if(fGender==="girlsPreferred"){
+    if(schoolGender==="boys"){practicalPenalty+=60;risks.push("Filtered out: this option is not eligible for the selected student.");}
+    else if(schoolGender==="coed"){practicalPenalty+=7;risks.push("A girls’ school is currently preferred over co-ed.");}
+  }
+  if(fGender==="boysOnly"&&schoolGender!=="boys"){practicalPenalty+=60;risks.push("Filtered out: boys’ schools only.");}
+  if(fGender==="girlsOnly"&&schoolGender!=="girls"){practicalPenalty+=60;risks.push("Filtered out: girls’ schools only.");}
+  if(fBudget==="public"&&school.fee>1000){practicalPenalty+=55;risks.push("Filtered out by public-only budget.");}
+  if(!["public","any"].includes(fBudget)&&school.fee>+fBudget){practicalPenalty+=28;risks.push("Current fees exceed the selected annual tuition range.");}
+  if(fReligion==="avoid"&&school.religion!=="secular"){practicalPenalty+=22;risks.push("Religious setting conflicts with the selected preference.");}
+  if(fReligion==="light"&&school.religion==="strong"){practicalPenalty+=10;risks.push("Religious identity may be more prominent than preferred.");}
+  if(fTravel==="local"&&school.travel!=="local"){practicalPenalty+=13;risks.push("Travel is less local than preferred.");}
+  if(fTravel==="moderate"&&school.travel==="metro"){practicalPenalty+=7;risks.push("Likely a larger commute than preferred.");}
+
+  natural=clamp(Math.round(natural),1,99);
+  opportunity=clamp(Math.round(opportunity),1,99);
+  const score=clamp(Math.round(natural*.55+opportunity*.32-risk*.22-practicalPenalty),1,99);
+  return {score,natural,opportunity,risk,riskLabel:riskLabel(risk),risks};
+}
+function renderSchools(s){
+  const ranked=schools.map(sc=>({...sc,match:schoolMatch(s,sc)})).sort((a,b)=>b.match.score-a.match.score);
+  el("topMatchScore").textContent=ranked[0].match.score+"%";
+  el("topMatchName").textContent=ranked[0].short+" · natural "+ranked[0].match.natural+" · growth "+ranked[0].match.opportunity+" · "+ranked[0].match.riskLabel.toLowerCase()+" risk";
+  el("schoolList").innerHTML=ranked.map((sc,i)=>{
+    const cautions=[...sc.cautions,...sc.match.risks].slice(0,5);
+    return `<article class="school-card">
+      <div class="school-head"><div><div class="q-kicker">${i===0?"Highest current match":"School option"}</div><h3 style="margin:5px 0">${sc.name}</h3><div class="note">${sc.type}</div></div><div class="match">${sc.match.score}%</div></div>
+      <div class="school-tags"><span class="tag">${(sc.gender || (sc.coed?"coed":"boys"))==="coed"?"Co-ed":(sc.gender || "boys")==="girls"?"Girls":"Boys"}</span><span class="tag">${sc.fee<1000?"Public fees":"Indicative annual fee $"+sc.fee.toLocaleString()}</span><span class="tag">${sc.religion==="secular"?"Secular":sc.religion==="light"?"Christian setting":"Catholic / Christian setting"}</span><span class="evidence-level ${(sc.evidenceLevel||"Medium").toLowerCase()}">${sc.evidenceLevel||"Medium"} evidence confidence</span></div>
+      <div class="score-trio">
+        <div class="score-mini"><strong>${sc.match.natural}%</strong><span>Natural fit</span></div>
+        <div class="score-mini"><strong>${sc.match.opportunity}%</strong><span>Growth opportunity</span></div>
+        <div class="score-mini risk-${sc.match.riskLabel.toLowerCase().replace(" ","-")}"><strong>${sc.match.risk}%</strong><span>${sc.match.riskLabel} risk</span></div>
+      </div>
+      <div class="confidence-note">${sc.evidenceNote||""}</div>
+      <div class="reason-grid"><div><h4>Why it may fit</h4><ul>${sc.strengths.map(x=>`<li>${x}</li>`).join("")}</ul></div>
+      <div><h4>Fit risks</h4><ul>${cautions.map(x=>`<li>${x}</li>`).join("")}</ul></div></div>
+      <div class="dossier-grid">
+        <div class="dossier-box"><h4>Ground-level picture</h4><ul>${(sc.groundThemes||[]).map(x=>`<li>${x}</li>`).join("")}</ul></div>
+        <div class="dossier-box"><h4>Contradictions to hold</h4><ul>${(sc.contradictions||[]).map(x=>`<li>${x}</li>`).join("")}</ul></div>
+        <div class="dossier-box"><h4>Important unknowns</h4><ul>${(sc.unknowns||[]).map(x=>`<li>${x}</li>`).join("")}</ul></div>
+        <div class="dossier-box"><h4>Questions to ask this school</h4><ul>${(sc.tourQuestions||[]).map(x=>`<li>${x}</li>`).join("")}</ul></div>
+      </div>
+      <div class="warning" style="margin-top:14px"><strong>Community-evidence caution:</strong> ${sc.community}</div>
+      <details class="evidence"><summary>Evidence and source links</summary><ul class="source-list">${sc.sources.map(x=>`<li><a href="${x[1]}" target="_blank" rel="noopener">${x[0]}</a></li>`).join("")}</ul></details>
+    </article>`;
+  }).join("");
+}
+["filterGender","filterBudget","filterReligion","filterTravel"].forEach(id=>el(id).onchange=()=>renderSchools(activeScores()));
+
+el("printBtn").onclick=()=>window.print();
+el("restartBtn").onclick=()=>{if(confirm("Clear all answers and restart?")){parentScores=null;parentAnswers={};el("comparisonPanel").classList.add("hidden");showOnly("landing");}};
+el("parentStartBtn").onclick=()=>{parentIndex=0;parentAnswers={};showOnly("parentGame");renderParentQuestion();};
+
+function renderParentQuestion(){
+  const q=parentQuestions[parentIndex],r=parentAnswers[parentIndex];
+  el("parentProgressText").textContent=`${parentIndex+1} of ${parentQuestions.length}`;
+  el("parentProgressBar").style.width=`${((parentIndex+1)/parentQuestions.length)*100}%`;
+  el("parentQuestionCard").innerHTML=`<div class="q-kicker">Observed behaviour, not an ideal answer</div><h2 class="q-title">${q.prompt}</h2><div class="options">${q.options.map((o,i)=>`<button class="option ${r===i?"selected":""}" data-popt="${i}">${o.text}</button>`).join("")}</div>`;
+  el("parentQuestionCard").querySelectorAll("[data-popt]").forEach(b=>b.onclick=()=>{parentAnswers[parentIndex]=+b.dataset.popt;renderParentQuestion();});
+  el("parentBackBtn").disabled=parentIndex===0;
+  el("parentNextBtn").textContent=parentIndex===parentQuestions.length-1?"Compare profiles":"Next";
+}
+el("parentBackBtn").onclick=()=>{if(parentIndex>0){parentIndex--;renderParentQuestion();}};
+el("parentNextBtn").onclick=()=>{
+  if(!Number.isInteger(parentAnswers[parentIndex])){alert("Choose an answer first.");return;}
+  if(parentIndex<parentQuestions.length-1){parentIndex++;renderParentQuestion();}
+  else{
+    parentScores=scoreQuestions(parentQuestions,parentAnswers);
+    useCombined=false;showOnly("results");el("comparisonPanel").classList.remove("hidden");renderResults();
+  }
+};
+function renderComparison(){
+  const dims=["teacher","visibility","peerDrive","resilience","structure","autonomy","focus","social","peerInfluence","pressure","academic","music","tech","sport","enterprise","breadth","grounded","mixedGender"];
+  el("comparisonPanel").classList.remove("hidden");
+  el("comparisonList").innerHTML=dims.map(d=>`<div class="compare-row"><div class="trait-label">${DIMS[d].label}</div>
+    <div title="Child ${childScores[d]}"><div class="compare-bars"><span class="child-bar" style="width:${childScores[d]}%"></span></div></div>
+    <div title="Parent ${parentScores[d]}"><div class="compare-bars"><span class="parent-bar" style="width:${parentScores[d]}%"></span></div></div></div>`).join("");
+  const diffs=dims.map(d=>({d,diff:parentScores[d]-childScores[d],abs:Math.abs(parentScores[d]-childScores[d])})).sort((a,b)=>b.abs-a.abs).slice(0,4);
+  el("differenceInsights").innerHTML=diffs.map(x=>{
+    const direction=x.diff>0?"Parent observations indicate more":"The child reports more";
+    return `<div class="insight"><strong>${DIMS[x.d].label}: ${x.abs}-point difference</strong>${direction} ${DIMS[x.d].label.toLowerCase()} than the other perspective. Treat this as a conversation prompt, not proof that either person is wrong.</div>`;
+  }).join("");
+  el("toggleCombinedBtn").textContent=useCombined?"Show child result only":"Use combined interpretation";
+}
+el("toggleCombinedBtn").onclick=()=>{useCombined=!useCombined;renderResults();};
+
+</script>
+</body>
+</html>
