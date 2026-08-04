@@ -675,30 +675,143 @@ function devImport(file){
   r.readAsText(file);
 }
 
-/* Quick synthetic profiles for checking a change without a real file.
-   Only the interest tiles are set; everything else falls to neutral,
-   so these show DIRECTION, not a real child. */
+/* Synthetic profiles for checking a change without a real answer file.
+
+   THE FIRST VERSION OF THIS WAS BROKEN and worth recording. It set the
+   three interest tiles and answered every other question with the middle
+   option. Fifty neutral answers swamped three tile picks, so the
+   "musician" profile came out at music 49 - dead neutral - and the
+   ranking became "whichever school sits closest to average". John Curtin,
+   the actual arts school, placed eighth, because a strong music school
+   genuinely IS a mismatch for a child with no musical preference. The
+   engine was right; the profile was nonsense.
+
+   These now answer IN CHARACTER: each option is scored against the target
+   profile and the best-fitting one is chosen. Still synthetic - a real
+   child is messier and contradicts themselves - but at least a musician
+   comes out musical. */
 const DEV_PROFILES={
-  "musician (music, coding, reading)":["music","code","reading"],
-  "athlete (sport, outdoor, helping)":["sport","outdoor","helping"],
-  "maker (coding, building, science)":["code","build","science"],
-  "artist (art, drama, writing)":["art","drama","writing"],
-  "academic (reading, puzzles, science)":["reading","puzzles","science"]
+ /* ---- INTERESTS: what a child is drawn to ---- */
+ "Musician — plays, wants to keep going":{group:"Interests",
+   tiles:["music","code","reading"],
+   dims:{music:92,tech:70,academicInterest:76,autonomy:74,social:46,breadth:60},
+   subj:{music:5,computing:4,english:4,maths:3,art:3,drama:3,pe:2,science:3,hass:3,lang:2,dt:3}},
+ "Musician — by ear, contemporary":{group:"Interests",
+   tiles:["music","code","build"],
+   dims:{music:92,tech:82,autonomy:86,academicInterest:58,formality:25,social:50},
+   subj:{music:5,computing:4,dt:4,art:3,english:3,maths:2,science:2,drama:3,pe:2,hass:2,lang:1}},
+ "Athlete — team sports, club level":{group:"Interests",
+   tiles:["sport","outdoor","helping"],
+   dims:{sport:92,social:82,empathy:76,structure:70,breadth:74,academicInterest:42},
+   subj:{pe:5,science:3,maths:3,english:3,hass:3,dt:3,art:2,music:2,drama:2,computing:2,lang:2}},
+ "Artist — visual and performing":{group:"Interests",
+   tiles:["art","drama","writing"],
+   dims:{visualArt:90,drama:88,social:70,autonomy:78,academicInterest:60,formality:32},
+   subj:{art:5,drama:5,english:4,music:3,lang:3,hass:3,dt:3,maths:2,science:2,pe:2,computing:2}},
+ "Maker — coding, robotics, building":{group:"Interests",
+   tiles:["code","build","science"],
+   dims:{tech:92,vet:68,autonomy:82,academicInterest:70,academic:62,social:46},
+   subj:{computing:5,dt:5,science:4,maths:4,art:3,pe:3,english:2,music:2,drama:2,hass:2,lang:2}},
+ "Academic — reads, puzzles, wants stretch":{group:"Interests",
+   tiles:["reading","puzzles","science"],
+   dims:{academicInterest:92,academic:90,focus:82,pressure:72,peerDrive:78,social:42,vet:20},
+   subj:{maths:5,science:5,english:4,hass:4,lang:3,computing:3,art:2,music:2,drama:2,pe:2,dt:2}},
+ "Trade-minded — hands-on, practical":{group:"Interests",
+   tiles:["build","sport","animals"],
+   dims:{vet:92,tech:76,sport:70,academic:34,academicInterest:32,structure:70,pressure:40},
+   subj:{dt:5,pe:4,science:3,computing:3,art:3,maths:2,english:2,music:2,drama:2,hass:2,lang:1}},
+ "Linguist — languages and travel":{group:"Interests",
+   tiles:["lang","reading","writing"],
+   dims:{languages:92,academicInterest:82,academic:74,social:62,breadth:68},
+   subj:{lang:5,english:5,hass:4,maths:3,science:3,art:3,drama:3,music:3,pe:2,computing:2,dt:2}},
+
+ /* ---- TEMPERAMENT: how a child works, regardless of interests ---- */
+ "Quiet one who gets overlooked":{group:"Temperament",
+   tiles:["reading","art","animals"],
+   dims:{visibility:88,teacher:82,social:24,belonging:78,helpSeeking:22,schoolSize:18,academicInterest:72,pressure:35},
+   subj:{english:4,art:4,science:3,maths:3,hass:3,music:3,lang:3,drama:2,pe:1,computing:3,dt:2}},
+ "Easily led by whoever's around":{group:"Temperament",
+   tiles:["sport","organise","music"],
+   dims:{peerInfluence:90,peerDrive:76,social:82,autonomy:26,effortSelfdir:28,focus:36},
+   subj:{pe:4,music:4,english:3,maths:3,science:3,art:3,hass:3,drama:3,computing:3,dt:3,lang:2}},
+ "Needs structure, does best with rules":{group:"Temperament",
+   tiles:["sport","build","puzzles"],
+   dims:{structure:90,focus:82,formality:76,autonomy:22,pressure:68,effortSelfdir:38},
+   subj:{maths:4,pe:4,dt:4,science:3,english:3,computing:3,hass:3,art:2,music:2,drama:2,lang:2}},
+ "Wants to be left alone to get on with it":{group:"Temperament",
+   tiles:["code","reading","art"],
+   dims:{autonomy:92,effortSelfdir:86,structure:18,teacher:24,social:30,visibility:22,formality:18},
+   subj:{computing:5,english:4,art:4,science:3,maths:3,hass:3,dt:3,music:3,lang:2,drama:2,pe:2}},
+ "Friend to everyone, reads the room":{group:"Temperament",
+   tiles:["helping","drama","organise"],
+   dims:{empathy:92,social:84,grounded:86,conflictRepair:82,statusTolerance:20,belonging:60,formality:35},
+   subj:{english:4,drama:4,hass:4,art:3,music:3,pe:3,science:3,maths:3,lang:3,computing:2,dt:2}},
+ "Steps back when outperformed":{group:"Temperament",
+   tiles:["art","music","animals"],
+   dims:{resilience:16,pressure:24,peerDrive:32,visibility:74,spaceNeed:78,academicInterest:64},
+   subj:{art:4,music:4,english:3,science:3,hass:3,maths:2,drama:3,lang:2,pe:2,computing:2,dt:2}},
+ "Needs real downtime after school":{group:"Temperament",
+   tiles:["reading","code","animals"],
+   dims:{spaceNeed:90,breadth:20,social:32,schoolSize:24,autonomy:76,academicInterest:74},
+   subj:{english:4,computing:4,science:4,maths:3,art:3,hass:3,music:2,lang:2,drama:1,pe:1,dt:2}},
+ "Coasting — wants an easy time":{group:"Temperament",
+   tiles:["sport","organise","selling"],
+   dims:{academic:22,academicInterest:20,pressure:22,focus:30,peerDrive:28,social:82,grounded:80,vet:66},
+   subj:{pe:4,dt:3,art:3,english:2,maths:2,science:2,hass:3,music:3,drama:3,computing:3,lang:1}},
+
+ /* ---- COMBINATIONS: the awkward ones a simple profile misses ---- */
+ "Gifted but socially anxious":{group:"Combinations",
+   tiles:["reading","puzzles","code"],
+   dims:{academic:92,academicInterest:92,talentAcademic:95,focus:86,social:20,spaceNeed:82,schoolSize:22,visibility:76,pressure:44},
+   subj:{maths:5,science:5,computing:5,english:4,hass:3,lang:3,art:2,music:2,drama:1,pe:1,dt:3}},
+ "Sporty, bright, not academic-minded":{group:"Combinations",
+   tiles:["sport","build","helping"],
+   dims:{sport:90,vet:78,social:80,academic:44,academicInterest:36,structure:72,grounded:82},
+   subj:{pe:5,dt:4,science:3,maths:3,english:2,hass:3,art:3,music:2,drama:2,computing:3,lang:1}},
+ "Musical and academic, wants both":{group:"Combinations",
+   tiles:["music","reading","puzzles"],
+   dims:{music:88,academic:86,academicInterest:88,breadth:84,talentMusic:90,talentAcademic:88,pressure:66},
+   subj:{music:5,maths:5,english:4,science:4,hass:3,lang:3,art:3,drama:3,computing:3,pe:2,dt:2}},
+ "Leader who wants room to run things":{group:"Combinations",
+   tiles:["organise","selling","drama"],
+   dims:{enterprise:90,social:86,autonomy:82,breadth:80,statusTolerance:70,academicInterest:62},
+   subj:{english:4,hass:4,drama:4,maths:3,computing:3,art:3,music:3,pe:3,science:3,dt:3,lang:3}},
+ "Creative, dislikes ceremony and ranking":{group:"Combinations",
+   tiles:["art","music","writing"],
+   dims:{visualArt:86,music:80,drama:74,formality:12,statusTolerance:14,grounded:84,autonomy:84,social:58},
+   subj:{art:5,music:5,english:4,drama:4,hass:3,lang:3,science:2,maths:2,computing:3,dt:3,pe:2}},
+ "Bright, easily led, needs the right cohort":{group:"Combinations",
+   tiles:["code","sport","music"],
+   dims:{academic:80,academicInterest:74,peerInfluence:90,peerDrive:82,autonomy:30,focus:44,effortSelfdir:32},
+   subj:{computing:4,pe:4,music:4,maths:3,science:3,english:3,hass:3,art:3,drama:3,dt:3,lang:2}}
 };
+
 function devProfile(name){
-  const ids=DEV_PROFILES[name]; if(!ids) return;
+  const P=DEV_PROFILES[name]; if(!P) return;
   answers={}; pAnswers={}; famConfig={};
-  answers[0]=ids.map(id=>childQuestions[0].options.findIndex(o=>o.id===id)).filter(i=>i>=0);
-  /* answer everything else with the middle option so the profile is
-     legible rather than random */
+  answers[0]=P.tiles.map(id=>childQuestions[0].options.findIndex(o=>o.id===id)).filter(i=>i>=0);
+  const fit=w=>Object.entries(w||{}).reduce((s,[d,v])=>s+v*(((P.dims[d]!==undefined?P.dims[d]:50))-50)/50,0);
   childQuestions.forEach((q,i)=>{
     if(i===0||!isActive(q,answers)) return;
-    if(q.type==="grid"){ const o={}; q.rows.forEach(r=>o[r.id]=3); answers[i]=o; }
-    else if(q.type==="bestworst"){ answers[i]={most:0,least:q.items.length-1}; }
-    else if(q.type==="multi"){ answers[i]=[0,1,2].slice(0,q.pick||3); }
-    else if(q.options&&q.options.length){ answers[i]=Math.floor(q.options.length/2); }
+    if(q.type==="grid"){ const o={}; q.rows.forEach(r=>o[r.id]=P.subj[r.id]||3); answers[i]=o; return; }
+    if(q.type==="clash"){ answers[i]=0; return; }
+    if(q.type==="multi"){ const sc=q.options.map((o,k)=>({k,v:fit(o.w)}));
+      answers[i]=sc.sort((a,b)=>b.v-a.v).slice(0,q.pick||3).map(x=>x.k); return; }
+    if(q.type==="bestworst"){ const sc=q.items.map(it=>fit(it.w));
+      answers[i]={most:sc.indexOf(Math.max(...sc)), least:sc.indexOf(Math.min(...sc))}; return; }
+    if(q.options&&q.options.length){ const sc=q.options.map(o=>fit(o.w));
+      answers[i]=sc.indexOf(Math.max(...sc)); return; }
   });
   finishChild();
+  /* show what the profile actually produced, so a flat one is obvious */
+  const box=el("devReadout");
+  if(box){
+    const top=Object.keys(DIMS).map(d=>({d,v:childScores[d]?childScores[d].score:50}))
+      .filter(x=>Math.abs(x.v-50)>12).sort((a,b)=>Math.abs(b.v-50)-Math.abs(a.v-50)).slice(0,6);
+    box.innerHTML = top.length
+      ? "<b>reads as:</b> "+top.map(x=>x.d+" "+Math.round(x.v)).join(", ")
+      : "<b>reads flat</b> — no strong signal, treat the ranking with suspicion";
+  }
 }
 
 function devPanel(){
@@ -709,10 +822,13 @@ function devPanel(){
     '<button id="devSave" style="width:100%;margin-bottom:6px">Save these answers</button>'+
     '<label style="display:block;margin-bottom:8px"><span style="display:block;margin-bottom:4px">Load an answer file</span>'+
     '<input id="devLoad" type="file" accept="application/json" style="width:100%;font-size:11px"></label>'+
-    '<select id="devProf" style="width:100%"><option value="">— synthetic profile —</option>'+
-    Object.keys(DEV_PROFILES).map(k=>'<option>'+k+'</option>').join("")+'</select>'+
-    '<div style="opacity:.6;margin-top:8px;font-size:11px">Synthetic profiles set interests only and answer '+
-    'everything else neutrally. They show direction, not a real child.</div>';
+    '<select id="devProf" style="width:100%"><option value="">— pick a profile —</option>'+
+    [...new Set(Object.values(DEV_PROFILES).map(p=>p.group))].map(gr=>
+      '<optgroup label="'+gr+'">'+Object.keys(DEV_PROFILES).filter(k=>DEV_PROFILES[k].group===gr)
+        .map(k=>'<option>'+k+'</option>').join('')+'</optgroup>').join('')+'</select>'+
+    '<div id="devReadout" style="margin-top:8px;font-size:11px;opacity:.85;line-height:1.45"></div>'+
+    '<div style="opacity:.55;margin-top:8px;font-size:11px">Profiles answer in character rather than neutrally. '+
+    'A real child is messier and contradicts themselves.</div>';
   document.body.appendChild(d);
   el("devSave").onclick=devExport;
   el("devLoad").onchange=e=>{ if(e.target.files[0]) devImport(e.target.files[0]); };

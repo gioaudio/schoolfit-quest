@@ -2,7 +2,7 @@ const schools = [
 {
 name:"Melville Senior High School — Academic Extension",
 short:"Melville AEP",type:"Public · co-ed · local comprehensive",coed:true,fee:500,religion:"secular",travel:"local",
-attrs:{formality:20,vet:60,languages:91,visualArt:83,drama:88,academic:76,teacher:66,peerAmbition:71,peerIntensity:60,structure:79,autonomy:62,social:84,music:71,tech:90,sport:55,enterprise:55,breadth:92,grounded:70,pressure:59},
+attrs:{formality:20,vet:60,languages:91,visualArt:70,drama:43,academic:76,teacher:66,peerAmbition:71,peerIntensity:60,structure:79,autonomy:62,social:84,music:71,tech:90,sport:55,enterprise:55,breadth:92,grounded:70,pressure:59},
 strengths:["Academic Extension across Mathematics, English, Science and Humanities in Years 7–10.","Broad co-ed environment with music, media, technology, sport and specialist pathways.","Local community and a wider social mix may help preserve perspective."],
 cautions:["Peer ambition is less uniform outside extension classes.","A socially adaptable student may need deliberate involvement in ambitious activities and strong teacher relationships.","Family advocacy may matter more than in a highly curated independent setting."],
 community:"Community evidence located for Melville was too thin and mixed to score confidently. Treat the peer-culture assessment as a structural inference, not a verified reputation.",
@@ -25,7 +25,7 @@ sources:[
 {
 name:"All Saints’ College",
 short:"All Saints",type:"Independent Anglican · co-ed",coed:true,fee:26716,religion:"light",travel:"local",
-attrs:{formality:42,vet:52,languages:70,visualArt:100,drama:100,academic:79,teacher:89,peerAmbition:87,peerIntensity:65,structure:73,autonomy:89,social:86,music:63,tech:60,sport:57,enterprise:55,breadth:91,grounded:37,pressure:63},
+attrs:{formality:42,vet:52,languages:70,visualArt:42,drama:74,academic:79,teacher:89,peerAmbition:87,peerIntensity:65,structure:73,autonomy:89,social:86,music:63,tech:60,sport:57,enterprise:55,breadth:91,grounded:37,pressure:63},
 strengths:["Strong personalisation, teacher visibility and flexible pathways.","Excellent fit for a student combining music, production, technology and enterprise.","Large co-curricular ecosystem makes active participation easy to sustain."],
 cautions:["High fees remain substantial even with a partial scholarship.","Not academically selective, so private fees do not guarantee an ambitious friendship group.","The socioeconomic environment is less socially broad than a comprehensive public school."],
 community:"Recent public community commentary was limited. The prototype therefore gives official program evidence far more weight than anecdotal claims about culture.",
@@ -49,7 +49,7 @@ sources:[
 {
 name:"Perth Modern School",
 short:"Perth Modern",type:"Public · co-ed · fully academically selective",coed:true,fee:500,religion:"secular",travel:"metro",
-attrs:{formality:58,vet:8,languages:80,visualArt:100,drama:75,academic:100,teacher:76,peerAmbition:99,peerIntensity:99,structure:83,autonomy:73,social:73,music:100,tech:100,sport:41,enterprise:40,breadth:69,grounded:25,pressure:91},
+attrs:{formality:58,vet:8,languages:80,visualArt:42,drama:51,academic:100,teacher:76,peerAmbition:99,peerIntensity:99,structure:83,autonomy:73,social:73,music:100,tech:100,sport:41,enterprise:40,breadth:69,grounded:25,pressure:91},
 strengths:["WA’s only fully academically selective co-ed secondary school.","Exceptionally strong peer ambition and sustained intellectual challenge.","Official materials emphasise gifted education, belonging, wellbeing and community service."],
 cautions:["A child who needs to feel near the top may become quieter or overly pressured.","Academic comparison is difficult to escape because the whole cohort is selective.","Less natural fit when sport, broad social identity or contemporary creative production are central."],
 community:"Reddit accounts are sharply mixed: some describe exceptional peers and opportunities; others describe intense comparison, burnout or past workplace-culture concerns. These are anecdotes, not representative survey data.",
@@ -72,7 +72,7 @@ sources:[
 {
 name:"John Curtin College of the Arts",
 short:"John Curtin",type:"Public · co-ed · selective arts pathways",coed:true,fee:700,religion:"secular",travel:"moderate",
-attrs:{formality:34,vet:30,languages:33,visualArt:100,drama:100,academic:73,teacher:83,peerAmbition:81,peerIntensity:79,structure:79,autonomy:85,social:90,music:98,tech:88,sport:53,enterprise:0,breadth:84,grounded:52,pressure:74},
+attrs:{formality:34,vet:30,languages:33,visualArt:88,drama:89,academic:73,teacher:83,peerAmbition:81,peerIntensity:79,structure:79,autonomy:85,social:90,music:98,tech:88,sport:53,enterprise:52,breadth:84,grounded:52,pressure:74},
 strengths:["Exceptional music, media and arts ecosystem with selective peers who care deeply about making things.","Strong potential fit for a social child whose music identity includes production and technology.","Public and co-ed, with a broad creative community rather than a purely academic hierarchy."],
 cautions:["Admission requires the ASET plus a specialist audition or portfolio for GAT Arts.","The specialist identity can become demanding and time-intensive.","Traditional audition criteria may not fully recognise advanced DAW skills without strong performance or portfolio evidence."],
 community:"Available Reddit discussions commonly praise the arts programs and community culture, while also noting that the larger school still contains varied behaviour and student groups.",
@@ -94,7 +94,7 @@ sources:[
 {
 name:"Corpus Christi College",
 short:"Corpus Christi",type:"Catholic independent · co-ed",coed:true,fee:9390,religion:"strong",travel:"local",
-attrs:{formality:86,vet:90,languages:55,visualArt:100,drama:100,academic:73,teacher:83,peerAmbition:79,peerIntensity:63,structure:87,autonomy:63,social:83,music:63,tech:100,sport:59,enterprise:80,breadth:78,grounded:56,pressure:65},
+attrs:{formality:86,vet:90,languages:55,visualArt:57,drama:85,academic:73,teacher:83,peerAmbition:79,peerIntensity:63,structure:87,autonomy:63,social:83,music:63,tech:100,sport:59,enterprise:80,breadth:78,grounded:56,pressure:65},
 strengths:["Structured co-ed environment with strong pastoral and participation systems.","Lower fees than All Saints while still providing an independent-school framework.","Potential fit for a child who benefits from routines, monitoring and active school life."],
 cautions:["Catholic identity is a real part of the school, not merely branding.","Less obvious fit for advanced contemporary music production and enterprise than All Saints or John Curtin.","Current public community evidence is too limited for confident claims about cohort culture."],
 community:"The prototype found insufficient recurring community commentary to make a reliable culture claim. A tour and current-family conversations would be essential.",
@@ -115,7 +115,7 @@ sources:[
 {
 name:"Aquinas College",
 short:"Aquinas",type:"Catholic independent · boys",coed:false,fee:18000,religion:"strong",travel:"moderate",
-attrs:{formality:96,vet:41,visualArt:83,drama:62,academic:78,teacher:81,peerAmbition:78,peerIntensity:70,structure:89,autonomy:65,social:84,music:57,tech:88,sport:70,enterprise:75,breadth:82,grounded:55,pressure:72},
+attrs:{formality:96,vet:41,visualArt:null,drama:null,academic:78,teacher:81,peerAmbition:78,peerIntensity:70,structure:89,autonomy:65,social:84,music:57,tech:88,sport:70,enterprise:75,breadth:82,grounded:55,pressure:72},
 strengths:["Very structured culture with major sport, music, co-curricular and extension opportunities.","Academic and music scholarships currently offer up to 50% tuition remission.","Could suit a boy strongly activated by tradition, teams, visible standards and teacher expectation."],
 cautions:["Single-sex and Catholic, which may conflict with a family preference for co-ed social development.","Traditional boys’ school culture needs direct evaluation rather than assumptions from programs alone.","Music scholarships require substantial ensemble, choral and school-program commitment."],
 community:"Included as a contrasting school type. The prototype has not yet completed a systematic community-feedback review for Aquinas.",
@@ -137,7 +137,7 @@ sources:[
 {
 name:"Rossmoyne Senior High School",
 short:"Rossmoyne",type:"Public · co-ed · high-performing comprehensive",coed:true,fee:650,religion:"secular",travel:"moderate",
-attrs:{formality:35,vet:34,languages:91,visualArt:83,drama:75,academic:89,teacher:72,peerAmbition:82,peerIntensity:77,structure:84,autonomy:64,social:82,music:87,tech:90,sport:50,enterprise:95,breadth:90,grounded:50,pressure:76},
+attrs:{formality:35,vet:34,languages:91,visualArt:73,drama:73,academic:89,teacher:72,peerAmbition:82,peerIntensity:77,structure:84,autonomy:64,social:82,music:87,tech:90,sport:50,enterprise:95,breadth:90,grounded:50,pressure:76},
 strengths:["Strong academic culture with specialist Mathematics, Classical Music and Volleyball pathways.","Large, established music program and broad technology, media and arts choices.","Offers a high-achievement environment without making the entire school academically selective."],
 cautions:["The specialist music pathway is classical and ensemble-centred rather than focused on contemporary production.","Access generally depends on the intake area or successful specialist-program entry.","A strong academic reputation can still create comparison pressure in upper pathways."],
 community:"Public reputation is strongly achievement-oriented, but accessible community commentary was too fragmented to make reliable claims about current student culture.",
@@ -160,7 +160,7 @@ sources:[
 {
 name:"Willetton Senior High School",
 short:"Willetton",type:"Public · co-ed · selective academic pathway",coed:true,fee:650,religion:"secular",travel:"moderate",
-attrs:{formality:24,vet:71,languages:70,visualArt:100,drama:88,academic:93,teacher:76,peerAmbition:81,peerIntensity:84,structure:86,autonomy:66,social:85,music:86,tech:80,sport:62,enterprise:95,breadth:92,grounded:52,pressure:82},
+attrs:{formality:24,vet:71,languages:70,visualArt:53,drama:70,academic:93,teacher:76,peerAmbition:81,peerIntensity:84,structure:86,autonomy:66,social:85,music:86,tech:80,sport:62,enterprise:95,breadth:92,grounded:52,pressure:82},
 strengths:["Highly developed Gifted and Talented academic cohort with access to music, computer science, languages, arts and specialist basketball.","Strong peer ambition while students still mix with a broad comprehensive-school population.","University-linked extension and academic competition opportunities."],
 cautions:["The selective academic cohort may reproduce some of the comparison risks of Perth Modern, although within a broader school.","Out-of-area access is generally tied to selective entry.","Music is a credible pathway but not as contemporary-production focused as Fremantle College or John Curtin."],
 community:"The school’s academic reputation is strong, but current student-culture evidence located publicly was insufficient for a confident social assessment.",
@@ -182,7 +182,7 @@ sources:[
 {
 name:"Applecross Senior High School — Academic Extension",
 short:"Applecross",type:"Public · co-ed · local extension and specialist arts",coed:true,fee:650,religion:"secular",travel:"local",
-attrs:{formality:20,vet:82,languages:55,visualArt:100,drama:88,academic:83,teacher:74,peerAmbition:79,peerIntensity:68,structure:80,autonomy:80,social:85,music:50,tech:90,sport:64,enterprise:80,breadth:92,grounded:56,pressure:66},
+attrs:{formality:20,vet:82,languages:55,visualArt:78,drama:54,academic:83,teacher:74,peerAmbition:79,peerIntensity:68,structure:80,autonomy:80,social:85,music:50,tech:90,sport:64,enterprise:80,breadth:92,grounded:56,pressure:66},
 strengths:["Academic Extension operates across Mathematics, English, Science and Humanities for Years 7–10.","Strong arts identity through the selective Visual Arts program, plus music and specialist tennis.","Broad co-ed environment with a less uniformly intense academic identity."],
 cautions:["Academic Extension is an in-house pathway and does not provide out-of-area entry.","Its strongest selective arts identity is visual art rather than music production.","Peer ambition will vary more widely than in a fully selective cohort."],
 community:"Accessible feedback was too limited and inconsistent for a reliable culture rating; the profile is based mainly on program structure.",
@@ -202,7 +202,7 @@ sources:[
 {
 name:"Shenton College — HPL / GATE",
 short:"Shenton",type:"Public · co-ed · selective and high-performance pathways",coed:true,fee:700,religion:"secular",travel:"metro",
-attrs:{formality:9,vet:51,languages:80,visualArt:100,drama:100,academic:92,teacher:81,peerAmbition:87,peerIntensity:86,structure:82,autonomy:78,social:88,music:67,tech:100,sport:66,enterprise:55,breadth:91,grounded:39,pressure:80},
+attrs:{formality:9,vet:51,languages:80,visualArt:null,drama:null,academic:92,teacher:81,peerAmbition:87,peerIntensity:86,structure:82,autonomy:78,social:88,music:67,tech:100,sport:66,enterprise:55,breadth:91,grounded:39,pressure:80},
 strengths:["Offers both Gifted and Talented Education and a High Performance Learning pathway across the four core areas.","Selective students spend substantial time together but still mix across arts, technologies, languages and physical education.","Strong breadth and high expectations without the entire school being academically selective."],
 cautions:["GATE remains a demanding selective cohort and may be too comparison-heavy for some children.","Out-of-area entry is limited to GATE.","Travel from the southern suburbs may reduce local friendships and spontaneous participation."],
 community:"Public commentary generally reflects a strong academic reputation, but this prototype has not found enough current, specific evidence to rate everyday culture confidently.",
@@ -222,7 +222,7 @@ sources:[
 {
 name:"Fremantle College",
 short:"Fremantle College",type:"Public · co-ed · selective, contemporary and specialist",coed:true,fee:750,religion:"secular",travel:"moderate",
-attrs:{formality:24,vet:93,languages:0,visualArt:83,drama:75,academic:78,teacher:80,peerAmbition:59,peerIntensity:66,structure:77,autonomy:88,social:89,music:87,tech:100,sport:53,enterprise:35,breadth:94,grounded:83,pressure:64},
+attrs:{formality:24,vet:93,languages:0,visualArt:54,drama:47,academic:78,teacher:80,peerAmbition:59,peerIntensity:66,structure:77,autonomy:88,social:89,music:87,tech:100,sport:53,enterprise:35,breadth:94,grounded:83,pressure:64},
 strengths:["Unusually strong combination of Gifted and Talented academics, Contemporary Music, ICT, Marine Studies and AFL pathways.","Contemporary Music explicitly includes writing, arranging, recording, performing and access to digital recording facilities.","A broad, socially mixed co-ed environment with multiple ways to belong and excel."],
 cautions:["The whole-school academic culture is likely less consistently ambitious than at Rossmoyne, Willetton or Shenton.","A highly peer-sensitive student may still need the right specialist or extension cohort and active adult mentorship.","Specialist Music entry expects instrumental or vocal learning, audition and evidence of practice."],
 community:"Community commentary was limited, so the strong creative fit is based on verified program design rather than claims about the whole student cohort.",
@@ -245,7 +245,7 @@ sources:[
 {
 name:"Kennedy Baptist College",
 short:"Kennedy",type:"Independent Baptist · co-ed",coed:true,fee:11990,religion:"strong",travel:"local",
-attrs:{formality:49,vet:65,languages:55,visualArt:100,drama:88,academic:77,teacher:85,peerAmbition:78,peerIntensity:65,structure:89,autonomy:67,social:87,music:63,tech:90,sport:63,enterprise:80,breadth:88,grounded:59,pressure:66},
+attrs:{formality:49,vet:65,languages:55,visualArt:39,drama:93,academic:77,teacher:85,peerAmbition:78,peerIntensity:65,structure:89,autonomy:67,social:87,music:63,tech:90,sport:63,enterprise:80,breadth:88,grounded:59,pressure:66},
 strengths:["Structured, co-ed independent environment with academic, sport, music and broad extracurricular pathways.","Instrumental music includes piano, contemporary instruments, voice, ensembles and senior ATAR or General Music.","Fees are substantially below Perth’s highest-fee independent schools."],
 cautions:["Scholarships are currently needs-based rather than open academic or music merit awards for all families.","Christian identity is explicit and should align with family values.","The peer cohort is not academically selective, so ambition will still vary."],
 community:"Current public commentary was insufficient for a reliable culture profile. The app therefore scores Kennedy mainly from its structure, programs and stated expectations.",
@@ -266,7 +266,7 @@ sources:[
 {
 name:"Carey Baptist College — Harrisdale",
 short:"Carey Harrisdale",type:"Independent Baptist · co-ed · GATE pathways",coed:true,fee:11928,religion:"strong",travel:"metro",
-attrs:{formality:52,vet:44,visualArt:100,drama:62,academic:85,teacher:85,peerAmbition:78,peerIntensity:72,structure:87,autonomy:77,social:85,music:83,tech:80,sport:58,enterprise:60,breadth:92,grounded:57,pressure:72},
+attrs:{formality:52,vet:44,visualArt:null,drama:null,academic:85,teacher:85,peerAmbition:78,peerIntensity:72,structure:87,autonomy:77,social:85,music:83,tech:80,sport:58,enterprise:60,breadth:92,grounded:57,pressure:72},
 strengths:["GATE pathways in STEM, Music and academic enrichment create ambitious sub-cohorts within a broad co-ed school.","Music Specialist education includes contemporary popular music, classical music, jazz and musical theatre.","Current GATE scholarships can substantially reduce tuition for successful applicants."],
 cautions:["The Baptist identity is substantive and should be considered directly.","The school is not fully selective outside GATE pathways.","The commute from Melville may weaken local friendship and community benefits."],
 community:"There was not enough recent, school-specific community evidence to draw firm conclusions about culture; program evidence carries most of the weight.",
@@ -286,7 +286,7 @@ sources:[
 {
 name:"Scotch College",
 short:"Scotch",type:"Independent Presbyterian tradition · boys",coed:false,fee:35932,religion:"light",travel:"metro",
-attrs:{formality:81,vet:44,languages:94,visualArt:100,drama:75,academic:89,teacher:88,peerAmbition:81,peerIntensity:83,structure:92,autonomy:76,social:91,music:58,tech:50,sport:66,enterprise:90,breadth:96,grounded:53,pressure:84},
+attrs:{formality:81,vet:44,languages:94,visualArt:38,drama:34,academic:89,teacher:88,peerAmbition:81,peerIntensity:83,structure:92,autonomy:76,social:91,music:58,tech:50,sport:66,enterprise:90,breadth:96,grounded:53,pressure:84},
 strengths:["Extremely broad co-curricular ecosystem with more than 100 enrichment activities and over 30 music ensembles.","Academic, music and other scholarships provide pathways for high-potential students.","Strong pastoral structures, sport and visible ladders for achievement."],
 cautions:["Single-sex and a high-fee, prestigious environment may conflict with family preferences around social breadth and wealth culture.","Compulsory PSA sport and extensive commitments may shape the student experience strongly.","High peer ambition and status signals may be energising for some children and distorting for others."],
 community:"Claims about wealth culture are a structural risk inference, not a finding about every family or student. Direct observation and current-family conversations are essential.",
@@ -306,7 +306,7 @@ sources:[
 {
 name:"Christ Church Grammar School",
 short:"Christ Church",type:"Independent Anglican · boys",coed:false,fee:35000,religion:"light",travel:"metro",
-attrs:{formality:87,vet:46,languages:80,visualArt:83,drama:62,academic:92,teacher:91,peerAmbition:92,peerIntensity:88,structure:94,autonomy:76,social:92,music:79,tech:100,sport:66,enterprise:80,breadth:97,grounded:27,pressure:90},
+attrs:{formality:87,vet:46,languages:80,visualArt:85,drama:58,academic:92,teacher:91,peerAmbition:92,peerIntensity:88,structure:94,autonomy:76,social:92,music:79,tech:100,sport:66,enterprise:80,breadth:97,grounded:27,pressure:90},
 strengths:["High expectations, extensive academic extension, sport, arts, service and leadership opportunities.","Music scholarships currently combine major tuition remission with instrumental tuition.","A strong fit for boys motivated by respected teachers, visible standards and institutional recognition."],
 cautions:["Single-sex and deeply embedded in Perth’s elite independent-school ecosystem.","A highly approval-driven child may thrive academically while absorbing a culture the family does not value.","High intensity, cost and status context make cultural fit at least as important as program quality."],
 community:"The culture cautions are not claims that individual students are entitled or ungrounded. They reflect the family’s stated concern about socioeconomic bubbles and prestige-centred identity.",
@@ -328,7 +328,7 @@ sources:[
 {
 name:"Hale School",
 short:"Hale",type:"Independent Anglican tradition · boys",coed:false,fee:34000,religion:"light",travel:"metro",
-attrs:{formality:87,vet:33,languages:70,visualArt:83,drama:88,academic:91,teacher:87,peerAmbition:87,peerIntensity:85,structure:92,autonomy:74,social:89,music:94,tech:100,sport:76,enterprise:80,breadth:95,grounded:38,pressure:86},
+attrs:{formality:87,vet:33,languages:70,visualArt:61,drama:62,academic:91,teacher:87,peerAmbition:87,peerIntensity:85,structure:92,autonomy:74,social:89,music:94,tech:100,sport:76,enterprise:80,breadth:95,grounded:38,pressure:86},
 strengths:["Strong academic enrichment, music, creative arts, service, leadership, outdoor education and PSA sport.","Academic and music scholarship pathways can materially reduce fees, with some needs-based awards offering deeper remission.","Highly structured boys’ education with substantial institutional resources."],
 cautions:["Single-sex and high-fee culture may not suit a family prioritising co-ed social development and socioeconomic breadth.","A non-refundable endowment fee adds significantly to entry cost.","Strong tradition and competition can become identity-forming beyond the classroom."],
 community:"The school presents a contemporary approach within a traditional boys’ institution. The app does not treat marketing claims or isolated anecdotes as proof of everyday culture.",
@@ -349,7 +349,7 @@ sources:[
 {
 name:"Wesley College",
 short:"Wesley",type:"Uniting Church independent · boys in secondary years",coed:false,fee:33000,religion:"light",travel:"moderate",
-attrs:{formality:81,vet:65,languages:33,visualArt:83,drama:88,academic:85,teacher:88,peerAmbition:84,peerIntensity:76,structure:88,autonomy:82,social:95,music:83,tech:100,sport:68,enterprise:80,breadth:98,grounded:42,pressure:78},
+attrs:{formality:81,vet:65,languages:33,visualArt:84,drama:61,academic:85,teacher:88,peerAmbition:84,peerIntensity:76,structure:88,autonomy:82,social:95,music:83,tech:100,sport:68,enterprise:80,breadth:98,grounded:42,pressure:78},
 strengths:["Very broad all-round offering across academics, sport, music, service, leadership and enterprise.","The Year 8 Katitjin experience and extensive co-curricular program emphasise independence, community and personal development.","Music scholarships recognise piano and contemporary instruments as well as traditional orchestral instruments."],
 cautions:["Secondary schooling is single-sex despite the College being co-ed in early years.","High fees and PSA-school culture remain significant contextual factors.","Compulsory sport and a very busy program may overwhelm children who prefer fewer, deeper commitments."],
 community:"Wesley’s stated culture places unusual emphasis on breadth, service and personal development, but the socioeconomic environment remains less broad than a public school.",
@@ -370,7 +370,7 @@ sources:[
 {
 name:"CBC Fremantle",
 short:"CBC Fremantle",type:"Catholic independent · boys",coed:false,fee:11900,religion:"strong",travel:"moderate",
-attrs:{formality:86,vet:65,visualArt:67,drama:62,academic:80,teacher:87,peerAmbition:74,peerIntensity:70,structure:92,autonomy:67,social:90,music:58,tech:50,sport:50,enterprise:75,breadth:87,grounded:68,pressure:73},
+attrs:{formality:86,vet:65,visualArt:null,drama:null,academic:80,teacher:87,peerAmbition:74,peerIntensity:70,structure:92,autonomy:67,social:90,music:58,tech:50,sport:50,enterprise:75,breadth:87,grounded:68,pressure:73},
 strengths:["Academic Excellence Program uses enriched and accelerated classes for top-achieving students, with continued entry tied to performance.","Strong boys’ school structure, sport, service, music, arts and pastoral identity at a mid-tier independent-school cost.","Music scholarships support individual tuition and require active involvement in ensembles, choir and music classes."],
 cautions:["CBC does not currently offer academic scholarships.","Single-sex and explicitly Catholic, with a strong ‘how boys learn’ philosophy.","Music scholarships support tuition rather than providing a major reduction in school fees."],
 community:"CBC may offer a more grounded alternative to Perth’s highest-fee boys’ schools, but this remains an inference from fee level, location and institutional model rather than representative social data.",
@@ -393,7 +393,7 @@ sources:[
 {
 name:"Iona Presentation College",
 short:"Iona",type:"Catholic independent · girls in Years 7–12",coed:false,gender:"girls",fee:12000,religion:"strong",travel:"metro",
-attrs:{formality:81,vet:55,visualArt:100,drama:100,academic:84,teacher:88,peerAmbition:83,peerIntensity:72,structure:88,autonomy:75,social:91,music:67,tech:50,sport:57,enterprise:74,breadth:95,grounded:47,pressure:72},
+attrs:{formality:81,vet:55,visualArt:null,drama:null,academic:84,teacher:88,peerAmbition:83,peerIntensity:72,structure:88,autonomy:75,social:91,music:67,tech:50,sport:57,enterprise:74,breadth:95,grounded:47,pressure:72},
 strengths:["Academic Excellence includes differentiated learning, advanced classes and a substantial academic co-curricular program.","Strong performing-arts culture with choirs, orchestras, bands, rock bands, production crews and composition opportunities.","Academic, General Excellence and Music scholarship pathways recognise broad contribution as well as achievement."],
 cautions:["The Senior School is girls only and Catholic identity is explicit.","The Mosman Park location may mean a significant commute from the southern suburbs.","Its music ecosystem is broad and performance-rich, but advanced DAW production should be checked directly."],
 community:"Iona publicly emphasises inclusion, participation and more than 80 co-curricular groups. Independent community evidence was too limited for stronger claims about peer culture.",
@@ -416,7 +416,7 @@ sources:[
 {
 name:"Santa Maria College",
 short:"Santa Maria",type:"Catholic independent · girls · day and boarding",coed:false,gender:"girls",fee:17349,religion:"strong",travel:"local",
-attrs:{formality:95,vet:68,visualArt:100,drama:100,academic:84,teacher:89,peerAmbition:82,peerIntensity:73,structure:90,autonomy:73,social:93,music:67,tech:88,sport:58,enterprise:78,breadth:96,grounded:52,pressure:73},
+attrs:{formality:95,vet:68,visualArt:null,drama:null,academic:84,teacher:89,peerAmbition:82,peerIntensity:73,structure:90,autonomy:73,social:93,music:67,tech:88,sport:58,enterprise:78,breadth:96,grounded:52,pressure:73},
 strengths:["Strong local girls’ school combining academic achievement, wellbeing, service, leadership and broad participation.","Extensive instrumental, ensemble, choir, contemporary performance, podcasting, media, STEM and academic-extension activities.","Large co-curricular ecosystem makes it easier for a social student to build several positive peer groups."],
 cautions:["The school is non-selective, so academic ambition will still vary across friendship groups.","Catholic and Mercy identity is central to school life.","Current scholarships and bursaries appear more financially targeted than a broad open merit-scholarship system."],
 community:"The school reports a strong participation and recognition culture, but current independent parent and alumni commentary was not sufficient for a dependable social-culture score.",
@@ -447,7 +447,7 @@ short:"John XXIII",type:"Catholic independent · co-ed · Jesuit and Mercy",coed
    +0.84 and -0.71 across the other 21 schools, so deriving them the usual
    way would just reproduce that bias in a new record. They are replaced for
    all 22 schools together when the pastoral data lands. */
-attrs:{formality:90,vet:55,visualArt:67,drama:67,academic:80,      // ICSEA 1186, 74% top socio-educational quarter, ATAR pathways, Magis gifted program
+attrs:{formality:90,vet:55,visualArt:null,drama:null,academic:80,      // arts inferred: handbook is portal-locked, so these are the field median, not a measurement
        teacher:85,       // PLACEHOLDER - dataset median
        visibility:85,    // PLACEHOLDER - dataset median
        mixedGender:100,  // co-educational. Recorded, never scored.
@@ -486,7 +486,7 @@ sources:[
 {
 name:"Seton Catholic College",
 short:"Seton",type:"Catholic independent · co-ed",coed:true,gender:"coed",fee:6029,religion:"strong",travel:"local",
-attrs:{formality:86,vet:57,languages:55,visualArt:100,drama:100,academic:74,teacher:86,peerAmbition:67,peerIntensity:60,structure:88,autonomy:71,social:86,music:88,tech:75,sport:51,enterprise:40,breadth:87,grounded:82,pressure:61},
+attrs:{formality:86,vet:57,languages:55,visualArt:74,drama:81,academic:74,teacher:86,peerAmbition:67,peerIntensity:60,structure:88,autonomy:71,social:86,music:88,tech:75,sport:51,enterprise:40,breadth:87,grounded:82,pressure:61},
 strengths:["Co-ed, local and comparatively affordable, with accelerated classes and an Excellence and Creativity program.","Strong pastoral emphasis, smaller-class claims, Sport Excellence and broad extracurricular participation.","Music tuition, ensembles and internal music scholarships support active school musicians."],
 cautions:["The overall peer environment is not academically selective, so the risk of coasting depends heavily on class placement and friendship group.","Music scholarships contribute to music fees rather than substantially reducing tuition.","Catholic identity and Religious Education are part of the core experience."],
 community:"Seton presents itself as close-knit and inclusive. Accessible independent feedback was limited, so this should be tested through tours and current-family conversations.",
