@@ -303,3 +303,31 @@
 .fold-panel summary:before{content:"▸ ";color:var(--muted)}
 .fold-panel[open] summary:before{content:"▾ "}
 .fold-panel summary span{color:var(--muted);font-weight:600}
+
+/* ===== emphasis lens ===== */
+.lens-panel{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:16px 0 20px;
+  background:color-mix(in srgb,var(--bg) 92%,var(--ink) 8%)}
+.lens-head h4{margin:0 0 4px;font-size:15px}
+.lens-head .note{margin:0 0 10px}
+.lens-chips{display:flex;flex-wrap:wrap;gap:8px}
+.lens-chip{font:inherit;font-size:13px;padding:6px 13px;border-radius:999px;cursor:pointer;
+  border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.lens-chip:hover{border-color:var(--ink)}
+.lens-chip.sug{border-style:dashed;border-color:var(--accent)}
+.lens-chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:600}
+.lens-chip.reset{opacity:.75;text-decoration:underline;border-style:dotted}
+.sug-dot{color:var(--accent);font-size:11px}
+.lens-chip.on .sug-dot{color:var(--bg)}
+#lensBanner{margin-top:10px}
+#lensBanner:empty{margin-top:0}
+
+.movement{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;margin:0 0 10px;
+  font-size:12.5px;padding:6px 10px;border-radius:8px;
+  background:color-mix(in srgb,var(--bg) 88%,var(--ink) 12%)}
+.mv{font-weight:700}
+.mv.up{color:#1a7f4b}
+.mv.down{color:#a33}
+.mv.flat{font-weight:500;opacity:.6}
+.mv-txt{opacity:.7}
+.mv-why{flex-basis:100%;opacity:.85;line-height:1.45}
+.mv-why.warn{color:#a33;opacity:1}

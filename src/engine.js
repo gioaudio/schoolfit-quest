@@ -935,7 +935,59 @@ function sportShape(schoolName){
 }
 
 /* ---------- match ---------- */
-function schoolMatch(s,school,fam){
+/* ============================ EMPHASIS LENS ============================
+
+   A deliberate, visible thumb on the scale. Everywhere else in this file
+   the interests are damped to INTEREST_DAMP because a ten-year-old's
+   hobbies change. That rule is right for the child who ticked "coding"
+   because it sounded good. It is wrong for the child who actually builds
+   things, because unlike a sport or an instrument, the equipment and the
+   senior subjects exist at the school or they exist nowhere.
+
+   So the lens exists, but it is OFF unless the user turns it on, it never
+   auto-applies, and the interface reports how far every school moved.
+   An emphasis you cannot see the effect of is just a hidden weighting. */
+
+const LENS_ATTRS = {
+  tech:     ["tech"],
+  music:    ["music"],
+  sport:    ["sport"],
+  academic: ["academic","peerAmbition"],
+  arts:     ["visualArt","drama"],
+  vet:      ["vet"]
+};
+const LENS_LABEL = {
+  tech:"Tech", music:"Music", sport:"Sport",
+  academic:"Academic", arts:"Arts", vet:"Trades"
+};
+/* Which talent ladder, if any, suggests each lens. Used ONLY to mark a
+   chip as suggested — never to switch one on. */
+const LENS_TALENT = {
+  tech:"computing", music:"music", sport:"sport",
+  academic:"academic", arts:"art", vet:null
+};
+
+/* Documented confirmed-ABSENT senior pathways. Hand-checked against the
+   research detail text, not pattern-matched: three other entries in the
+   computing section read as negations but actually confirm the activity
+   exists and only fail to verify an external competition team. Regex got
+   that wrong twice, so this list is explicit and stays explicit. */
+const LENS_ABSENT = {
+  "All Saints’ College": {
+    tech:"The complete public Year 11–12 list was checked: no Engineering Studies and no senior Materials Design and Technology."
+  }
+};
+function lensAbsence(schoolName,lens){
+  return (LENS_ABSENT[schoolName]||{})[lens] || null;
+}
+/* A lens can only be offered where we actually measured the domain.
+   A school whose attribute is null is not a dead end — it is unchecked,
+   and saying otherwise would punish a locked handbook. */
+function lensMeasured(school,lens){
+  return (LENS_ATTRS[lens]||[]).some(k=>school.attrs[k]!==null&&school.attrs[k]!==undefined);
+}
+
+function schoolMatch(s,school,fam,lens){
   const {v:want,c:conf}=desiredSchoolVector(s);
   const A={}; Object.keys(school.attrs).forEach(k=>A[k]=evAttr(school,k));
   /* If this child works beyond their class AND this school runs a stream
@@ -1034,7 +1086,12 @@ function schoolMatch(s,school,fam){
     const strength=Math.abs(want[k]-50)/50;
     const c=conf[k]||0;
     const isInterest=["music","tech","sport","enterprise"].includes(k);
-    const w=(0.4+1.6*strength*c)*(isInterest?INTEREST_DAMP:1);
+    /* The lens lifts the damp off ONE domain. It does not add weight above
+       what a culture dimension already carries — it only stops this one
+       being discounted. Emphasis, not override. */
+    const lensed=lens && (LENS_ATTRS[lens]||[]).includes(k);
+    const damp=isInterest ? (lensed?1:INTEREST_DAMP) : 1;
+    const w=(0.4+1.6*strength*c)*damp;
     /* evTerm blends an unverifiable culture claim toward what an average
        school would score, so a prospectus cannot buy a strong match. */
     const term=evTerm(school,k,want[k],100-Math.abs(want[k]-A[k]));
@@ -1134,7 +1191,16 @@ function schoolMatch(s,school,fam){
     evConf, avgMeas,
     suits:notes.suits, watch:notes.watch, surplus:notes.surplus,
     peers:peerNote(school.name,fam),
-    character:schoolCharacter(A)
+    character:schoolCharacter(A),
+    /* What the lens did here, so the card can show its reasoning rather
+       than just a number that moved for no visible cause. */
+    lens: lens ? {
+      key: lens,
+      absent: lensAbsence(school.name,lens),
+      measured: lensMeasured(school,lens),
+      value: (LENS_ATTRS[lens]||[]).map(k=>A[k]).filter(v=>v!=null)
+               .reduce((a,b,i,arr)=>a+b/arr.length,0) || null
+    } : null
   };
 }
 

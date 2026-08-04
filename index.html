@@ -311,6 +311,34 @@
 .fold-panel summary:before{content:"▸ ";color:var(--muted)}
 .fold-panel[open] summary:before{content:"▾ "}
 .fold-panel summary span{color:var(--muted);font-weight:600}
+
+/* ===== emphasis lens ===== */
+.lens-panel{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:16px 0 20px;
+  background:color-mix(in srgb,var(--bg) 92%,var(--ink) 8%)}
+.lens-head h4{margin:0 0 4px;font-size:15px}
+.lens-head .note{margin:0 0 10px}
+.lens-chips{display:flex;flex-wrap:wrap;gap:8px}
+.lens-chip{font:inherit;font-size:13px;padding:6px 13px;border-radius:999px;cursor:pointer;
+  border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.lens-chip:hover{border-color:var(--ink)}
+.lens-chip.sug{border-style:dashed;border-color:var(--accent)}
+.lens-chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:600}
+.lens-chip.reset{opacity:.75;text-decoration:underline;border-style:dotted}
+.sug-dot{color:var(--accent);font-size:11px}
+.lens-chip.on .sug-dot{color:var(--bg)}
+#lensBanner{margin-top:10px}
+#lensBanner:empty{margin-top:0}
+
+.movement{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;margin:0 0 10px;
+  font-size:12.5px;padding:6px 10px;border-radius:8px;
+  background:color-mix(in srgb,var(--bg) 88%,var(--ink) 12%)}
+.mv{font-weight:700}
+.mv.up{color:#1a7f4b}
+.mv.down{color:#a33}
+.mv.flat{font-weight:500;opacity:.6}
+.mv-txt{opacity:.7}
+.mv-why{flex-basis:100%;opacity:.85;line-height:1.45}
+.mv-why.warn{color:#a33;opacity:1}
 </style>
 </head>
 <body>
@@ -432,6 +460,14 @@
       <h3>Schools</h3>
       <p class="note">Ranked by fit indication. The ± band is real uncertainty, not decoration — where two schools overlap inside their bands, this tool cannot tell them apart.</p>
       <div class="insight"><strong>How much do the interests count?</strong>Less than the culture. A ten-year-old's hobbies often change; the way a school teaches, what it expects, how it treats a struggling kid and what it opens up do not. So teaching, culture and opportunity carry roughly 1.4 times the weight of interest alignment in these rankings, and specific sports and instruments are flagged for you to check rather than being scored at all. Interest fit is a good tiebreaker between schools that already suit your child — it isn't the reason to pick one.</div>
+      <div class="lens-panel">
+        <div class="lens-head">
+          <h4>Try emphasising one thing</h4>
+          <p class="note">This is the one control here that changes the scores. Everything above only decides which schools appear at all. Off by default — the ranking you land on is the tool's answer, and nothing here is switched on for you.</p>
+        </div>
+        <div id="lensChips" class="lens-chips"></div>
+        <div id="lensBanner"></div>
+      </div>
       <div id="topSummary"></div>
       <div id="schoolList"></div>
       <div id="excludedList"></div>
@@ -18175,7 +18211,59 @@ function sportShape(schoolName){
 }
 
 /* ---------- match ---------- */
-function schoolMatch(s,school,fam){
+/* ============================ EMPHASIS LENS ============================
+
+   A deliberate, visible thumb on the scale. Everywhere else in this file
+   the interests are damped to INTEREST_DAMP because a ten-year-old's
+   hobbies change. That rule is right for the child who ticked "coding"
+   because it sounded good. It is wrong for the child who actually builds
+   things, because unlike a sport or an instrument, the equipment and the
+   senior subjects exist at the school or they exist nowhere.
+
+   So the lens exists, but it is OFF unless the user turns it on, it never
+   auto-applies, and the interface reports how far every school moved.
+   An emphasis you cannot see the effect of is just a hidden weighting. */
+
+const LENS_ATTRS = {
+  tech:     ["tech"],
+  music:    ["music"],
+  sport:    ["sport"],
+  academic: ["academic","peerAmbition"],
+  arts:     ["visualArt","drama"],
+  vet:      ["vet"]
+};
+const LENS_LABEL = {
+  tech:"Tech", music:"Music", sport:"Sport",
+  academic:"Academic", arts:"Arts", vet:"Trades"
+};
+/* Which talent ladder, if any, suggests each lens. Used ONLY to mark a
+   chip as suggested — never to switch one on. */
+const LENS_TALENT = {
+  tech:"computing", music:"music", sport:"sport",
+  academic:"academic", arts:"art", vet:null
+};
+
+/* Documented confirmed-ABSENT senior pathways. Hand-checked against the
+   research detail text, not pattern-matched: three other entries in the
+   computing section read as negations but actually confirm the activity
+   exists and only fail to verify an external competition team. Regex got
+   that wrong twice, so this list is explicit and stays explicit. */
+const LENS_ABSENT = {
+  "All Saints’ College": {
+    tech:"The complete public Year 11–12 list was checked: no Engineering Studies and no senior Materials Design and Technology."
+  }
+};
+function lensAbsence(schoolName,lens){
+  return (LENS_ABSENT[schoolName]||{})[lens] || null;
+}
+/* A lens can only be offered where we actually measured the domain.
+   A school whose attribute is null is not a dead end — it is unchecked,
+   and saying otherwise would punish a locked handbook. */
+function lensMeasured(school,lens){
+  return (LENS_ATTRS[lens]||[]).some(k=>school.attrs[k]!==null&&school.attrs[k]!==undefined);
+}
+
+function schoolMatch(s,school,fam,lens){
   const {v:want,c:conf}=desiredSchoolVector(s);
   const A={}; Object.keys(school.attrs).forEach(k=>A[k]=evAttr(school,k));
   /* If this child works beyond their class AND this school runs a stream
@@ -18274,7 +18362,12 @@ function schoolMatch(s,school,fam){
     const strength=Math.abs(want[k]-50)/50;
     const c=conf[k]||0;
     const isInterest=["music","tech","sport","enterprise"].includes(k);
-    const w=(0.4+1.6*strength*c)*(isInterest?INTEREST_DAMP:1);
+    /* The lens lifts the damp off ONE domain. It does not add weight above
+       what a culture dimension already carries — it only stops this one
+       being discounted. Emphasis, not override. */
+    const lensed=lens && (LENS_ATTRS[lens]||[]).includes(k);
+    const damp=isInterest ? (lensed?1:INTEREST_DAMP) : 1;
+    const w=(0.4+1.6*strength*c)*damp;
     /* evTerm blends an unverifiable culture claim toward what an average
        school would score, so a prospectus cannot buy a strong match. */
     const term=evTerm(school,k,want[k],100-Math.abs(want[k]-A[k]));
@@ -18374,7 +18467,16 @@ function schoolMatch(s,school,fam){
     evConf, avgMeas,
     suits:notes.suits, watch:notes.watch, surplus:notes.surplus,
     peers:peerNote(school.name,fam),
-    character:schoolCharacter(A)
+    character:schoolCharacter(A),
+    /* What the lens did here, so the card can show its reasoning rather
+       than just a number that moved for no visible cause. */
+    lens: lens ? {
+      key: lens,
+      absent: lensAbsence(school.name,lens),
+      measured: lensMeasured(school,lens),
+      value: (LENS_ATTRS[lens]||[]).map(k=>A[k]).filter(v=>v!=null)
+               .reduce((a,b,i,arr)=>a+b/arr.length,0) || null
+    } : null
   };
 }
 
@@ -18917,14 +19019,45 @@ function renderProfileNotes(s){
     : "";
 }
 
+/* Which emphasis is switched on, or null. Never set from the child's
+   answers — only from a click. */
+let activeLens=null;
+
 function renderSchools(s){
   const fam=familyFilters();
   const subs=subDomains(answers);
-  const ranked=schools.map(sc=>({sc,m:schoolMatch(s,sc,fam)})).sort((a,b)=>b.m.score-a.m.score);
+
+  /* Always compute the unemphasised order first. It is the reference the
+     arrows are measured against, and it is what "reset" returns you to. */
+  const base=schools.map(sc=>({sc,m:schoolMatch(s,sc,fam,null)})).sort((a,b)=>b.m.score-a.m.score);
+  const basePos={}; base.forEach((r,i)=>basePos[r.sc.name]=i+1);
+  const baseScore={}; base.forEach(r=>baseScore[r.sc.name]=r.m.score);
+
+  const ranked = activeLens
+    ? schools.map(sc=>({sc,m:schoolMatch(s,sc,fam,activeLens)})).sort((a,b)=>b.m.score-a.m.score)
+    : base;
+  renderLens(s,ranked,basePos);
+
   const ok=ranked.filter(r=>r.m.eligible), no=ranked.filter(r=>!r.m.eligible);
   const tours=profileTours(s);
 
-  const card=(r,dim)=>{
+  /* How far this school moved, and why. Shown only while a lens is on. */
+  const movement=(r,pos)=>{
+    if(!activeLens) return "";
+    const was=basePos[r.sc.name], d=was-pos, ds=r.m.score-baseScore[r.sc.name];
+    const arrow = d>0?`<span class="mv up">&#9650; ${d}</span>`
+                : d<0?`<span class="mv down">&#9660; ${-d}</span>`
+                :      `<span class="mv flat">no change</span>`;
+    const why = r.m.lens && r.m.lens.absent
+      ? `<span class="mv-why warn">${esc(r.m.lens.absent)}</span>`
+      : r.m.lens && !r.m.lens.measured
+        ? `<span class="mv-why">We could not check this domain here, so the emphasis did not apply. Unchecked, not absent.</span>`
+        : "";
+    return `<div class="movement">${arrow}
+      <span class="mv-txt">was #${was}${ds?`, score ${ds>0?"+":""}${ds}`:""}</span>${why}</div>`;
+  };
+
+  const card=(r,dim,pos)=>{
     const {sc,m}=r;
     const cautions=[...sc.cautions.slice(0,2),...m.risks].slice(0,5);
     const allTours=[...sc.tourQuestions,...tours].slice(0,6);
@@ -18942,6 +19075,7 @@ function renderSchools(s){
           <div class="ss-lab">fit indication</div>
         </div>
       </header>
+      ${movement(r,pos)}
       ${m.blocks.length?`<div class="blocked">Outside your stated constraints: ${esc(m.blocks.join(" "))}</div>`:""}
       ${m.softs.length?`<div class="soft">${esc(m.softs.join(" "))}</div>`:""}
       ${m.peers?`<div class="subdomain"><span class="sd ${m.peers.has?"strong":"unknown"}">${esc(m.peers.text)}</span></div>`:""}
@@ -18995,12 +19129,55 @@ function renderSchools(s){
       ${overlapNote(lead)}
     </div>` : "";
 
-  el("schoolList").innerHTML=ok.map(r=>card(r,false)).join("");
+  el("schoolList").innerHTML=ok.map((r,i)=>card(r,false,i+1)).join("");
   el("excludedList").innerHTML = no.length
     ? `<h3>Outside your stated constraints (${no.length})</h3>
        <p class="note">These are not ranked against the others. They are here so you can see what a constraint is costing you, not to suggest you should reconsider it.</p>`
-      + no.map(r=>card(r,true)).join("")
+      + no.map((r,i)=>card(r,true,ok.length+i+1)).join("")
     : "";
+}
+
+/* The chips. A chip is marked as suggested where the child's own answers
+   registered talent in that domain — marked, never switched on. Noticing
+   is not the same as deciding, and the difference is the whole point. */
+function renderLens(s,ranked,basePos){
+  const suggested=talents(s);
+  const chips=Object.keys(LENS_ATTRS).map(k=>{
+    const sug=LENS_TALENT[k] && suggested.includes(LENS_TALENT[k]);
+    const on=activeLens===k;
+    return `<button type="button" class="lens-chip${on?" on":""}${sug?" sug":""}" data-lens="${k}"
+      ${sug?'title="Their answers pointed here. It is still off until you turn it on."':""}
+      >${esc(LENS_LABEL[k])}${sug?' <span class="sug-dot">&#10022;</span>':""}</button>`;
+  }).join("");
+  el("lensChips").innerHTML = chips +
+    (activeLens?`<button type="button" class="lens-chip reset" data-lens="">Reset</button>`:"");
+
+  if(!activeLens){
+    const named=Object.keys(LENS_ATTRS).filter(k=>LENS_TALENT[k]&&suggested.includes(LENS_TALENT[k]))
+      .map(k=>LENS_LABEL[k]);
+    el("lensBanner").innerHTML = named.length
+      ? `<div class="insight"><strong>Their answers pointed at ${esc(named.join(" and "))}</strong>
+         Marked with a &#10022; above, and left off. This ranking does not have a thumb on the scale.</div>`
+      : "";
+  } else {
+    const moved=ranked.filter(r=>r.m.eligible)
+      .map((r,i)=>Math.abs(basePos[r.sc.name]-(i+1)))
+      .reduce((a,b)=>a+b,0);
+    el("lensBanner").innerHTML =
+      `<div class="insight warn"><strong>${esc(LENS_LABEL[activeLens])} is emphasised — this is not the tool's answer</strong>
+       The damping normally applied to interests is lifted for this one domain, so it now counts the same as a culture dimension
+       rather than 0.65 of one. Nothing else changed. ${moved
+         ? `Total movement across the list: ${moved} place${moved===1?"":"s"}. A school that barely moved tells you as much as one that jumped.`
+         : `Nothing moved at all — on this evidence, emphasising it does not change which schools suit this child.`}</div>`;
+  }
+
+  el("lensChips").querySelectorAll("[data-lens]").forEach(b=>{
+    b.onclick=()=>{
+      const k=b.getAttribute("data-lens");
+      activeLens = (!k || activeLens===k) ? null : k;
+      if(childScores) renderSchools(activeScores());
+    };
+  });
 }
 
 /* If the leading scores overlap inside their uncertainty bands, say so
@@ -19139,31 +19316,31 @@ const DEV_PROFILES={
  /* ---- INTERESTS: what a child is drawn to ---- */
  "Musician — plays, wants to keep going":{group:"Interests",
    tiles:["music","code","reading"],
-   dims:{music:92,tech:70,academicInterest:76,autonomy:74,social:46,breadth:60},
+   dims:{talentMusic:88,music:92,tech:70,academicInterest:76,autonomy:74,social:46,breadth:60},
    subj:{music:5,computing:4,english:4,maths:3,art:3,drama:3,pe:2,science:3,hass:3,lang:2,dt:3}},
  "Musician — by ear, contemporary":{group:"Interests",
    tiles:["music","code","build"],
-   dims:{music:92,tech:82,autonomy:86,academicInterest:58,formality:25,social:50},
+   dims:{talentMusic:92,music:92,tech:82,autonomy:86,academicInterest:58,formality:25,social:50},
    subj:{music:5,computing:4,dt:4,art:3,english:3,maths:2,science:2,drama:3,pe:2,hass:2,lang:1}},
  "Athlete — team sports, club level":{group:"Interests",
    tiles:["sport","outdoor","helping"],
-   dims:{sport:92,social:82,empathy:76,structure:70,breadth:74,academicInterest:42},
+   dims:{talentSport:88,sport:92,social:82,empathy:76,structure:70,breadth:74,academicInterest:42},
    subj:{pe:5,science:3,maths:3,english:3,hass:3,dt:3,art:2,music:2,drama:2,computing:2,lang:2}},
  "Artist — visual and performing":{group:"Interests",
    tiles:["art","drama","writing"],
-   dims:{visualArt:90,drama:88,social:70,autonomy:78,academicInterest:60,formality:32},
+   dims:{talentArt:90,talentDrama:74,visualArt:90,drama:88,social:70,autonomy:78,academicInterest:60,formality:32},
    subj:{art:5,drama:5,english:4,music:3,lang:3,hass:3,dt:3,maths:2,science:2,pe:2,computing:2}},
  "Maker — coding, robotics, building":{group:"Interests",
    tiles:["code","build","science"],
-   dims:{tech:92,vet:68,autonomy:82,academicInterest:70,academic:62,social:46},
+   dims:{talentComputing:92,tech:92,vet:68,autonomy:82,academicInterest:70,academic:62,social:46},
    subj:{computing:5,dt:5,science:4,maths:4,art:3,pe:3,english:2,music:2,drama:2,hass:2,lang:2}},
  "Academic — reads, puzzles, wants stretch":{group:"Interests",
    tiles:["reading","puzzles","science"],
-   dims:{academicInterest:92,academic:90,focus:82,pressure:72,peerDrive:78,social:42,vet:20},
+   dims:{talentAcademic:90,academicInterest:92,academic:90,focus:82,pressure:72,peerDrive:78,social:42,vet:20},
    subj:{maths:5,science:5,english:4,hass:4,lang:3,computing:3,art:2,music:2,drama:2,pe:2,dt:2}},
  "Trade-minded — hands-on, practical":{group:"Interests",
    tiles:["build","sport","animals"],
-   dims:{vet:92,tech:76,sport:70,academic:34,academicInterest:32,structure:70,pressure:40},
+   dims:{talentComputing:70,vet:92,tech:76,sport:70,academic:34,academicInterest:32,structure:70,pressure:40},
    subj:{dt:5,pe:4,science:3,computing:3,art:3,maths:2,english:2,music:2,drama:2,hass:2,lang:1}},
  "Linguist — languages and travel":{group:"Interests",
    tiles:["lang","reading","writing"],
@@ -19207,15 +19384,15 @@ const DEV_PROFILES={
  /* ---- COMBINATIONS: the awkward ones a simple profile misses ---- */
  "Gifted but socially anxious":{group:"Combinations",
    tiles:["reading","puzzles","code"],
-   dims:{academic:92,academicInterest:92,talentAcademic:95,focus:86,social:20,spaceNeed:82,schoolSize:22,visibility:76,pressure:44},
+   dims:{talentAcademic:90,academic:92,academicInterest:92,talentAcademic:95,focus:86,social:20,spaceNeed:82,schoolSize:22,visibility:76,pressure:44},
    subj:{maths:5,science:5,computing:5,english:4,hass:3,lang:3,art:2,music:2,drama:1,pe:1,dt:3}},
  "Sporty, bright, not academic-minded":{group:"Combinations",
    tiles:["sport","build","helping"],
-   dims:{sport:90,vet:78,social:80,academic:44,academicInterest:36,structure:72,grounded:82},
+   dims:{talentSport:86,sport:90,vet:78,social:80,academic:44,academicInterest:36,structure:72,grounded:82},
    subj:{pe:5,dt:4,science:3,maths:3,english:2,hass:3,art:3,music:2,drama:2,computing:3,lang:1}},
  "Musical and academic, wants both":{group:"Combinations",
    tiles:["music","reading","puzzles"],
-   dims:{music:88,academic:86,academicInterest:88,breadth:84,talentMusic:90,talentAcademic:88,pressure:66},
+   dims:{talentMusic:86,talentAcademic:84,music:88,academic:86,academicInterest:88,breadth:84,talentMusic:90,talentAcademic:88,pressure:66},
    subj:{music:5,maths:5,english:4,science:4,hass:3,lang:3,art:3,drama:3,computing:3,pe:2,dt:2}},
  "Leader who wants room to run things":{group:"Combinations",
    tiles:["organise","selling","drama"],
@@ -19223,7 +19400,7 @@ const DEV_PROFILES={
    subj:{english:4,hass:4,drama:4,maths:3,computing:3,art:3,music:3,pe:3,science:3,dt:3,lang:3}},
  "Creative, dislikes ceremony and ranking":{group:"Combinations",
    tiles:["art","music","writing"],
-   dims:{visualArt:86,music:80,drama:74,formality:12,statusTolerance:14,grounded:84,autonomy:84,social:58},
+   dims:{talentArt:82,talentDrama:70,visualArt:86,music:80,drama:74,formality:12,statusTolerance:14,grounded:84,autonomy:84,social:58},
    subj:{art:5,music:5,english:4,drama:4,hass:3,lang:3,science:2,maths:2,computing:3,dt:3,pe:2}},
  "Bright, easily led, needs the right cohort":{group:"Combinations",
    tiles:["code","sport","music"],
