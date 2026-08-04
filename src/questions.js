@@ -9,40 +9,64 @@
 
 const DIMS = {
   /* ---------- SCORED ---------- */
-  academic:{label:"Academic challenge",kind:"scored",desc:"Enjoys demanding ideas, advanced work and intellectual stretch."},
-  teacher:{label:"Teacher mentorship",kind:"scored",desc:"Performs best when a respected adult notices potential and raises the bar."},
-  peerDrive:{label:"Ambitious peers",kind:"scored",desc:"Gains energy from capable, engaged students nearby."},
-  peerInfluence:{label:"Peer-culture sensitivity",kind:"scored",desc:"Tends to absorb the habits and priorities of close friends."},
-  resilience:{label:"Outperformance resilience",kind:"scored",desc:"Stays engaged when others are currently stronger."},
-  structure:{label:"Structure and accountability",kind:"scored",desc:"Benefits from clear standards, checkpoints and follow-through."},
-  autonomy:{label:"Independence",kind:"scored",desc:"Wants room to choose methods, topics and direction."},
-  focus:{label:"Focused learning culture",kind:"scored",desc:"Needs classrooms where effort and attention are consistently normal."},
-  social:{label:"Social energy",kind:"scored",desc:"Draws motivation and identity from groups, events and belonging."},
-  pressure:{label:"Pressure tolerance",kind:"scored",desc:"Can sustain effort under selection, deadlines and visible comparison."},
-  visibility:{label:"Need to be actively noticed",kind:"scored",desc:"Benefits when teachers identify potential and personally direct opportunities."},
-  breadth:{label:"Breadth of identity",kind:"scored",desc:"Wants several strong pathways rather than one defining specialty."},
-  grounded:{label:"Grounded social culture",kind:"scored",desc:"Values social breadth, community connection and low status-consciousness."},
-  academicInterest:{label:"Academic interest",kind:"scored",attr:"academic",desc:"Draws towards study, reading, puzzles and ideas for their own sake."},
-  music:{label:"Music and performing arts",kind:"scored",desc:"Prioritises performance, composition, production and sound."},
-  tech:{label:"Technology and making",kind:"scored",desc:"Prioritises computing, media, design and building things."},
-  sport:{label:"Sport and movement",kind:"scored",desc:"Values teams, competition, physical challenge and active school life."},
-  enterprise:{label:"Leadership and enterprise",kind:"scored",desc:"Enjoys leading, pitching, organising and turning ideas into action."},
+  academic:{label:"Academic challenge",kind:"scored",poles:["Comfortable pace","Wants to be pushed"],desc:"Enjoys demanding ideas, advanced work and intellectual stretch."},
+  teacher:{label:"Teacher mentorship",kind:"profile",poles:["Self-propelled","Runs on teacher relationships"],desc:"Performs best when a respected adult notices potential and raises the bar."},
+  peerDrive:{label:"Ambitious peers",kind:"scored",poles:["Sets own pace","Lifted by ambitious peers"],desc:"Gains energy from capable, engaged students nearby."},
+  peerInfluence:{label:"Peer-culture sensitivity",kind:"scored",poles:["Holds own line","Follows the group"],desc:"Tends to absorb the habits and priorities of close friends."},
+  resilience:{label:"Outperformance resilience",kind:"scored",poles:["Steps back when outperformed","Leans in when outperformed"],desc:"Stays engaged when others are currently stronger."},
+  structure:{label:"Structure and accountability",kind:"profile",poles:["Wants freedom","Wants scaffolding"],desc:"Benefits from clear standards, checkpoints and follow-through."},
+  autonomy:{label:"Independence",kind:"scored",poles:["Happy to be directed","Wants to do it their way"],desc:"Wants room to choose methods, topics and direction."},
+  focus:{label:"Focused learning culture",kind:"scored",poles:["Tunes out distraction","Needs a focused room"],desc:"Needs classrooms where effort and attention are consistently normal."},
+  social:{label:"Social energy",kind:"profile",poles:["Works best quietly","Runs on people and events"],desc:"Draws motivation and identity from groups, events and belonging."},
+  pressure:{label:"Pressure tolerance",kind:"scored",poles:["Prefers low pressure","Sustains pressure well"],desc:"Can sustain effort under selection, deadlines and visible comparison."},
+  visibility:{label:"Need to be actively noticed",kind:"profile",poles:["Goes and asks","Needs to be noticed"],desc:"Benefits when teachers identify potential and personally direct opportunities."},
+  breadth:{label:"Breadth of identity",kind:"scored",poles:["Wants to go deep on one","Wants several pathways"],desc:"Wants several strong pathways rather than one defining specialty."},
+  grounded:{label:"Grounded social culture",kind:"scored",poles:["Doesn't mind a narrow intake","Wants a broad social mix"],desc:"Values social breadth, community connection and low status-consciousness."},
+  schoolSize:{label:"Environment size",kind:"scored",poles:["Wants to be known","Comfortable in a big school"],desc:"Comfort in a large school versus a smaller one where everyone is known."},
+  academicInterest:{label:"Academic interest",kind:"scored",poles:["Study is a means to an end","Enjoys the work itself"],attr:"academic",desc:"Draws towards study, reading, puzzles and ideas for their own sake."},
+  music:{label:"Music and performing arts",kind:"scored",poles:["Not a priority","Music matters"],desc:"Prioritises performance, composition, production and sound."},
+  tech:{label:"Technology and making",kind:"scored",poles:["Not a priority","Making and tech matter"],desc:"Prioritises computing, media, design and building things."},
+  sport:{label:"Sport and movement",kind:"scored",poles:["Not a priority","Sport matters"],desc:"Values teams, competition, physical challenge and active school life."},
+  enterprise:{label:"Business and enterprise",kind:"scored",poles:["Prefers to contribute","Likes to lead and organise"],desc:"Enjoys leading, pitching, organising and turning ideas into action."},
 
   /* ---------- PROFILE ONLY ---------- */
-  helpSeeking:{label:"Surfacing a problem",kind:"profile",desc:"Whether they tell someone when they are stuck, behind or struggling.",lowIsRisk:true},
-  belonging:{label:"Close-friendship reliance",kind:"profile",desc:"Whether they rely on one or two close friendships rather than a wide network."},
-  schoolSize:{label:"Environment size",kind:"profile",desc:"Comfort in a large, anonymous school versus a small one where everyone is known."},
-  changeTolerance:{label:"New starts",kind:"profile",desc:"How readily they settle into a group where they know nobody.",lowIsRisk:true},
-  statusTolerance:{label:"Status-hierarchy comfort",kind:"profile",desc:"Comfort in a school where standing and reputation are visible and ranked."},
-  conflictRepair:{label:"Repairing a falling-out",kind:"profile",desc:"How they handle a rupture with a close friend."},
-  empathy:{label:"Looking out for others",kind:"profile",desc:"Willingness to act for someone else at some cost to themselves."},
-  spaceNeed:{label:"Need for downtime",kind:"profile",desc:"How much recovery time they need after a full or crowded day.",highIsRisk:true},
-  formality:{label:"Traditional culture fit",kind:"profile",desc:"Whether uniform, ceremony and school tradition energise or cost them."},
-  cohortStability:{label:"Stable grouping",kind:"profile",desc:"Preference for one consistent class group over moving between groups."},
-  outdoor:{label:"Outdoor and expedition",kind:"profile",desc:"Appetite for camps, hiking and time away from home."},
-  effortSelfdir:{label:"Follow-through",kind:"profile",desc:"Whether work gets finished without an adult prompting.",lowIsRisk:true},
-  mentorStyle:{label:"Preferred teacher style",kind:"profile",desc:"Relational and attentive at one end, expert and demanding at the other."},
-  coed:{label:"Mixed-group working",kind:"display",desc:"How they described working in mixed versus same-gender groups. Recorded, never scored."}
+  helpSeeking:{label:"Surfacing a problem",kind:"profile",poles:["Keeps it to themselves","Tells someone early"],desc:"Whether they tell someone when they are stuck, behind or struggling.",lowIsRisk:true},
+  belonging:{label:"Close-friendship reliance",kind:"profile",poles:["Wide network","Relies on one or two close friends"],desc:"Whether they rely on one or two close friendships rather than a wide network."},
+
+  changeTolerance:{label:"New starts",kind:"profile",poles:["Needs a familiar face","Handles a cold start"],desc:"How readily they settle into a group where they know nobody.",lowIsRisk:true},
+  statusTolerance:{label:"Status-hierarchy comfort",kind:"profile",poles:["Uncomfortable with pecking order","Comfortable with visible status"],desc:"Comfort in a school where standing and reputation are visible and ranked."},
+  conflictRepair:{label:"Repairing a falling-out",kind:"profile",poles:["Waits it out","Sorts it out directly"],desc:"How they handle a rupture with a close friend."},
+  empathy:{label:"Looking out for others",kind:"profile",poles:["Focuses on their own part","Acts for others at a cost"],desc:"Willingness to act for someone else at some cost to themselves."},
+  spaceNeed:{label:"Need for downtime",kind:"profile",poles:["Thrives on a full week","Needs real downtime"],desc:"How much recovery time they need after a full or crowded day.",highIsRisk:true},
+  formality:{label:"Traditional culture fit",kind:"scored",poles:["Prefers relaxed","Energised by tradition"],desc:"Whether uniform, ceremony and school tradition energise or cost them."},
+  cohortStability:{label:"Stable grouping",kind:"profile",poles:["Happy moving groups","Wants a stable group"],desc:"Preference for one consistent class group over moving between groups."},
+  outdoor:{label:"Outdoor and expedition",kind:"profile",poles:["Rather be elsewhere","Loves camps and expeditions"],desc:"Appetite for camps, hiking and time away from home."},
+  effortSelfdir:{label:"Follow-through",kind:"profile",poles:["Needs prompting","Finishes without being asked"],desc:"Whether work gets finished without an adult prompting.",lowIsRisk:true},
+  mentorStyle:{label:"Preferred teacher style",kind:"profile",poles:["Wants an expert who pushes","Wants someone who knows them"],desc:"Relational and attentive at one end, expert and demanding at the other."},
+  visualArt:{label:"Visual art and design",kind:"scored",poles:["Not a priority","Art and design matter"],desc:"Draws towards drawing, design, making images and objects."},
+  vet:{label:"Hands-on and vocational pathways",kind:"scored",poles:["Wants an academic route","Wants a practical route"],desc:"Drawn to trades, certificates and learning by doing rather than an ATAR-only path."},
+  languages:{label:"Languages",kind:"scored",poles:["Not a priority","Languages matter"],desc:"Draws towards other languages, travel and other countries."},
+  drama:{label:"Drama and performing",kind:"scored",poles:["Not a priority","Drama and performing matter"],desc:"Draws towards acting, theatre and performance."},
+  /* TALENT — one dimension per domain, not one shared level.
+     The old single `talentLevel` was written to by both the sport and the
+     music question, so a child who competes at state level in one and plays
+     the other for fun produced a single blended number and the tool could
+     not tell WHICH thing they were good at. That matters because 17 of the
+     22 schools have a selective or extension pathway, and every one of them
+     is selective in a specific domain.
+
+     Every ladder asks about history and behaviour, never self-assessment.
+     "Are you gifted at maths" is a bad question for a ten-year-old: it gets
+     bragging from one child and modesty from another. "I've sat a test for
+     a selective program" is a fact, and facts are what we can use. */
+  talentAcademic:{label:"Academic level",kind:"profile",poles:["School work is about right","Working well beyond the class"],desc:"How far ahead of the standard classroom they are already working."},
+  talentSport:{label:"Sport level",kind:"profile",poles:["Plays for fun","Competing above school level"],desc:"How far they have taken their sport outside school."},
+  talentMusic:{label:"Music level",kind:"profile",poles:["Plays for fun","Committed beyond school"],desc:"How far they have taken music outside school."},
+  talentComputing:{label:"Computing level",kind:"profile",poles:["Uses it for fun","Building real things"],desc:"How far they have taken coding, robotics or making outside school."},
+  talentArt:{label:"Art level",kind:"profile",poles:["Draws for fun","Working to a serious standard"],desc:"How far they have taken art or design outside school."},
+  talentDrama:{label:"Drama level",kind:"profile",poles:["Enjoys performing","Performing outside school"],desc:"How far they have taken drama or performance outside school."},
+  socialTested:{label:"Has social resilience been tested",kind:"profile",poles:["Never been tested","Has come through it"],desc:"Whether the child has ever been without a close friend or lost a friendship group.",lowIsRisk:true},
+  coed:{label:"Mixed-group working",kind:"display",poles:["Same-gender groups","Mixed groups"],desc:"How they described working in mixed versus same-gender groups. Recorded, never scored."}
 };
 
 const SCORED_DIMS  = Object.keys(DIMS).filter(d=>DIMS[d].kind==="scored");
@@ -51,10 +75,11 @@ const PROFILE_DIMS = Object.keys(DIMS).filter(d=>DIMS[d].kind==="profile");
 /* Child dimension -> school attribute. Where two child dimensions
    feed one school attribute they are blended in desiredSchoolVector. */
 const ATTR_OF = {
-  academic:"academic", academicInterest:"academic", teacher:"teacher", visibility:"visibility",
-  structure:"structure", autonomy:"autonomy", focus:"focus", social:"social",
+  academic:"academic", academicInterest:"academic",
+  autonomy:"autonomy", focus:"focus",
   pressure:"pressure", music:"music", tech:"tech", sport:"sport",
-  enterprise:"enterprise", breadth:"breadth", grounded:"grounded"
+  breadth:"breadth", grounded:"grounded", enterprise:"enterprise",
+  visualArt:"visualArt", drama:"drama", languages:"languages", vet:"vet", formality:"formality", schoolSize:"size"
 };
 
 /* Interest tiles for the Stage 0 inventory. `d` = dimension weights.
@@ -62,9 +87,9 @@ const ATTR_OF = {
    it is reported and turned into a tour question, never scored. */
 const TILES = [
   {id:"music",   t:"Making music or playing an instrument", d:{music:3}},
-  {id:"art",     t:"Drawing, design or animation",          d:{tech:1}, unmapped:"visual art and design"},
-  {id:"drama",   t:"Acting, film or performing",            d:{music:2, social:1}},
-  {id:"writing", t:"Writing stories, or making videos",     d:{tech:1, academicInterest:1}, unmapped:"writing and media"},
+  {id:"art",     t:"Drawing, design or animation",          d:{visualArt:3, tech:1}},
+  {id:"drama",   t:"Acting, film or performing",            d:{drama:3, social:1}},
+  {id:"writing", t:"Writing stories, or making videos",     d:{drama:2, tech:1, academicInterest:1}},
   {id:"sport",   t:"Sport and training",                    d:{sport:3}},
   {id:"outdoor", t:"Being outdoors — camping, hiking, exploring", d:{outdoor:3, sport:1}},
   {id:"build",   t:"Building or fixing things",             d:{tech:3}},
@@ -76,7 +101,7 @@ const TILES = [
   {id:"helping", t:"Helping or coaching younger kids",      d:{empathy:3, social:1}, unmapped:"service and peer-support programs"},
   {id:"organise",t:"Organising an event or running a club", d:{enterprise:3, social:1}},
   {id:"selling", t:"Making or selling something to earn money", d:{enterprise:3}},
-  {id:"lang",    t:"Languages, travel or other countries",  d:{academicInterest:2}, unmapped:"languages and exchange"}
+  {id:"lang",    t:"Languages, travel or other countries",  d:{languages:3, academicInterest:1}}
 ];
 
 function tileOpts(scale, extra){
@@ -92,8 +117,6 @@ function tileOpts(scale, extra){
    CHILD BANK — 50 items
    ============================================================ */
 const childQuestions = [
-
-/* ---------- STAGE 0 · interest inventory (3) ---------- */
 {stage:0,type:"multi",pick:3,round:"What you're into",
  prompt:"Pick the three things you'd most want to spend a whole Saturday doing.",
  options:tileOpts(1)},
@@ -107,39 +130,27 @@ const childQuestions = [
  hint:"Pick any number, including none.",
  options:tileOpts(0.6,{effortSelfdir:1})},
 
-/* ---------- STAGE 0b · sub-domain, conditional ----------
-   Only shown to a child who picked the parent interest. Framed as a
-   decision rather than a form. Not scored into any dimension — the
-   answer flags specific programs to check on a tour, it does not rank
-   schools, because a ten-year-old's current favourite sport should not
-   drive a six-year decision. */
 {stage:0,type:"subdomain",domain:"sport",trigger:["sport"],round:"What you're into",
  prompt:"Your school is starting one new team next year and you get to pick. Which one would you actually turn up to every week?",
  options:[
-  {id:"afl",text:"AFL"},{id:"soccer",text:"Soccer"},{id:"basketball",text:"Basketball"},
-  {id:"netball",text:"Netball"},{id:"hockey",text:"Hockey"},{id:"cricket",text:"Cricket"},
-  {id:"rugby",text:"Rugby"},{id:"swimming",text:"Swimming"},{id:"athletics",text:"Athletics or cross country"},
-  {id:"rowing",text:"Rowing"},{id:"tennis",text:"Tennis"},{id:"volleyball",text:"Volleyball"},
-  {id:"waterpolo",text:"Water polo"},{id:"dance",text:"Dance"}]},
+  {id:"afl",text:"AFL", w:{social:2}},{id:"soccer",text:"Soccer", w:{social:2}},{id:"basketball",text:"Basketball", w:{social:2}},
+  {id:"netball",text:"Netball", w:{social:2}},{id:"hockey",text:"Hockey", w:{social:2}},{id:"cricket",text:"Cricket", w:{social:1, focus:1}},
+  {id:"rugby",text:"Rugby", w:{social:2, pressure:1}},{id:"swimming",text:"Swimming", w:{autonomy:2, structure:1}},{id:"athletics",text:"Athletics or cross country", w:{autonomy:2}},
+  {id:"rowing",text:"Rowing", w:{structure:2, pressure:2}},{id:"tennis",text:"Tennis", w:{autonomy:2}},{id:"volleyball",text:"Volleyball", w:{social:2}},
+  {id:"waterpolo",text:"Water polo", w:{social:2, pressure:1}},{id:"dance",text:"Dance", w:{drama:2, visualArt:1}}]},
 
 {stage:0,type:"subdomain",domain:"music",trigger:["music","drama"],round:"What you're into",
  prompt:"The music department has money for one big thing this year. What should they buy?",
  hint:"There's no right answer — pick what you'd actually use.",
  options:[
-  {id:"orchestral",text:"Orchestra instruments — strings, brass, woodwind"},
-  {id:"band",text:"Concert band gear"},
-  {id:"choral",text:"A proper setup for choir and singing"},
-  {id:"jazz",text:"Jazz band gear"},
-  {id:"contemporary",text:"Rock band gear and amps"},
-  {id:"production",text:"Recording and music production equipment"},
-  {id:"tuition",text:"More one-to-one lesson time with a teacher"}]},
+  {id:"orchestral",text:"Orchestra instruments — strings, brass, woodwind", w:{structure:2, focus:1}},
+  {id:"band",text:"Concert band gear", w:{structure:2, social:1}},
+  {id:"choral",text:"A proper setup for choir and singing", w:{social:2, structure:1}},
+  {id:"jazz",text:"Jazz band gear", w:{autonomy:2, social:1}},
+  {id:"contemporary",text:"Rock band gear and amps", w:{social:2, autonomy:1}},
+  {id:"production",text:"Recording and music production equipment", w:{tech:3, autonomy:3, social:-1}},
+  {id:"tuition",text:"More one-to-one lesson time with a teacher", w:{teacher:2, autonomy:1}}]},
 
-/* ---------- STAGE 0c · the interest ladder ----------
-   Three clashes between the child's OWN top three picks, each with a
-   different narrative frame so it never reads as the same question
-   repeated. A full round robin, which also exposes inconsistent
-   answering. These do not feed the dimensions directly — they produce
-   a ranking that then weights the interest dimensions. */
 {stage:0,type:"clash",pair:[0,1],round:"What you're into",
  prompt:"Both of these are on at the same time this Saturday, and you can only get to one. Which do you go to?"},
 
@@ -149,10 +160,6 @@ const childQuestions = [
 {stage:0,type:"clash",pair:[1,2],round:"What you're into",
  prompt:"You can only carry one of these on past Year 10. Which one comes with you?"},
 
-/* Head-to-head against schoolwork. Static, and scored normally —
-   this reveals whether the interest survives a demanding academic
-   load, which is the difference between a school that can carry both
-   and one that quietly forces a choice. */
 {stage:0,type:"scenario",round:"What you're into",
  prompt:"There's a big test coming up, and {TOP} has something big on in the very same week. What actually happens?",options:[
  {text:"I'd find a way to do both properly, even if it's a rough week.",w:{pressure:3,breadth:3,effortSelfdir:2,spaceNeed:-2}},
@@ -161,110 +168,233 @@ const childQuestions = [
  {text:"I'd ask a teacher or my parents to help me work out the week.",w:{structure:3,teacher:2,helpSeeking:3,effortSelfdir:-2}},
  {text:"I'd probably end up doing neither as well as I wanted.",w:{pressure:-3,spaceNeed:3,effortSelfdir:-2}}]},
 
-/* ---------- STAGE 1 · two-option trade-offs (24) ---------- */
-{stage:1,type:"choice",round:"Challenge",prompt:"You get to pick one class for next term. Which sounds better?",options:[
- {text:"A hard class where you'd probably be one of the best in the room.",w:{academic:2,visibility:2,resilience:-1}},
- {text:"The hardest class in the school, where lots of people would start ahead of you.",w:{academic:3,peerDrive:2,resilience:3,pressure:1}}]},
+{stage:0,type:"grid",round:"What you're into",
+ prompt:"How much do you enjoy each of these at school?",
+ hint:"1 means you'd rather not, 5 means you love it. Be honest — there's no right answer.",
+ scale:["Not for me","","OK","","Love it"],
+ rows:[
+  {id:"maths",   t:"Maths",                      d:{academicInterest:3}},
+  {id:"english", t:"English",                    d:{academicInterest:2}},
+  {id:"science", t:"Science",                    d:{academicInterest:2, tech:1}},
+  {id:"hass",    t:"History and society",        d:{academicInterest:2}},
+  {id:"lang",    t:"Languages",                  d:{languages:3, academicInterest:1}},
+  {id:"art",     t:"Art",                        d:{visualArt:3}},
+  {id:"music",   t:"Music",                      d:{music:3}},
+  {id:"drama",   t:"Drama",                      d:{drama:3, social:1}},
+  {id:"dt",      t:"Design and technology",      d:{tech:3}},
+  {id:"computing",t:"Computing",                 d:{tech:3}},
+  {id:"pe",      t:"PE and sport",               d:{sport:3}}]},
+
+{stage:0,type:"talent",domain:"academic",trigger:null,round:"What you're into",
+ prompt:"Think about your school work at the moment. Which is closest?",
+ options:[
+  {id:"right",  text:"It's usually about the right level for me",              w:{talentAcademic:1}},
+  {id:"early",  text:"I often finish early and end up waiting",                w:{talentAcademic:2}},
+  {id:"extra",  text:"I read ahead or do my own projects at home because I want to", w:{talentAcademic:3, academicInterest:2}},
+  {id:"comp",   text:"I've done competitions or extension work outside school", w:{talentAcademic:4, academicInterest:2}},
+  {id:"test",   text:"I've sat, or am sitting, a test for a selective program", w:{talentAcademic:4, academicInterest:1}},
+  {id:"hard",   text:"I find most of it pretty hard going",                     w:{talentAcademic:0}}]},
+
+{stage:0,type:"talent",domain:"sport",trigger:["sport"],round:"What you're into",
+ prompt:"How serious is your sport for you at the moment?",
+ options:[
+  {id:"fun",   text:"Just for fun",                       w:{talentSport:0}},
+  {id:"school",text:"I play for school teams",            w:{talentSport:1}},
+  {id:"club",  text:"I play for a club outside school",   w:{talentSport:3}},
+  {id:"rep",   text:"I compete at representative or state level", w:{talentSport:4}}]},
+
+{stage:0,type:"talent",domain:"music",trigger:["music"],round:"What you're into",
+ prompt:"How serious is your music for you at the moment?",
+ options:[
+  {id:"fun",   text:"Just for fun",                            w:{talentMusic:0}},
+  {id:"school",text:"I play in school groups",                 w:{talentMusic:1}},
+  {id:"grades",text:"I do lessons and exams or grades",        w:{talentMusic:3}},
+  {id:"outside",text:"I play in ensembles or compete outside school", w:{talentMusic:4}}]},
+
+{stage:0,type:"choice",domain:"music",trigger:["music"],round:"What you're into",
+ prompt:"When you play, what's usually in front of you?",
+ options:[
+  {id:"notation", text:"Sheet music — I read the notes",              w:{}},
+  {id:"chords",   text:"Chords, tabs or lyrics",                      w:{}},
+  {id:"ear",      text:"Nothing — I work it out by ear",              w:{autonomy:2}},
+  {id:"screen",   text:"A screen — I'm making it on a computer",      w:{tech:2, autonomy:2}},
+  {id:"both",     text:"Depends — I read some things and work out others", w:{}}]},
+
+{stage:0,type:"choice",domain:"music",trigger:["music"],round:"What you're into",
+ prompt:"If nobody reminded you to practise, what would actually happen?",
+ options:[
+  {id:"same",   text:"About the same — I play because I want to",   w:{effortSelfdir:3, autonomy:2}},
+  {id:"less",   text:"Less, but I'd still play",                    w:{effortSelfdir:1}},
+  {id:"pause",  text:"I'd probably stop for a while",               w:{effortSelfdir:-1}},
+  {id:"stop",   text:"I'd stop",                                    w:{effortSelfdir:-3}}]},
+
+{stage:0,type:"choice",domain:"music",trigger:["music"],round:"What you're into",
+ prompt:"Thinking about high school — where do you want your music to happen?",
+ options:[
+  {id:"schoolBig", text:"At school — I want to be in the bands, ensembles or productions", w:{social:2}},
+  {id:"schoolSub", text:"At school, but as a subject more than a performance thing",       w:{academicInterest:1}},
+  {id:"outside",   text:"Mostly outside school, with my own teacher or my own projects",   w:{autonomy:3}},
+  {id:"more",      text:"I'd like to do more than I get to now",                           w:{}},
+  {id:"unsure",    text:"Not sure yet",                                                    w:{}}]},
+
+{stage:0,type:"choice",domain:"sport",trigger:["sport"],round:"What you're into",
+ prompt:"Thinking about high school — where do you want your sport to happen?",
+ options:[
+  {id:"schoolBig", text:"At school — I want to make the teams",           w:{social:2}},
+  {id:"outside",   text:"Mostly at my club outside school",               w:{autonomy:2}},
+  {id:"both",      text:"Both — school teams and my club",                w:{social:1}},
+  {id:"casual",    text:"Just for fun, nothing serious",                  w:{}},
+  {id:"unsure",    text:"Not sure yet",                                   w:{}}]},
+
+{stage:0,type:"choice",domain:"art",trigger:["art"],round:"What you're into",
+ prompt:"When you make art, what are you usually working with?",
+ options:[
+  {id:"traditional",text:"Paper, paint, clay — real materials",           w:{}},
+  {id:"digital",    text:"A screen — drawing or designing on a computer", w:{tech:2}},
+  {id:"both",       text:"Both about the same",                           w:{tech:1}},
+  {id:"building",   text:"Making actual objects — models, props, things", w:{tech:2}}]},
+
+{stage:0,type:"choice",domain:"art",trigger:["art"],round:"What you're into",
+ prompt:"Thinking about high school — where do you want your art to happen?",
+ options:[
+  {id:"schoolBig", text:"At school — proper art classes and a studio",    w:{}},
+  {id:"outside",   text:"Mostly my own stuff at home",                    w:{autonomy:3}},
+  {id:"both",      text:"Both",                                           w:{autonomy:1}},
+  {id:"unsure",    text:"Not sure yet",                                   w:{}}]},
+
+{stage:0,type:"choice",domain:"drama",trigger:["drama"],round:"What you're into",
+ prompt:"In a school production, where would you rather be?",
+ options:[
+  {id:"onstage", text:"On stage, in the show",                            w:{social:2}},
+  {id:"backstage",text:"Backstage — lighting, sound, sets",               w:{tech:3, social:-1}},
+  {id:"making",  text:"Making it — writing it, filming it, directing",    w:{tech:2, autonomy:2}},
+  {id:"either",  text:"Happy either way, I just want to be in it",        w:{social:1}}]},
+
+{stage:0,type:"choice",domain:"computing",trigger:["code","build"],round:"What you're into",
+ prompt:"Thinking about high school — how do you want to do this stuff?",
+ options:[
+  {id:"subject",  text:"As real subjects — computing, engineering, design", w:{academicInterest:2}},
+  {id:"club",     text:"In a club or a team, like robotics",                w:{social:2}},
+  {id:"outside",  text:"On my own projects, in my own time",                w:{autonomy:3}},
+  {id:"unsure",   text:"Not sure yet",                                      w:{}}]},
+
+{stage:0,type:"choice",domain:"drama",trigger:["drama"],round:"What you're into",
+ prompt:"Thinking about high school — how far do you want to take drama?",
+ options:[
+  {id:"major",   text:"Properly — I'd want it as a subject and be in the productions", w:{social:2}},
+  {id:"shows",   text:"The productions, but not as a subject",                w:{social:2}},
+  {id:"try",     text:"I'd like to try more than I've had the chance to",     w:{}},
+  {id:"outside", text:"I do it outside school and that's enough",             w:{autonomy:2}},
+  {id:"unsure",  text:"Not sure yet",                                          w:{}}]},
+
+{stage:0,type:"talent",domain:"drama",trigger:["drama"],round:"What you're into",
+ prompt:"How serious is drama or performing for you at the moment?",
+ options:[
+  {id:"fun",   text:"Just for fun",                                  w:{talentDrama:0}},
+  {id:"school",text:"I do school plays or productions",              w:{talentDrama:1}},
+  {id:"classes",text:"I take classes or do exams outside school",    w:{talentDrama:3}},
+  {id:"outside",text:"I perform with a company or group outside school", w:{talentDrama:4}}]},
+
+{stage:0,type:"talent",domain:"computing",trigger:["code","build"],round:"What you're into",
+ prompt:"How far have you taken coding, robotics or building things?",
+ options:[
+  {id:"fun",   text:"I mess about with it sometimes",                w:{talentComputing:0}},
+  {id:"school",text:"Mostly what we do at school or in a club",      w:{talentComputing:1}},
+  {id:"own",   text:"I build my own projects at home",               w:{talentComputing:3}},
+  {id:"comp",  text:"I've entered competitions, or people use what I've made", w:{talentComputing:4}}]},
+
+{stage:0,type:"talent",domain:"art",trigger:["art"],round:"What you're into",
+ prompt:"How serious is your art or design for you at the moment?",
+ options:[
+  {id:"fun",   text:"I draw or make things for fun",                 w:{talentArt:0}},
+  {id:"school",text:"Mostly in art class at school",                 w:{talentArt:1}},
+  {id:"own",   text:"I work on my own pieces at home a lot",         w:{talentArt:3}},
+  {id:"shown", text:"I've entered things, sold work, or had it shown", w:{talentArt:4}}]},
 
 {stage:1,type:"choice",round:"Motivation",prompt:"Your friends have started taking a group project less seriously. What would help you most?",options:[
  {text:"A teacher checks in on you, expects more, and gives you a clear target.",w:{teacher:3,structure:3,peerInfluence:2}},
  {text:"You're allowed to leave the group and do a bigger version on your own.",w:{autonomy:3,resilience:1,peerInfluence:-1}}]},
 
-{stage:1,type:"choice",round:"Social",prompt:"In a big team project, which job feels better?",options:[
- {text:"Run the group, present the idea and keep everyone going.",w:{enterprise:3,social:3,structure:1}},
- {text:"Be the person who makes the hardest part really well.",w:{tech:1,autonomy:2,academic:1}}]},
-
-{stage:1,type:"choice",round:"Motivation",prompt:"You've just done work you're really proud of. Which would mean more?",options:[
- {text:"A teacher you respect says that's the level they expect from you.",w:{teacher:3,visibility:2}},
- {text:"You know yourself it's the best thing you've ever made.",w:{autonomy:3,resilience:1}}]},
-
-{stage:1,type:"choice",round:"Structure",prompt:"A teacher gives you a big project. Which setup gets your best work?",options:[
- {text:"A clear standard, weekly check-ins and straight feedback.",w:{structure:3,teacher:1,effortSelfdir:-1}},
- {text:"A rough goal and the freedom to work out your own way.",w:{autonomy:3,effortSelfdir:2}}]},
-
-{stage:1,type:"choice",round:"Identity",prompt:"By Year 10, which would you rather be?",options:[
- {text:"Really good at one main thing.",w:{breadth:0}},
- {text:"Good across school, activities and a few different interests.",w:{breadth:3}}]},
-
-{stage:1,type:"choice",round:"Social",prompt:"A new club looks interesting but none of your friends are joining. What's more like you?",options:[
- {text:"Join anyway and see who's there.",w:{peerInfluence:-3}},
- {text:"Pick something else your friends are doing.",w:{peerInfluence:3,social:2}}]},
-
-{stage:1,type:"choice",round:"Social",prompt:"Your closest friends get really into a new hobby. What's more likely?",options:[
- {text:"I'd probably get into it too.",w:{peerInfluence:3}},
- {text:"I'd keep spending most of my time on what I'm already into.",w:{peerInfluence:-3,autonomy:2}}]},
-
-{stage:1,type:"choice",round:"Challenge",prompt:"Which spot in a class would make you work harder?",options:[
- {text:"Near the top, with a real chance to lead and get noticed.",w:{visibility:3,resilience:-2}},
- {text:"Somewhere in the middle, with people around you doing amazing work.",w:{peerDrive:3,resilience:3}}]},
-
-{stage:1,type:"choice",round:"Learning",prompt:"You're stuck on something in class and you don't really get it. What's more like you?",options:[
- {text:"Put your hand up and ask, even though everyone can hear.",w:{helpSeeking:3}},
- {text:"Keep going on your own and try to work it out.",w:{helpSeeking:-3,autonomy:2}}]},
-
-{stage:1,type:"choice",round:"Environment",prompt:"Which school would suit you better?",options:[
- {text:"A big school where there's something for everyone, but plenty of faces you'll never know.",w:{schoolSize:3,breadth:2}},
- {text:"A smaller school where you'd know almost everyone, but there's less on offer.",w:{schoolSize:-3,belonging:2,visibility:2}}]},
-
-{stage:1,type:"choice",round:"Social",prompt:"Which sounds better for your first year of high school?",options:[
- {text:"A big group of friends you hang around with.",w:{social:3,belonging:-2}},
- {text:"One or two really close friends you'd do everything with.",w:{belonging:3,social:-1}}]},
-
-{stage:1,type:"choice",round:"Pressure",prompt:"Which would you rather do?",options:[
- {text:"Try out for something where not everyone gets in.",w:{pressure:3,peerDrive:1}},
- {text:"Join something open to anyone who wants to get better.",w:{pressure:-2,grounded:2}}]},
-
-{stage:1,type:"choice",round:"Environment",prompt:"Which would you pick for high school?",options:[
- {text:"A school close to home, where your friends, sport and neighbourhood all stay connected.",w:{grounded:3,belonging:2}},
- {text:"A school further away, with a longer trip each day, that's really strong at something you love.",w:{grounded:-2,pressure:1,academic:1}}]},
-
-{stage:1,type:"choice",round:"Environment",prompt:"Two schools have equally good subjects. Which sounds better?",options:[
- {text:"A big school with heaps of programs, where you have to go looking for the best ones yourself.",w:{visibility:-3,schoolSize:2}},
- {text:"A school where teachers are more likely to spot what you're good at and suggest things.",w:{visibility:3,teacher:2}}]},
-
-{stage:1,type:"choice",round:"Environment",prompt:"Which classroom would you rather be in?",options:[
- {text:"Fairly relaxed, and some people muck around, but there's a big mix of people and you can still take harder classes.",w:{grounded:3,focus:-3}},
- {text:"Almost everyone works hard the whole lesson, but it feels more competitive.",w:{focus:3,pressure:2,peerDrive:1}}]},
-
-{stage:1,type:"choice",round:"Culture",prompt:"Which school feels better?",options:[
- {text:"Sport is a big deal, and the best athletes are the most well-known kids.",w:{sport:2,statusTolerance:3}},
- {text:"Sport, music, art, marks and leadership all get noticed about the same.",w:{breadth:3,grounded:2,statusTolerance:-3}}]},
-
-{stage:1,type:"choice",round:"Culture",prompt:"Which school day sounds better?",options:[
- {text:"Full uniform, assemblies, house competitions and lots of school traditions.",w:{formality:3,structure:1}},
- {text:"Relaxed uniform, fewer formal events, and more say in how you do things.",w:{formality:-3,statusTolerance:-1}}]},
-
-{stage:1,type:"choice",round:"Identity",prompt:"Which high school week sounds better?",options:[
- {text:"Something on most afternoons — sport, music, clubs, activities.",w:{breadth:3,social:2,spaceNeed:-3}},
- {text:"One or two things you take seriously, with time left over to get really good at them.",w:{breadth:-1,spaceNeed:3}}]},
-
 {stage:1,type:"choice",round:"Environment",prompt:"Which would you rather?",options:[
  {text:"Stay with the same class group for most subjects all year.",w:{cohortStability:3,belonging:1}},
  {text:"Be in different groups for different subjects, depending on the subject.",w:{cohortStability:-3,changeTolerance:2}}]},
 
-{stage:1,type:"choice",round:"Social",prompt:"You're starting at a school where most kids already know each other from primary. What's more like you?",options:[
- {text:"Fine — I'd find my people within a few weeks.",w:{changeTolerance:3,social:2}},
- {text:"I'd rather go somewhere with a group I already know.",w:{changeTolerance:-3,belonging:2}}]},
+{stage:2,type:"scenario",round:"Starting out",
+ prompt:"Some high schools near you have close to 3,000 students. That's about ten times a primary school. How does that land?",
+ options:[
+  {text:"Sounds great — more people, more going on.",              w:{schoolSize:3, social:2, breadth:2}},
+  {text:"Fine. I'd find my people soon enough.",                   w:{schoolSize:2, changeTolerance:2}},
+  {text:"A bit much. I'd rather somewhere I'm not a number.",      w:{schoolSize:-2, visibility:2, belonging:2}},
+  {text:"I'd hate it. I want somewhere people know me.",           w:{schoolSize:-3, belonging:3, visibility:3, spaceNeed:2}}]},
 
-{stage:1,type:"choice",round:"What you're into",prompt:"Your school runs a week-long camp — hiking, tents, no phones. How do you feel about that?",options:[
- {text:"Sounds great.",w:{outdoor:3,changeTolerance:1}},
- {text:"I'd rather spend that week on the things I'm actually into.",w:{outdoor:-3}}]},
+{stage:2,type:"scenario",round:"Starting out",
+ prompt:"It's your first week at the new school. What are you actually thinking about most?",
+ options:[
+  {text:"Whether I'll find my way around — the place is huge.",           w:{schoolSize:-3, belonging:1}},
+  {text:"Whether anyone I know is in my classes.",                        w:{belonging:3, changeTolerance:-2, schoolSize:-1}},
+  {text:"Whether the teachers will work out what I'm good at.",           w:{visibility:3, teacher:2}},
+  {text:"Getting into whatever's running — teams, music, clubs.",         w:{breadth:3, social:2, schoolSize:2}},
+  {text:"Nothing much. I'd just get on with it.",                         w:{changeTolerance:3, autonomy:2, visibility:-2}}]},
 
-{stage:1,type:"choice",round:"Learning",prompt:"Which teacher would you rather have for a whole year?",options:[
- {text:"One who really knows their subject and pushes you hard.",w:{academic:2,pressure:1,mentorStyle:-3}},
- {text:"One who knows you well and notices how you're going.",w:{teacher:3,visibility:2,mentorStyle:3}}]},
+{stage:2,type:"scenario",round:"Starting out",
+ prompt:"You get put in a class for the year. Which one actually gets your best work out of you?",
+ options:[
+  {text:"Everyone's switched on and it's a bit competitive.",             w:{focus:3, peerDrive:3, pressure:2}},
+  {text:"A real mix of people, pretty relaxed, but the work gets done.",  w:{grounded:3, focus:-1, pressure:-1}},
+  {text:"Quiet and orderly — everyone just works.",                       w:{focus:3, structure:2, social:-2}},
+  {text:"One where the teacher knows me properly.",                       w:{teacher:3, visibility:3, mentorStyle:2}},
+  {text:"Doesn't really matter — I'd work about the same.",               w:{autonomy:3, effortSelfdir:2, peerInfluence:-3}}]},
+
+{stage:2,type:"scenario",round:"Starting out",
+ prompt:"There's a whole-school assembly every week. What do you hope they're making a fuss about?",
+ options:[
+  {text:"The teams that won on the weekend.",                             w:{sport:2, statusTolerance:3}},
+  {text:"Sport, music, art and marks — all about the same.",              w:{breadth:3, grounded:2, statusTolerance:-2}},
+  {text:"Someone who looked out for another kid.",                        w:{empathy:3, grounded:3, statusTolerance:-3}},
+  {text:"Top marks, awards, who came first.",                             w:{academic:2, statusTolerance:3, pressure:1}},
+  {text:"Honestly, I'd rather there wasn't a big assembly.",              w:{formality:-3, statusTolerance:-3}}]},
+
+{stage:2,type:"scenario",round:"Starting out",
+ prompt:"Picture your actual week at high school. Which one sounds like the version of you that's doing well?",
+ options:[
+  {text:"Something on most afternoons — sport, music, clubs.",            w:{breadth:3, social:2, spaceNeed:-3, schoolSize:2}},
+  {text:"One or two things I take really seriously.",                     w:{breadth:-2, spaceNeed:1, autonomy:2, schoolSize:-1}},
+  {text:"Busy at school, but afternoons are mine.",                       w:{spaceNeed:3, breadth:-1}},
+  {text:"Whatever my friends are doing.",                                 w:{peerInfluence:3, social:3, autonomy:-2}},
+  {text:"Full uniform, assemblies, house competitions — the whole thing.", w:{formality:3, structure:2, breadth:1}}]},
+
+{stage:2,type:"scenario",round:"Learning",
+ prompt:"Think about the class where the teacher has the most rules. How's your work in there?",
+ options:[
+  {text:"Some of my best, honestly.",                       w:{structure:3, focus:3, pressure:2, effortSelfdir:-1}},
+  {text:"About the same as anywhere else.",                 w:{structure:0, autonomy:1}},
+  {text:"Worse — I spend the time annoyed.",                w:{structure:-3, autonomy:3, focus:-1}},
+  {text:"I don't really have a class like that.",           w:{}}]},
+
+{stage:1,type:"choice",round:"Learning",
+ prompt:"When you're learning something new, which actually works better for you?",options:[
+ {text:"Reading about it, then writing or talking it through.",   w:{academicInterest:3, vet:-3}},
+ {text:"Being shown, then doing it with my hands until I get it.", w:{vet:3, tech:2}},
+ {text:"Watching someone do it properly, then copying them.",      w:{vet:2, teacher:1}},
+ {text:"Both work — depends what it is.",                          w:{}}]},
+
+{stage:1,type:"choice",round:"Learning",
+ prompt:"Think about your best subject and your worst one. What actually makes the difference?",options:[
+ {text:"The subject itself — I like what I like.",              w:{teacher:-3,autonomy:2,academicInterest:2}},
+ {text:"Honestly, mostly the teacher.",                          w:{teacher:3,mentorStyle:3,visibility:2}},
+ {text:"A bit of both.",                                         w:{teacher:1,mentorStyle:1}},
+ {text:"I go alright in most things either way.",                w:{teacher:-2,effortSelfdir:2,resilience:1}}]},
+
+{stage:1,type:"choice",round:"Learning",
+ prompt:"A teacher tells you your work isn't good enough and to do it again. What's that like?",options:[
+ {text:"Fine — I'd just do it again.",                                w:{mentorStyle:-3,academic:2,pressure:2,resilience:2}},
+ {text:"Fine, as long as I know they're on my side.",                 w:{mentorStyle:1,teacher:2,visibility:1,resilience:1}},
+ {text:"I'd want to know why before I did anything.",                 w:{mentorStyle:-1,autonomy:2,academic:1}},
+ {text:"It'd bother me for a while, even if they were right.",        w:{mentorStyle:3,teacher:2,visibility:2,pressure:-2,resilience:-1}}]},
 
 {stage:1,type:"choice",round:"Motivation",prompt:"Which would put you off more?",options:[
  {text:"A rule you think is unfair.",w:{formality:-3,structure:-2},risk:"fairness"},
  {text:"Work that feels pointless.",w:{academic:2,structure:-1},risk:"meaning"}]},
-
-/* ---------- STAGE 2 · behavioural scenarios (15) ---------- */
-{stage:2,type:"scenario",round:"What you'd actually do",prompt:"Someone in your year turns out to be way better than you at something you really care about. What do you actually do?",options:[
- {text:"Ask how they got that good and try doing it their way.",w:{resilience:3,peerDrive:3,helpSeeking:2}},
- {text:"Practise on my own until I can keep up with them.",w:{resilience:2,autonomy:2,pressure:1}},
- {text:"Put my effort into the part of it I'm already strong at.",w:{breadth:2,resilience:1}},
- {text:"Let them take the lead on that one and step back a bit.",w:{resilience:-3,visibility:2}},
- {text:"Spend more of my time on something else I enjoy.",w:{resilience:-3,breadth:1}}]},
 
 {stage:2,type:"scenario",round:"What you'd actually do",prompt:"Your friendship group decides that doing the bare minimum is good enough. What happens to how much effort you put in?",options:[
  {text:"Stays the same — what I want out of it matters more.",w:{peerInfluence:-3,effortSelfdir:2}},
@@ -273,13 +403,6 @@ const childQuestions = [
  {text:"It drops unless a teacher is checking on me.",w:{peerInfluence:2,structure:3,teacher:2}},
  {text:"I'd do the things I care about with different people.",w:{peerInfluence:1,social:2,schoolSize:2}}]},
 
-{stage:2,type:"scenario",round:"What you'd actually do",prompt:"You start an exciting project that nobody set and there's no due date. Three weeks later, what's most likely true?",options:[
- {text:"It's finished and I've started making it better.",w:{effortSelfdir:3,autonomy:3}},
- {text:"I've done heaps of it, but it's not finished.",w:{effortSelfdir:-1,breadth:1}},
- {text:"I'd have kept going if someone had checked in on me.",w:{effortSelfdir:-3,structure:3,teacher:1}},
- {text:"I've moved on to a newer idea.",w:{effortSelfdir:-2,breadth:2}},
- {text:"I got other people involved so it kept moving.",w:{social:3,enterprise:2}}]},
-
 {stage:2,type:"scenario",round:"What you'd actually do",prompt:"A teacher gives you straight criticism of work you were proud of. What happens next?",options:[
  {text:"I want to know exactly how to fix it.",w:{teacher:3,resilience:2,helpSeeking:2}},
  {text:"I'm annoyed at first, then I go back and improve it.",w:{resilience:2,pressure:1}},
@@ -287,33 +410,12 @@ const childQuestions = [
  {text:"I worry that I've let them down.",w:{teacher:3,pressure:-3,visibility:1}},
  {text:"I check what other people got told before I decide what to think.",w:{peerInfluence:3,statusTolerance:1}}]},
 
-{stage:2,type:"scenario",round:"What you'd actually do",prompt:"You turn up to a camp or holiday program where you don't know a single person. What do you actually do?",options:[
- {text:"Start talking to people and find a group pretty quickly.",w:{social:3,changeTolerance:3}},
- {text:"Get to know people through the activity rather than by chatting.",w:{changeTolerance:1,breadth:1}},
- {text:"Wait for someone outgoing to bring me in.",w:{social:-2,changeTolerance:-2,belonging:2}},
- {text:"Get on with the activity — friends can happen later.",w:{autonomy:2,social:-1}},
- {text:"Stay pretty quiet and join in less than I normally would.",w:{social:-3,changeTolerance:-3,visibility:2}}]},
-
-{stage:2,type:"scenario",round:"What you'd actually do",prompt:"You've got a test, a performance and a big game all in the same week. What actually happens?",options:[
- {text:"I love having lots on.",w:{pressure:3,breadth:3,spaceNeed:-3}},
- {text:"I make a plan and work through them one at a time.",w:{pressure:2,structure:2,effortSelfdir:2}},
- {text:"I put most of my energy into the one that matters most to me.",w:{breadth:-2,autonomy:2}},
- {text:"I get through it if an adult helps me organise the week.",w:{structure:3,teacher:1,effortSelfdir:-2}},
- {text:"Weeks like that take a lot out of me.",w:{pressure:-3,spaceNeed:3}}]},
-
 {stage:2,type:"scenario",round:"What you'd actually do",prompt:"You try out for a team, a group or a special program and you don't get in. What's most likely?",options:[
  {text:"Ask what I need to get better at and try again next time.",w:{resilience:3,teacher:2,helpSeeking:2}},
  {text:"Train on my own and try again without talking about it much.",w:{resilience:2,autonomy:3,helpSeeking:-2}},
  {text:"Put my energy into something where I've got a better shot.",w:{breadth:2,resilience:-1}},
  {text:"Give that one a rest for a while.",w:{resilience:-3,pressure:-2}},
  {text:"Join the version that's open to everyone so I can keep doing it.",w:{grounded:3,pressure:-2}}]},
-
-{stage:2,type:"scenario",round:"What you'd actually do",prompt:"Your class gets given a list showing where everyone placed on a big task. What effect does that have on you?",options:[
- {text:"Makes me want to get further up the list.",w:{pressure:3,statusTolerance:3,peerDrive:2}},
- {text:"Helps me see what the standard is, but I don't think about it much after.",w:{pressure:2,resilience:2}},
- {text:"I like it on the weeks I do well.",w:{statusTolerance:2,visibility:2,resilience:-1}},
- {text:"It pulls my attention away from actually learning.",w:{pressure:-3,statusTolerance:-3}},
- {text:"I'd rather just be told privately how I went.",w:{pressure:-2,statusTolerance:-3,visibility:1}}]},
 
 {stage:2,type:"scenario",round:"What you'd actually do",prompt:"Your schoolwork feels too easy and the teacher hasn't noticed. What do you actually do?",options:[
  {text:"Ask the teacher straight out for harder work.",w:{academic:3,helpSeeking:3,visibility:-1}},
@@ -350,13 +452,6 @@ const childQuestions = [
  {text:"It depends way more on who the actual people are than on that.",w:{coed:0}},
  {text:"I've never really noticed.",w:{coed:0}}]},
 
-{stage:2,type:"scenario",round:"What you'd actually do",prompt:"You're in a class where a few people are mucking around and putting others off. What's most likely?",options:[
- {text:"I keep working and mostly tune it out.",w:{focus:-3,resilience:1}},
- {text:"I work well as long as the teacher keeps things under control.",w:{focus:1,structure:3,teacher:2}},
- {text:"My effort slowly drops along with everyone else's.",w:{focus:3,peerInfluence:3}},
- {text:"It frustrates me and I'd rather be in a more focused class.",w:{focus:3,academic:2}},
- {text:"I enjoy the energy and still get my work done.",w:{focus:-2,social:3}}]},
-
 {stage:2,type:"scenario",round:"What you'd actually do",prompt:"A confident person in your group starts taking over the whole project. What do you do?",options:[
  {text:"Push back and share the leading.",w:{enterprise:3,statusTolerance:2,resilience:2}},
  {text:"Sort out one part that's clearly mine to run.",w:{autonomy:3,enterprise:1}},
@@ -364,20 +459,12 @@ const childQuestions = [
  {text:"Step back and do less.",w:{resilience:-3,visibility:3}},
  {text:"Ask the teacher to sort out who's doing what.",w:{structure:3,teacher:2,helpSeeking:2}}]},
 
-/* ---------- STAGE 3 · most and least (8) ---------- */
 {stage:3,type:"bestworst",round:"What matters most",prompt:"At a school, which of these would matter MOST to you, and which LEAST?",items:[
  {text:"Teachers who know what I'm good at.",w:{teacher:3,visibility:3}},
  {text:"Other kids who take their work seriously.",w:{peerDrive:3,focus:3}},
  {text:"Great gear and spaces for the things I'm into.",w:{tech:2,music:2}},
  {text:"A good social life.",w:{social:3,grounded:2}},
  {text:"Adults who'd notice if I was having a bad week.",w:{teacher:2,visibility:2,belonging:3}}]},
-
-{stage:3,type:"bestworst",round:"What matters most",prompt:"Which of these would you MOST want a school to be great at, and which LEAST?",items:[
- {text:"Sports teams and coaching.",w:{sport:3}},
- {text:"Harder classes in the subjects I'm good at.",w:{academic:3,academicInterest:2}},
- {text:"Arts — music, drama, art, film.",w:{music:3}},
- {text:"Making and building — tech, design, robotics.",w:{tech:3}},
- {text:"Outdoor programs, camps and expeditions.",w:{outdoor:3}}]},
 
 {stage:3,type:"bestworst",round:"What matters most",prompt:"Which of these school things matters MOST to you, and which LEAST?",items:[
  {text:"Clear rules, and adults who follow up.",w:{structure:3,formality:2}},
@@ -416,7 +503,7 @@ const childQuestions = [
  {text:"Feeling behind everyone else.",w:{resilience:-3,pressure:-1},risk:"outclassed"},
  {text:"Not having friends I click with.",w:{social:2,belonging:3},risk:"social"},
  {text:"Feeling under pressure all the time.",w:{pressure:-3,spaceNeed:2},risk:"pressure"}]}
-];
+];;;
 
 /* ============================================================
    PARENT BANK — 32 items (22 observation + 10 family)
@@ -424,12 +511,55 @@ const childQuestions = [
    engine and act as constraints.
    ============================================================ */
 const parentQuestions = [
-{part:"A",type:"scenario",prompt:"When your child realises another child is significantly more capable, what usually happens?",options:[
- {text:"They become more determined and seek ideas from them.",w:{resilience:3,peerDrive:3}},
- {text:"They practise privately but remain involved.",w:{resilience:2,autonomy:2}},
- {text:"They find another way to contribute.",w:{breadth:2,resilience:1}},
- {text:"They become quieter or step back.",w:{resilience:-3,visibility:2}},
- {text:"They lose interest in the activity.",w:{resilience:-3,breadth:1}}]},
+/* ---------- vocational pathways: who to ask, and how ----------
+   THE CHILD is asked how they learn - already in the bank, and framed
+   around process rather than destination because a Year 6 student should
+   not be made to choose a career.
+
+   THE PARENT is asked what they have OBSERVED, never what they want. Ask
+   a parent of a ten-year-old whether they picture ATAR or a trade and
+   nearly all of them say ATAR, because that is the default aspiration in
+   the room. The answer would tell us about the parent, not the child, and
+   it would quietly push every family toward academically-weighted schools.
+   What a parent can actually report is how the child goes with a long
+   written task versus something they build.
+
+   THE FAMILY is asked whether the option matters to them. That one IS a
+   preference and it belongs to them - it sits with faith, co-ed and
+   formality as something a family decides rather than something we
+   measure. Perth Modern has a confirmed zero across all twelve VET
+   fields; a family who wants that door left open should know before they
+   fall in love with the place. */
+{stage:1,type:"scenario",round:"How they work",
+ prompt:"Compare two pieces of your child's schoolwork: a long written assignment, and something practical they had to build, make or perform. Which came out better?",
+ options:[
+  {text:"The written one, clearly.",                          w:{academicInterest:3, vet:-3}},
+  {text:"The practical one, clearly.",                        w:{vet:3, tech:2, academicInterest:-1}},
+  {text:"Both good, but they enjoyed the practical one more.", w:{vet:2, tech:1}},
+  {text:"Both about the same.",                               w:{}},
+  {text:"Hard to say — not much practical work comes home.",  w:{}}]},
+
+{stage:1,type:"choice",round:"Pathways",
+ prompt:"How important is it that a vocational or trade pathway stays genuinely available — certificates, school-based apprenticeships, hands-on courses?",
+ options:[
+  {text:"Important — we want that door properly open.",       w:{vet:3}},
+  {text:"Worth having, though we expect an ATAR route.",      w:{vet:1}},
+  {text:"Not a factor for us.",                               w:{}},
+  {text:"We'd rather a school focused on university pathways.",w:{vet:-3, academicInterest:1}}]},
+
+/* The parent is the better witness for this one. They have watched the
+   child across strict teachers, structured holiday programs and demanding
+   coaches, and can see the pattern the child is inside of. Asked as an
+   observation of what HAPPENED, never as a view about what the child
+   needs - parents have theories, and the theory is not the evidence. */
+{stage:1,type:"scenario",round:"How they work",
+ prompt:"When your child has been in a firmly structured setting — a strict teacher, a demanding coach, a run-tight holiday program — what actually happened?",
+ options:[
+  {text:"They grumbled about it and did some of their best work.",  w:{structure:3, focus:2, resilience:2}},
+  {text:"They were noticeably calmer and happier.",                 w:{structure:3, spaceNeed:1}},
+  {text:"They resented it and switched off.",                       w:{structure:-3, autonomy:3}},
+  {text:"No real difference either way.",                           w:{structure:0}},
+  {text:"We haven't really seen them in one.",                      w:{}}]},
 
 {part:"A",type:"scenario",prompt:"Without a deadline or adult follow-up, what usually happens to a self-directed project?",options:[
  {text:"It is completed independently.",w:{effortSelfdir:3,autonomy:3}},
@@ -443,12 +573,6 @@ const parentQuestions = [
  {text:"Somewhat, but adults and their own goals still matter.",w:{peerInfluence:1,teacher:1}},
  {text:"A lot — they absorb the group's habits.",w:{peerInfluence:3,social:2,focus:2}},
  {text:"It depends on how confident they feel in that activity.",w:{peerInfluence:2,resilience:-1}}]},
-
-{part:"A",type:"scenario",prompt:"Which adults have got their strongest work out of them?",options:[
- {text:"Warm teachers who build confidence.",w:{teacher:2,mentorStyle:3,pressure:-1}},
- {text:"Demanding teachers who clearly expect more.",w:{teacher:3,structure:2,mentorStyle:-2,pressure:1}},
- {text:"Teachers who give them freedom and resources.",w:{autonomy:3,teacher:1}},
- {text:"Adults matter less than the peer group.",w:{peerDrive:2,peerInfluence:2,teacher:-2}}]},
 
 {part:"A",type:"scenario",prompt:"When a teacher says the work isn't good enough yet, what usually follows?",options:[
  {text:"They rapidly improve it.",w:{resilience:3,teacher:2}},
@@ -469,12 +593,6 @@ const parentQuestions = [
  {text:"Joins in with the group's direction.",w:{peerInfluence:3}},
  {text:"Observer who may step back.",w:{social:-3,visibility:2}}]},
 
-{part:"A",type:"scenario",prompt:"How often do they choose an activity when friends aren't joining?",options:[
- {text:"Often.",w:{peerInfluence:-3,autonomy:2}},
- {text:"Sometimes, if they're very interested.",w:{peerInfluence:-1}},
- {text:"Rarely.",w:{peerInfluence:3,social:2}},
- {text:"They'll join, but less confidently.",w:{peerInfluence:2,social:-1,visibility:2}}]},
-
 {part:"A",type:"scenario",prompt:"What most reliably turns their ability into sustained effort?",options:[
  {text:"A teacher relationship and high expectations.",w:{teacher:3,structure:2}},
  {text:"A competition, ranking or public goal.",w:{pressure:3,statusTolerance:2}},
@@ -483,7 +601,7 @@ const parentQuestions = [
  {text:"A busy routine with fixed commitments.",w:{structure:3,breadth:2}}]},
 
 {part:"A",type:"scenario",prompt:"Which concern feels most realistic in a highly selective cohort?",options:[
- {text:"They'd thrive and learn from stronger peers.",w:{resilience:3,peerDrive:3}},
+ {text:"They'd thrive and learn from stronger peers.",w:{resilience:3}},
  {text:"They'd work hard but get stressed.",w:{pressure:-2,resilience:1}},
  {text:"They may become less visible or less confident.",w:{resilience:-3,visibility:3}},
  {text:"They wouldn't care much about comparisons.",w:{statusTolerance:-2,autonomy:2}}]},
@@ -503,7 +621,7 @@ const parentQuestions = [
  {text:"One-to-one or small groups.",w:{social:-3,belonging:3,schoolSize:-2}}]},
 
 {part:"A",type:"scenario",prompt:"How important is being among the strongest to their confidence?",options:[
- {text:"Not very — strong peers energise them.",w:{resilience:3,peerDrive:3}},
+ {text:"Not very — strong peers energise them.",w:{peerDrive:3}},
  {text:"Somewhat — they need regular evidence of success.",w:{resilience:-1,visibility:2}},
  {text:"Very — they can withdraw when clearly outperformed.",w:{resilience:-3,visibility:2}},
  {text:"It varies a lot by activity.",w:{breadth:2}}]},
@@ -559,7 +677,53 @@ const parentQuestions = [
  {text:"Real downtime before they're any use.",w:{spaceNeed:3}},
  {text:"They run out of steam, and it shows at home.",w:{spaceNeed:3,pressure:-3}}]},
 
-/* ---------- Part B · family values, culture, constraints ---------- */
+{part:"A",type:"scenario",prompt:"Thinking about your child's school results — how do they come?",options:[
+ {text:"A lot of effort for solid results.",w:{effortSelfdir:2,structure:2,pressure:-1}},
+ {text:"Steady effort, steady results.",w:{structure:1}},
+ {text:"Good results without much effort.",w:{academic:3,visibility:3,effortSelfdir:-2}},
+ {text:"It varies a lot depending on the subject.",w:{breadth:2,focus:1}}]},
+
+{part:"A",type:"scenario",prompt:"Does your child want to be pushed harder academically, or would they rather it stayed comfortable?",options:[
+ {text:"They actively want to be pushed.",w:{academic:3,peerDrive:2,pressure:2}},
+ {text:"They'd take it if offered, but wouldn't ask.",w:{academic:1,visibility:3}},
+ {text:"They'd rather it stayed comfortable.",w:{academic:-2,pressure:-2}},
+ {text:"They want to be pushed in some subjects and not others.",w:{breadth:2,academic:1}}]},
+
+{part:"A",type:"scenario",prompt:"Has your child ever gone through a stretch without a close friend at school, or had a friendship group break down?",
+ note:"This isn't about whether anything is wrong. It tells us whether their answers about friendship reflect resilience or simply good luck so far.",options:[
+ {text:"No — they've always had friends and it's never been an issue.",w:{socialTested:0}},
+ {text:"Once or twice briefly, and they came through it.",w:{socialTested:3,conflictRepair:2}},
+ {text:"Yes, and it was hard for a while.",w:{socialTested:4,belonging:3,pressure:-2}},
+ {text:"Yes, and it still affects them.",w:{socialTested:4,belonging:3,conflictRepair:-2,pressure:-3}}]},
+
+{part:"A",type:"scenario",prompt:"Is your household busy and social, or quieter and more home-based?",options:[
+ {text:"Busy and social — people around, lots on.",w:{social:3,spaceNeed:-2,breadth:2}},
+ {text:"A mix, depending on the week.",w:{}},
+ {text:"Quieter and more home-based.",w:{social:-2,spaceNeed:2}},
+ {text:"Quiet at home, but the kids are out a lot.",w:{social:2,breadth:2}}]},
+
+{part:"A",type:"scenario",prompt:"How much do results and achievement get talked about at home?",options:[
+ {text:"A lot — it's a regular topic.",w:{academic:2,pressure:2,statusTolerance:2}},
+ {text:"When reports come out, not much otherwise.",w:{}},
+ {text:"Rarely — we focus on effort rather than results.",w:{pressure:-2,statusTolerance:-2,grounded:2}},
+ {text:"We deliberately keep it low-key.",w:{pressure:-3,statusTolerance:-3,grounded:2}}]},
+
+{part:"A",type:"scenario",prompt:"What does a typical weeknight look like in your house?",options:[
+ {text:"Structured — set homework and bedtime routines.",w:{structure:3,effortSelfdir:-1}},
+ {text:"Fairly relaxed, but it gets done.",w:{autonomy:2,effortSelfdir:2}},
+ {text:"Busy — activities most nights.",w:{breadth:3,social:2,spaceNeed:-2}},
+ {text:"It varies a lot week to week.",w:{structure:-2}}]},
+
+{part:"B",type:"suburb",config:"suburb",
+ prompt:"Which suburb do you live in?",
+ note:"This replaces a guess. Travel was previously a fixed label — 'local' or 'metro' — set from one point of view. With your suburb the tool measures from your front door instead.",
+ options:[]},
+
+{part:"B",type:"peers",config:"knownPeers",
+ prompt:"Do you know of children from your child's class heading to any of these?",
+ note:"Tick any you know of. This is never used to rank a school — friendship groups shift in Year 8 regardless. It is shown so you can weigh it yourself.",
+ options:[]},
+
 {part:"B",type:"rank2",prompt:"At the end of Year 12, what would make you feel this school was the right choice? Pick your top two.",
  config:"success",options:[
  {id:"results",text:"Strong results and options after school."},
@@ -624,4 +788,4 @@ const parentQuestions = [
  {id:"parent",text:"Mine — they're still young."},
  {id:"child",text:"Theirs — they know how they feel."},
  {id:"even",text:"Weight them evenly, and show me where we disagree."}]}
-];
+];;

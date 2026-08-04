@@ -10,7 +10,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 
 /* Bump this on every release you push. It is what lets a visitor
    holding a cached copy notice they are out of date. */
-const VERSION = "4.4.1";
+const VERSION = "5.0.0";
 
 const read = f => readFileSync(new URL(f, import.meta.url), "utf8");
 
@@ -39,8 +39,9 @@ const APP_VERSION = ${JSON.stringify(VERSION)};
 /* Order matters. questions -> schools -> engine -> app. */
 const JS_FILES = [
   "src/questions.js",   // dimensions + child and parent question banks
-  "src/schools.js",     // the 21 school profiles and their sources
+  "src/schools.js",     // the 22 school profiles and their sources
   "src/programs.js",    // sport and music sub-domain data
+  "src/research.js",    // imported evidence layer — status-flagged, never scored
   "src/engine.js",      // scoring, confidence, matching, alignment narrative
   "src/app.js"          // flow and rendering
 ];

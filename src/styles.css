@@ -277,3 +277,29 @@
 .sd.gap{background:rgba(200,79,94,.09);border-color:rgba(200,79,94,.35)}
 .sd.unknown{background:var(--paper);border-color:var(--line);color:var(--muted)}
 .sd-note{flex-basis:100%;font-size:.84rem;color:var(--muted);line-height:1.5;margin:4px 0 0}
+
+/* ---- v4.5 subject grid ---- */
+.grid-q{display:grid;gap:6px;margin:6px 0 4px}
+.grid-row{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;padding:9px 12px;border-radius:12px;border:1px solid var(--line);background:#fff}
+.grid-label{font-size:.95rem;font-weight:600}
+.grid-scale{display:flex;gap:8px}
+.dot{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--line);background:#fff;transition:.12s}
+.dot:hover{border-color:var(--accent);transform:scale(1.08)}
+.dot.on{background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 3px rgba(98,87,213,.16)}
+.grid-legend{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);font-weight:650;padding:2px 12px 0}
+@media(max-width:560px){.grid-row{grid-template-columns:1fr}.dot{width:26px;height:26px}}
+
+/* ---- v4.7 pole sliders + progressive disclosure ---- */
+.pole{margin-bottom:16px}
+.pole-labels{display:flex;justify-content:space-between;gap:16px;font-size:.78rem;color:var(--muted);margin-bottom:6px}
+.pole-labels .on{color:var(--ink);font-weight:750}
+.pole-track{position:relative;height:8px;background:#eceef3;border-radius:99px}
+.pole-track:before{content:"";position:absolute;left:50%;top:-3px;bottom:-3px;width:1px;background:#c9cfd9}
+.pole-fill{position:absolute;top:0;bottom:0;background:var(--accent);border-radius:99px;opacity:.85}
+.pole-dot{position:absolute;top:50%;width:13px;height:13px;margin:-6.5px 0 0 -6.5px;border-radius:50%;background:var(--accent);border:2.5px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.22)}
+.pole-conf{display:flex;align-items:center;gap:7px;font-size:.72rem;color:var(--muted);margin-top:5px;font-weight:650}
+.fold-panel summary{cursor:pointer;font-size:1rem;padding:4px 0;list-style:none}
+.fold-panel summary::-webkit-details-marker{display:none}
+.fold-panel summary:before{content:"▸ ";color:var(--muted)}
+.fold-panel[open] summary:before{content:"▾ "}
+.fold-panel summary span{color:var(--muted);font-weight:600}

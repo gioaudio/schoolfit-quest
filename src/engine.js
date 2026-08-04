@@ -16,6 +16,76 @@
 
 const K_SHRINK = 2.5;              // items needed before a dim is trusted
 const EV_CONF  = {High:1.0, Medium:0.78, Low:0.55};
+
+/* Evidence weighting applies to CULTURE attributes only.
+   ------------------------------------------------------
+   A school's music, sport, tech, academic, breadth and enterprise
+   attributes are built from things that can be checked from outside:
+   published programs, competition membership, subject lists, specialist
+   pathways, ensemble counts. Aquinas runs a very large sport program
+   whether or not anyone independent has ever written about the school.
+   Those attributes are not weakened by an absent review.
+
+   Culture attributes are different. "Teachers notice potential and
+   direct opportunity" is a claim about lived experience, and for 9 of
+   our 13 fee-paying schools the only source making it is the school
+   itself. There is no external review of WA private schools, and
+   searches of SEEK, Glassdoor and Indeed for Kennedy, Christ Church,
+   Wesley, CBC Fremantle, Iona, Santa Maria, Aquinas and Carey
+   Harrisdale found no current teaching-staff accounts at all.
+
+   So culture attributes regress toward the middle of the field when
+   the evidence behind them is thin, and program attributes do not.
+   The effect is to stop a school being rewarded for a good website
+   or punished for having no marketing department. */
+/* visibility and teacher were removed from scoring entirely (see below),
+   and grounded is now measured from ACARA socio-educational data, so the
+   evidence discount applies only to what is left that still rests on
+   school self-description. */
+/* What is left that still rests partly on school self-description.
+   structure, social and enterprise were removed from scoring entirely -
+   all three correlated with FEE at +0.50 to +0.59 and with measured
+   ICSEA at roughly zero, the same fingerprint as visibility and teacher.
+   No source exists for any of them, and enterprise in particular
+   decomposes into things measured properly elsewhere: whether a school
+   lets a Year 8 lead (access pathways), whether lessons involve leading
+   (pedagogy), and whether the cohort pushes back (peerAmbition, now
+   derived from real ICSEA). */
+const CULTURE_ATTRS = ["pressure","peerIntensity","autonomy","focus"];
+
+/* NOTE ON enterprise. It was removed from scoring earlier today because
+   the interpretive value correlated with FEE at +0.59 and with measured
+   ICSEA at +0.07. It is now BACK, rebuilt from senior subject lists:
+   Business Management and Enterprise, Economics, Accounting, Career and
+   Enterprise, Certificate III Business. The rebuilt value correlates
+   -0.18 with the old guess - unrelated, like every other attribute we
+   have re-derived - and 0.35 rather than 0.64 with fee.
+
+   The construct is NARROWER than the old label suggested. This measures
+   whether a school teaches business and enterprise as SUBJECTS. It does
+   not measure whether a child gets to lead things, which is what the
+   child-side questions about organising events are really asking. Five
+   schools have portal-locked handbooks and carry no value at all. */
+
+/* WHY visibility AND teacher NO LONGER SCORE.
+   -------------------------------------------
+   Both correlated with school FEES at +0.84 and with measured ICSEA at
+   0.09 and 0.20. That is the signature of a number derived from price
+   rather than from anything about the school. No source for either
+   exists at any of the 22 schools: there is no external review of WA
+   private schools, and a search of every school's published material
+   for pastoral group size and mentor continuity returned "not stated"
+   for 13 of 22, with only 2 publishing a group size at all.
+
+   Removing them took the fee correlation of a final recommendation from
+   0.50 to 0.21, and the private-versus-public gap from 9.4 points to 0.5,
+   while leaving the top of the list unchanged. Schools that were ahead on
+   evidence stayed ahead; schools that were ahead on price did not.
+
+   Both remain PROFILE dimensions: still measured on the child, still
+   shaping the narrative, and now generating a tour question instead of
+   a score. "How do you spot a capable student who is quietly coasting?"
+   is a better thing for a parent to ask than a number nobody can source. */
 const RISK_GATE = 0.5;             // min measurement confidence to fire a risk
 const INTEREST_SHARE = 0.32;       // interests' share of the growth score
 const INTEREST_DAMP  = 0.65;       // interests' weight relative to culture in fit
@@ -28,6 +98,8 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",
 function optW(o,dim){ return (o.w&&o.w[dim])||0; }
 
 function bounds(q,dim){
+  if(!q.options && !q.items && !q.rows) return [0,0];
+  if(q.options && !q.options.length) return [0,0];   // e.g. the suburb picker
   if(q.type==="bestworst"){
     let lo=Infinity,hi=-Infinity;
     q.items.forEach((m,mi)=>q.items.forEach((l,li)=>{
@@ -36,6 +108,14 @@ function bounds(q,dim){
       if(v<lo)lo=v; if(v>hi)hi=v;
     }));
     return [lo,hi];
+  }
+  if(q.type==="grid"){
+    /* Ratings are read as deviation from this child's own average, so a
+       child who rates everything 5 contributes nothing and a child who
+       rates maths 5 and English 2 contributes a lot. Neutralises both
+       the yea-sayers and the modest in one move. */
+    let W=0; q.rows.forEach(r=>W+=Math.abs((r.d&&r.d[dim])||0));
+    return W===0?[0,0]:[-2*W, 2*W];
   }
   if(q.type==="multi"){
     const vals=q.options.map(o=>optW(o,dim));
@@ -51,6 +131,16 @@ function bounds(q,dim){
 }
 
 function value(q,r,dim){
+  if(q.type==="grid"){
+    const ids=q.rows.map(x=>x.id).filter(id=>r&&r[id]!==undefined);
+    if(!ids.length) return 0;
+    const mean=ids.reduce((s,id)=>s+r[id],0)/ids.length;
+    return q.rows.reduce((s,row)=>{
+      const w=(row.d&&row.d[dim])||0;
+      if(!w || r[row.id]===undefined) return s;
+      return s + (r[row.id]-mean)*w;
+    },0);
+  }
   if(q.type==="bestworst") return 2*optW(q.items[r.most],dim)-optW(q.items[r.least],dim);
   if(q.type==="multi") return (r||[]).reduce((sum,i)=>sum+optW(q.options[i],dim),0);
   return optW(q.options[r],dim);
@@ -58,7 +148,10 @@ function value(q,r,dim){
 
 function answered(q,r){
   if(r===undefined||r===null) return false;
+  if(q.type==="suburb") return typeof r==="string" && r.length>0;
+  if(q.type==="peers")  return r==="unknown" || Array.isArray(r);
   if(q.type==="bestworst") return r.most!==undefined && r.least!==undefined && r.most!==r.least;
+  if(q.type==="grid") return typeof r==="object" && q.rows.every(x=>r[x.id]!==undefined);
   if(q.type==="multi") return Array.isArray(r) && (q.pick===0 ? true : r.length===q.pick);
   if(q.type==="rank2") return Array.isArray(r) && r.length===2;
   return true;
@@ -74,7 +167,10 @@ function pickedTiles(responses){
   return r.map(i=>q.options[i] && q.options[i].id).filter(Boolean);
 }
 function isActive(q,responses){
-  if(q.type==="subdomain") return q.trigger.some(t=>pickedTiles(responses).includes(t));
+  /* trigger:null means always ask — currently only the academic talent
+     ladder, which applies whatever the child is interested in. */
+  if(q.type==="subdomain"||q.type==="talent")
+    return q.trigger===null || q.trigger.some(t=>pickedTiles(responses).includes(t));
   if(q.type==="clash")     return pickedTiles(responses).length>=3;
   return true;
 }
@@ -134,6 +230,83 @@ function unconfirmedInterests(responses){
   return named.filter(t=>!done.includes(t));
 }
 
+/* ---------- tested versus resilient ----------
+   A low score on a social dimension means one of two very different
+   things: genuinely independent, or never tested. The tool cannot tell
+   them apart from the child's answers alone, because a child who has
+   always had friends has no reference point for needing them. The
+   parent item resolves it. Where the answer is "never been an issue",
+   these readings are reported as untested rather than as resilience. */
+const UNTESTED_DIMS=["belonging","conflictRepair","changeTolerance","social"];
+function socialUntested(parentScores){
+  if(!parentScores) return false;
+  const s=parentScores.socialTested;
+  /* Read the OBSERVED value, not the shrunk score. Confidence shrinkage
+     exists to stop a thinly-measured *trait* swinging to an extreme.
+     This is not a trait — it is a fact the parent knows and reported.
+     Damping it toward neutral would be treating knowledge as uncertainty. */
+  return !!(s && s.n>0 && s.observed<=25);
+}
+
+/* Does this child's stated level of commitment justify letting a
+   sub-domain move a ranking? Only club level and above. */
+const TALENT_DIMS={academic:"talentAcademic", sport:"talentSport", music:"talentMusic",
+                   computing:"talentComputing", art:"talentArt", drama:"talentDrama"};
+
+/* Observed, not shrunk — "I play for a club outside school" is a fact the
+   child reports, not an estimate about them. Catches the top two rungs of
+   each ladder and leaves "just for fun" and "school teams" as flags only. */
+function talentIn(scores,domain){
+  const t=scores[TALENT_DIMS[domain]];
+  return !!(t && t.n>0 && t.observed>=60);
+}
+
+/* Every domain the child is already working above school level in. */
+function talents(scores){
+  return Object.keys(TALENT_DIMS).filter(d=>talentIn(scores,d));
+}
+
+/* Back-compat for callers that only wanted "is this child serious about
+   anything". Prefer talents() or talentIn() — knowing WHICH domain is the
+   whole point, because every selective pathway is selective in one. */
+function talentGate(scores){ return talents(scores).length>0; }
+
+/* A selective or extension pathway is only meaningful to a child who could
+   plausibly enter it. Returns the pathways at this school that match a
+   domain the child is already working above school level in, so the card
+   can surface the entry route rather than silently ranking a school the
+   family may not be able to access.
+
+   Deliberately NOT a score. Selective entry is a fact about access, not a
+   measure of fit, and it must never quietly promote or demote a school. */
+function relevantPathways(schoolName,scores){
+  const r=(typeof RESEARCH!=="undefined") ? RESEARCH[schoolName] : null;
+  if(!r) return [];
+  const sel=(r.pedagogy||{}).selective_or_extension;
+  if(!sel||!sel.detail) return [];
+  const txt=sel.detail.toLowerCase();
+  /* Most schools describe extension that is open to everyone already
+     enrolled — "the school is non-selective but offers academic extension,
+     scholarships and broad senior pathways". That is not a pathway a child
+     gains entry to, and matching on "academic" or "extension" alone
+     returned all 22 schools, which is the same as returning none.
+     A pathway counts here only if entry is actually selected. */
+  const openToAll = /non-selective/.test(txt);
+  const NAMED = /gifted and talented|fully .*selective|academically selective|specialist |gate |high performance|aset|accelerated class|academic extension|academic excellence|excellence and creativity|keep\b/;
+  if(openToAll && !NAMED.test(txt)) return [];
+  const MATCH={
+    academic:["gifted","talented","gate ","selective","academic extension","academic excellence","accelerated","high performance","aset","keep"],
+    music:["music"], art:["visual art","art "], drama:["drama","performing"],
+    sport:["sport","tennis","volleyball","netball","football","rowing"],
+    computing:["stem","ict","robotic","engineering"]
+  };
+  return talents(scores)
+    .filter(d=>(MATCH[d]||[]).some(k=>txt.includes(k)))
+    .map(d=>({domain:d, status:sel.status, detail:sel.detail,
+              selected:!openToAll,
+              access:r.programAccess||null, entry:r.entryReality||null}));
+}
+
 /* The child's chosen sport and music specifics. */
 function subDomains(responses){
   const out={};
@@ -146,37 +319,145 @@ function subDomains(responses){
   return out;
 }
 
+/* ---------- known peers ----------
+   Never scored. Returned as a note for the card, plus a risk entry only
+   when the factors genuinely stack: a child who leans on one or two
+   close friendships, does not settle easily into a new group, has never
+   been tested on either, AND has nobody they know going. Any one of
+   those alone is noise. Together it is a real, specific finding. */
+function peerNote(schoolName, fam){
+  if(!fam || !fam.knownPeers) return null;
+  if(fam.knownPeers==="unknown") return null;
+  const list=Array.isArray(fam.knownPeers)?fam.knownPeers:[];
+  return list.includes(schoolName)
+    ? {has:true,  text:"You know of children from their class heading here."}
+    : {has:false, text:"Nobody you know of from their class is heading here."};
+}
+function peerRisk(s, schoolName, fam, untested){
+  const n=peerNote(schoolName,fam);
+  if(!n || n.has) return null;
+  const leansOnFriends = CF(s,"belonging")>=0.45 && S(s,"belonging")>=60;
+  const hardStart      = CF(s,"changeTolerance")>=0.45 && S(s,"changeTolerance")<=42;
+  if(!(leansOnFriends && hardStart)) return null;
+  return "Your child leans on one or two close friendships and does not find a cold start easy"
+    + (untested ? ", and has never had that tested" : "")
+    + ". Nobody you know of is heading here. That combination is worth weighing — though it is a reason to ask how the school settles new students, not a reason to follow the group.";
+}
+
 /* Sub-domain verdict for one school. Flags, never ranks — a ten-year-
    old's current favourite sport should not move a six-year decision,
    and "not yet researched" is reported as exactly that, never as
    absence. */
-function subDomainCheck(schoolName,subs){
+/* ---------- sub-domain verdict, with near neighbours ----------
+   A child picks ONE thing the music department should buy. Answering that
+   as a flat yes/no punishes narrow specialisms unfairly: only 2 of 22
+   schools have a confirmed recording and production pathway, yet EVERY
+   school that lacks one has contemporary music at strength 1 or 2. Telling
+   a producer-first child that Melville is a risk - a school with confirmed
+   strong contemporary music and full instrumental tuition - is simply
+   wrong, and it drowns out everything else on the card.
+
+   Production is a detail OF contemporary music, not a peer category. So
+   when the exact pick is absent we walk to its nearest neighbours and say
+   what IS there. A real warning is reserved for a child who is serious AND
+   finds nothing in the neighbourhood either. */
+const SUB_NEIGHBOURS = {
+  music:{
+    production:  ["contemporary","band","tuition"],
+    contemporary:["production","guitar","band","tuition"],
+    orchestral:  ["band","choral","tuition"],
+    band:        ["orchestral","jazz","tuition"],
+    jazz:        ["band","contemporary","tuition"],
+    choral:      ["orchestral","tuition"],
+    guitar:      ["contemporary","tuition"],
+    tuition:     ["band","orchestral"]
+  },
+  sport:{}
+};
+
+function subDomainCheck(schoolName,subs,scores){
   const out=[];
   [["sport",SPORT_LABELS],["music",MUSIC_LABELS]].forEach(([domain,labels])=>{
     const key=subs[domain];
     if(!key) return;
     const state=programState(schoolName,domain,key);
     const label=labels[key]||key;
-    if(state===2) out.push({level:"strong", text:label+" is a notable strength here."});
-    else if(state===1) out.push({level:"ok", text:label+" is offered here."});
-    else if(state===0) out.push({level:"gap", text:"No evidence found that this school offers "+label.toLowerCase()+". Worth confirming directly."});
-    else out.push({level:"unknown", text:"This school has not been checked for "+label.toLowerCase()+" yet. Ask on the tour."});
+    const serious=scores?talentIn(scores,domain):false;
+
+    if(state===2){ out.push({level:"strong", text:label+" is a notable strength here."}); return; }
+    if(state===1){ out.push({level:"ok", text:label+" is offered here."+
+      (serious?" Worth asking how far it goes for someone already working outside school.":"")}); return; }
+
+    /* Exact pick absent or unchecked - look at the neighbourhood before
+       saying anything alarming. */
+    const near=(SUB_NEIGHBOURS[domain]||{})[key]||[];
+    const found=near.map(k=>({k,st:programState(schoolName,domain,k)}))
+                    .filter(x=>x.st===2||x.st===1)
+                    .sort((a,b)=>b.st-a.st);
+    if(found.length){
+      const names=found.slice(0,2).map(x=>(labels[x.k]||x.k).toLowerCase());
+      const lead=found[0].st===2?" is a strength here":" is offered here";
+      out.push({level:"near",
+        text:"No dedicated "+label.toLowerCase()+" pathway was found, but "+names[0]+lead+
+             (names[1]?", along with "+names[1]:"")+". Worth asking what equipment is available and whether students can work that way within it."});
+      return;
+    }
+    if(state===0){
+      out.push({level:serious?"risk":"gap",
+        text:serious
+          ? "No evidence of "+label.toLowerCase()+" here, and nothing close to it either, for a child already working above school level in this. Confirm directly - it may be the deciding factor."
+          : "No evidence found that this school offers "+label.toLowerCase()+", or anything close to it."});
+      return;
+    }
+    out.push({level:"unknown", text:"This school has not been checked for "+label.toLowerCase()+" yet. Ask on the tour."});
   });
   return out;
 }
 
+
 /* ---------- scoring with confidence ---------- */
+/* ---------- how much to trust an item ----------
+   Remembering is better evidence than imagining. A child answering "in
+   the class with the most rules, how is your work" is reporting something
+   that happened. A child answering "which school day sounds better" is
+   picturing a place they have never been, at ten years old, and their
+   answer is a guess dressed as a preference.
+
+   Both are worth asking - for a large part of secondary school there is
+   nothing to remember yet - but they should not count the same. Response
+   items keep full weight; preference items are damped.
+
+   The parent bank is untouched: it has no preference-framed items at all,
+   because a parent is always being asked what they have seen. */
+/* Damp only the items that ask a child to IMAGINE a school, classroom or
+   teacher they have never encountered and pick between two of them. Those
+   are the guesses. Everything else - what they did, what is in front of
+   them when they play, what they want to do next year - is either a fact
+   or a plan, and both are better evidence than a hypothetical.
+
+   A first attempt used a whitelist of "response" phrasings and damped
+   things it should not have: "what's usually in front of you" is a fact,
+   and "if nobody reminded you to practise, what would actually happen" is
+   a response. Blacklisting the hypotheticals is the safer direction to
+   get wrong. */
+const IMAGINED = /which (school|classroom|teacher|would you|sounds|feels)|would you rather|sounds better|feels better|would you pick|which job|put you off more|rather be|rather have/i;
+function itemWeight(q){
+  if(q.type!=="choice") return 1;               // scenarios, grids, tiles, talent are all real
+  return IMAGINED.test(q.prompt||"") ? 0.72 : 1;
+}
+
 function scoreQuestions(qs,responses){
   const out={};
   Object.keys(DIMS).forEach(dim=>{
     let raw=0,lo=0,hi=0,n=0;
     qs.forEach((q,i)=>{
-      if(!q.options && !q.items) return;
+      if(!q.options && !q.items && !q.rows) return;
       const r=responses[i];
       if(!answered(q,r)) return;
       const b=bounds(q,dim);
       if(b[0]===b[1]) return;                 // dim not present in this item
-      raw+=value(q,r,dim); lo+=b[0]; hi+=b[1]; n++;
+      const w=itemWeight(q);
+      raw+=value(q,r,dim)*w; lo+=b[0]*w; hi+=b[1]*w; n++;
     });
     if(n===0){ out[dim]={score:50,observed:50,n:0,confidence:0}; return; }
     const observed=clamp(Math.round((raw-lo)/(hi-lo)*100));
@@ -216,28 +497,28 @@ function desiredSchoolVector(s){
   return {
     v:{
       academic:      mix("academic","academicInterest",0.6),
-      teacher:       S(s,"teacher"),
-      visibility:    S(s,"visibility"),
-      peerAmbition:  mix("peerDrive","peerInfluence",0.62),
+    visualArt:     S(s,"visualArt"),
+    languages:     S(s,"languages"),
+    vet:           S(s,"vet"),
+    formality:     S(s,"formality"),
+    drama:         S(s,"drama"),
+          peerAmbition:  mix("peerDrive","peerInfluence",0.62),
       peerIntensity: mix("resilience","pressure",0.65),
-      structure:     S(s,"structure"),
-      autonomy:      S(s,"autonomy"),
+        autonomy:      S(s,"autonomy"),
       focus:         S(s,"focus"),
-      social:        S(s,"social"),
-      pressure:      S(s,"pressure"),
+        pressure:      S(s,"pressure"),
       music:         S(s,"music"),
       tech:          S(s,"tech"),
       sport:         S(s,"sport"),
-      enterprise:    S(s,"enterprise"),
-      breadth:       S(s,"breadth"),
-      grounded:      S(s,"grounded")
+        breadth:       S(s,"breadth"),
+    enterprise:    S(s,"enterprise"),
+      grounded:      S(s,"grounded"),
+      size:          S(s,"schoolSize")
     },
     c:{
-      academic:cmin("academic","academicInterest"), teacher:CF(s,"teacher"), visibility:CF(s,"visibility"),
-      peerAmbition:cmin("peerDrive","peerInfluence"), peerIntensity:cmin("resilience","pressure"),
-      structure:CF(s,"structure"), autonomy:CF(s,"autonomy"), focus:CF(s,"focus"),
-      social:CF(s,"social"), pressure:CF(s,"pressure"), music:CF(s,"music"), tech:CF(s,"tech"),
-      sport:CF(s,"sport"), enterprise:CF(s,"enterprise"), breadth:CF(s,"breadth"), grounded:CF(s,"grounded")
+      academic:cmin("academic","academicInterest"), visualArt:CF(s,"visualArt"), drama:CF(s,"drama"), languages:CF(s,"languages"), vet:CF(s,"vet"), formality:CF(s,"formality"), peerAmbition:cmin("peerDrive","peerInfluence"), peerIntensity:cmin("resilience","pressure"), autonomy:CF(s,"autonomy"), focus:CF(s,"focus"), pressure:CF(s,"pressure"), music:CF(s,"music"), tech:CF(s,"tech"),
+      sport:CF(s,"sport"), breadth:CF(s,"breadth"), grounded:CF(s,"grounded"), enterprise:CF(s,"enterprise"),
+      size:CF(s,"schoolSize")
     }
   };
 }
@@ -264,18 +545,64 @@ function attrRank(){
   return ATTR_RANK;
 }
 
-/* An attribute from a weaker-evidence school is pulled back toward
-   the middle of the field. We do not claim to know it as precisely. */
+/* Attribute value. No evidence adjustment happens here — see below.
+
+   THIS USED TO REGRESS WEAK-EVIDENCE ATTRIBUTES TOWARD 50, AND THAT
+   WAS BACKWARDS. Match scores reward an attribute being *close to what
+   the child wants*. Most children want something in the middle on most
+   culture dimensions. So pulling an unverified school toward the middle
+   moved it CLOSER to the average child and RAISED its score. Uncertainty
+   was paying a dividend. Measured on a real profile, the change promoted
+   Scotch and Christ Church five places each on no evidence whatsoever.
+
+   Uncertainty must not move the point estimate. It belongs on the
+   *weight*: an attribute nobody outside the school has ever corroborated
+   should be less able to earn a strong match, and equally less able to
+   cause a bad one. That is applied in schoolMatch via evTerm(). */
 function evAttr(school,key){
-  const conf=EV_CONF[school.evidenceLevel]||0.7;
   const raw=school.attrs[key];
   if(raw===undefined) return null;
-  const rel=attrRank()[key](raw);
-  return 50+(rel-50)*(0.65+0.35*conf);
+  return attrRank()[key](raw);
+}
+
+/* Mean match term per dimension: what an average school scores against
+   a given want. This is the "we don't know" fallback — the score you'd
+   expect from a school picked blind. Cached; attrRank is already cached. */
+let _NEUTRAL=null;
+function neutralTerm(key,want){
+  if(!_NEUTRAL) _NEUTRAL={};
+  const vals=_NEUTRAL[key]||(_NEUTRAL[key]=schools
+    .map(s=>s.attrs[key]).filter(v=>v!==undefined).map(v=>attrRank()[key](v)));
+  if(!vals.length) return 50;
+  return vals.reduce((a,v)=>a+(100-Math.abs(want-v)),0)/vals.length;
+}
+
+/* Blend a school's actual match term toward the blind-guess term in
+   proportion to how weak the evidence is. High evidence keeps its full
+   result. Low evidence keeps ~55% of the distance from average, so a
+   school cannot earn a strong culture match on its own prospectus —
+   and is not punished for lacking a marketing department either.
+   Program attributes are externally checkable, so they pass through. */
+function evTerm(school,key,want,actual){
+  if(!CULTURE_ATTRS.includes(key)) return actual;
+  const conf=EV_CONF[school.evidenceLevel]||0.7;
+  const n=neutralTerm(key,want);
+  return n+(actual-n)*conf;
 }
 
 /* ---------- risk triggers ---------- */
 const RISK_RULES=[
+  /* A child whose output runs on the teacher relationship, at a school
+     that confirms it hands the pastoral adult over mid-secondary. Fires
+     only where the handover is CONFIRMED - 13 of 22 schools never say,
+     and silence is not a yes. */
+  {dims:["teacher"], test:(s,a,school)=>{
+     if(!school) return false;
+     const ps=(typeof RESEARCH!=="undefined" && RESEARCH[school.name]||{}).pastoralStructure||{};
+     return ps.sameAdultAcrossYears==="no" && S(s,"teacher")>68;
+   }, pts:14,
+   msg:"This child's effort tracks the adult in front of them, and this school confirms it changes its pastoral staffing partway through. Worth asking who picks them up and when."},
+
   {dims:["resilience"], test:(s,a)=>S(s,"resilience")<42 && a.peerIntensity>82, pts:26,
    msg:"This cohort's intensity may amplify a tendency to step back when others are ahead."},
   {dims:["resilience"], test:(s,a)=>S(s,"resilience")<50 && S(s,"resilience")>=42 && a.peerIntensity>76, pts:13,
@@ -290,19 +617,21 @@ const RISK_RULES=[
    msg:"Classroom focus varies more here than this child appears to need."},
   {dims:["teacher"], test:(s,a)=>S(s,"teacher")>70 && a.teacher<70, pts:11,
    msg:"Mentorship is central to this child's motivation, and the profile here is less certain on that."},
-  {dims:["social"], test:(s,a)=>S(s,"social")>72 && a.social<68, pts:9,
+  {dims:["social"], test:(s,a)=>a.social!=null && S(s,"social")>72 && a.social<68, pts:9,
    msg:"The social and co-curricular ecosystem may feel narrower than this child wants."},
   {dims:["academic","academicInterest"], test:(s,a)=>S(s,"academic")>72 && a.academic<68, pts:14,
    msg:"Academic stretch may need to be sought out rather than being the default setting."},
   {dims:["grounded"], test:(s,a)=>S(s,"grounded")>70 && a.grounded<65, pts:12,
    msg:"The social mix here is narrower than this child's stated preference for a grounded environment."},
   /* Symmetric risks — v3 only ever flagged under-provision, never over-provision. */
-  {dims:["autonomy"], test:(s,a)=>S(s,"autonomy")>70 && a.structure>78 && a.autonomy<50, pts:16,
+  {dims:["autonomy"], test:(s,a)=>a.structure!=null && a.autonomy!=null && S(s,"autonomy")>70 && a.structure>78 && a.autonomy<50, pts:16,
    msg:"This is a tightly structured environment and this child works best with room to move. Over-structure is a real disengagement path, not a safe default."},
   {dims:["spaceNeed"], test:(s,a)=>S(s,"spaceNeed")>66 && a.breadth>82, pts:14,
    msg:"Commitment load here is high, and this child needs genuine downtime. Ask what is actually compulsory."},
   {dims:["statusTolerance"], test:(s,a)=>S(s,"statusTolerance")<36 && a.grounded<45, pts:15,
    msg:"Standing and reputation are more visible here than this child appears comfortable with."},
+  {dims:["schoolSize"], test:(s,a)=>S(s,"schoolSize")<36 && a.size>75, pts:15,
+   msg:"This is one of the largest schools in the set, and this child leans towards somewhere they would be known by name."},
   {dims:["breadth"], test:(s,a)=>S(s,"breadth")<35 && a.breadth>82, pts:9,
    msg:"This school spreads students across many things, while this child wants to go deep on one or two."}
 ];
@@ -368,6 +697,11 @@ const PHRASE={
   hiLo:"this child wants several pathways, and this school concentrates more narrowly",
   loHi:"a lot is expected across many areas, while this child wants to go deep on one or two",
   loLo:"students are able to concentrate here, which is what this child wants"},
+ size:{
+  hiHi:"it is one of the larger schools in this set, which is the kind of environment this child said suits them",
+  hiLo:"this child leans towards a big school with plenty going on, and this is one of the smaller ones here",
+  loHi:"this is one of the largest schools in the set, and this child leans towards somewhere they would be known",
+  loLo:"it is one of the smaller schools here, which matches this child's preference for being known"},
  grounded:{
   hiHi:"the social mix is broad, which this child said matters to them",
   hiLo:"this child values a grounded, mixed environment and the intake here is narrower",
@@ -418,20 +752,278 @@ function schoolCharacter(A){
   const traits=[];
   if(A.peerIntensity>=72) traits.push("a high-intensity cohort");
   else if(A.peerIntensity<=38) traits.push("a gentler pace");
-  if(A.structure>=70) traits.push("tight structure");
+  if(A.structure!=null && A.structure>=70) traits.push("tight structure");
   else if(A.autonomy>=72) traits.push("unusual latitude for students");
   if(A.breadth>=72) traits.push("a wide co-curricular spread");
   else if(A.breadth<=38) traits.push("a narrower set of pathways");
-  if(A.grounded>=72) traits.push("a socially broad intake");
-  else if(A.grounded<=32) traits.push("a narrower social intake");
-  if(A.visibility>=74) traits.push("staff who actively direct opportunity");
+  if(A.grounded!=null && A.grounded>=72) traits.push("a socially broad intake");
+  else if(A.grounded!=null && A.grounded<=32) traits.push("a narrower social intake");
+  if(A.visibility!=null && A.visibility>=74) traits.push("staff who actively direct opportunity");
   return traits.slice(0,3);
+}
+
+/* ---------- academic streaming ----------
+   A whole-school academic figure averages the extension class with the
+   General and VET cohorts. For a child who will sit in a selected stream
+   that average describes a room they will rarely be in. Melville is the
+   clearest case: whole-school academic 76, but its Academic Extension is
+   entered by testing, reports and NAPLAN. Hale is the mirror image -
+   whole-school 91, but its extension is enrichment open to anyone already
+   enrolled, so there is no selected room to join.
+
+   What streaming changes is WHO IS IN THE ROOM, not what the school
+   offers. Subject lists, results and pathways are school-level facts and
+   are left alone. peerAmbition and peerIntensity are the attributes that
+   actually move, so they are the only ones adjusted - and only for a
+   child whose own answers say they work beyond their class.
+
+   The size of the lift is set by HOW SELECTIVE ENTRY IS, which is
+   recorded for every school, never by an invented guess at how the
+   stream performs. Nobody publishes results by stream. */
+/* Classified explicitly rather than by pattern-matching prose, because the
+   prose does not distinguish the two things that matter. Three regex
+   attempts each got it wrong in a different way: one credited John Curtin
+   with an academic stream for its Gifted and Talented ARTS program, one
+   read "the school is non-selective but offers academic extension" as a
+   selected stream, and one used programAccess, which describes entry to
+   the SCHOOL rather than to the stream.
+
+   The real distinction is systemic, not a fee story. WA public GATE and
+   Academic Extension programs are Department-designated and entered by
+   testing. Independent-school "academic extension" is internal placement
+   by a teacher, and none of the 22 publishes a selection method for it.
+   That difference is real and worth encoding; it is not evidence that
+   one sector teaches better. Reason recorded per school so it can be
+   argued with. */
+const STREAM_TIER = {
+  "Perth Modern School":                             [4,"Whole school selective via the statewide Academic Selective Entry Test. The school average IS the stream, so no lift applies."],
+  "Willetton Senior High School":                    [3,"Gifted and Talented academic entry, a separate statewide competitive process."],
+  "Melville Senior High School — Academic Extension":[2,"Academic Extension selected by school testing, reports and NAPLAN - the only school that publishes its method."],
+  "Applecross Senior High School — Academic Extension":[2,"Department Academic Extension, internal selection."],
+  "Shenton College — HPL / GATE":                    [2,"Gifted and Talented Education plus High Performance Learning."],
+  "Fremantle College":                               [2,"Gifted and Talented and Academic Excellence inside a comprehensive."],
+  "Rossmoyne Senior High School":                    [2,"Specialist Mathematics is academic and selective. Its GATE Languages and Classical Music are other domains and do not count here."],
+  "John Curtin College of the Arts":                 [1,"Its Gifted and Talented programs are ARTS, not academic. Counted for arts elsewhere, not for academic streaming."],
+  "Christ Church Grammar School":                    [1,"Academic extension classes exist but the school is non-selective and publishes no selection method."],
+  "Carey Baptist College — Harrisdale":              [1,"GATE Music and STEM are selective; general academic enrichment is not."],
+  "CBC Fremantle":                                   [1,"Academic Excellence is performance-based continuation rather than selected entry."],
+  "Corpus Christi College":                          [1,"Academic Excellence inside an explicitly non-selective school."],
+  "Iona Presentation College":                       [1,"Academic Excellence inside an explicitly non-selective school."],
+  "Aquinas College":                                 [1,"Non-selective; academic extension and scholarships only."],
+  "Seton Catholic College":                          [1,"Accelerated classes published, no selection method stated."],
+  "Kennedy Baptist College":                         [1,"KEEP is an internal extension pathway, not selected entry."],
+  "Hale School":                                     [1,"Enrichment open to enrolled students; no selected academic stream found."],
+  "Scotch College":                                  [1,"Enrichment and IB breadth; no selected academic stream found."],
+  "All Saints’ College":                             [1,"Personalisation and acceleration, open to enrolled students."],
+  "Santa Maria College":                             [1,"Academic enrichment and extension electives, not a selected stream."],
+  "John XXIII College":                              [1,"Magis enrichment sits within normal admission."],
+  "Wesley College":                                  [0,"No selected or named academic stream located."]
+};
+function streamTier(schoolName){ return (STREAM_TIER[schoolName]||[0])[0]; }
+function streamReason(schoolName){ return (STREAM_TIER[schoolName]||[0,""])[1]; }
+
+const STREAM_LIFT = [0, 0, 0.45, 0.70, 0];   // by tier; tier 4 needs none,
+                                             // its average already IS the stream
+
+
+/* ---------- selected programs in the OTHER domains ----------
+   The academic case generalises. A child auditioned into Rossmoyne's
+   Specialist Classical Music sits with auditioned players, not with the
+   school's general music cohort - exactly the same argument as an
+   Academic Extension class, and exactly the same limit on what we can
+   claim. Nobody publishes results by program either, so the lift is
+   again set by whether entry is SELECTED, never by a guess at how the
+   program performs.
+
+   Detected from program data we already hold rather than from prose:
+   music.selective, arts.artSelective, and a named specialist sport
+   program with a trial. */
+function selectedProgram(schoolName, domain){
+  const p=(typeof PROGRAMS!=="undefined") ? PROGRAMS[schoolName] : null;
+  const r=(typeof RESEARCH!=="undefined") ? RESEARCH[schoolName] : null;
+  if(domain==="music")  return !!(p && p.music && p.music.selective===2);
+  if(domain==="art")    return !!(p && p.arts  && p.arts.artSelective===2);
+  if(domain==="sport"){
+    const sp=(r&&r.sport&&r.sport.specialistProgram)||"";
+    /* A named program is not enough - it has to select. */
+    return /trial|audition|application|selection|endorsed|academy/i.test(sp);
+  }
+  return false;
+}
+
+/* Which attribute a selected program in this domain lifts. Same principle
+   as the academic case: the program changes WHO IS IN THE ROOM, so the
+   peer attributes move and the school-level provision figures do not. */
+const DOMAIN_PEERS = {music:["peerAmbition"], art:["peerAmbition"],
+                      sport:["peerAmbition","peerIntensity"]};
+const PROGRAM_LIFT = 0.40;   // below the academic tier-2 lift of 0.45,
+                             // because a co-curricular program shapes less
+                             // of a child's week than a streamed class does
+
+/* ---------- how they read, and where they want it to happen ----------
+   Two children with identical ability belong in different schools if one
+   reads notation and the other plays by ear. Notation opens ATAR Music,
+   orchestra, concert band and choral work. Playing by ear or from chords
+   points at contemporary, guitar, jazz and production - not because it is
+   lesser, but because those programs are built to work that way.
+
+   And a child whose music lives OUTSIDE school needs far less from the
+   school's program than one who wants to be in the ensembles. Serious and
+   school-dependent are different things, and we used to conflate them. */
+const READS_TO_SUBS = {
+  notation:["orchestral","band","choral","jazz"],
+  chords:  ["contemporary","guitar","band"],
+  ear:     ["contemporary","guitar","production","jazz"],
+  screen:  ["production","contemporary"],
+  both:    []
+};
+function musicAnswer(responses, prompt){
+  let out=null;
+  childQuestions.forEach((q,i)=>{
+    if(q.domain!=="music" || q.type!=="choice") return;
+    if(!q.prompt.toLowerCase().includes(prompt)) return;
+    const r=responses[i];
+    if(r!==undefined && q.options[r]) out=q.options[r].id;
+  });
+  return out;
+}
+/* Which of the sport "where do you want it to happen" options they chose. */
+function sportIntent(responses){
+  let out=null;
+  childQuestions.forEach((q,i)=>{
+    if(q.domain!=="sport" || q.type!=="choice") return;
+    if(!q.prompt.toLowerCase().includes("where do you want")) return;
+    const r=responses[i];
+    if(r!==undefined && q.options[r]) out=q.options[r].id;
+  });
+  return out;
+}
+
+function musicProfile(responses){
+  const reads=musicAnswer(responses,"in front of you");
+  const where=musicAnswer(responses,"where do you want your music");
+  return {reads, where,
+          leans: READS_TO_SUBS[reads]||[],
+          schoolDependent: where==="schoolBig"||where==="schoolSub"||where==="more",
+          selfSufficient:  where==="outside"};
+}
+
+/* ---------- sport: breadth and depth are different products ----------
+   Willetton fields 17 sports and has one standout. John Curtin fields 2
+   and has a specialist football program. Blended into a single number
+   they land within a few points of each other, which serves neither
+   child well.
+
+   A kid who just likes playing wants BREADTH - something on every
+   season, teams that will have them, no trials. A kid competing outside
+   school wants DEPTH - their sport, taken seriously, with a coach who
+   knows it. Same attribute, opposite readings.
+
+   So we re-weight rather than adding a question. The child has already
+   told us which they are: talentSport, and the "where do you want your
+   sport to happen" answer. Nothing new to ask. */
+function sportShape(schoolName){
+  const p=(typeof PROGRAMS!=="undefined") ? PROGRAMS[schoolName] : null;
+  const sp=(p&&p.sport)||{};
+  const keys=["afl","cricket","netball","basketball","soccer","hockey","rugby","tennis",
+              "volleyball","swimming","athletics","crosscountry","rowing","waterpolo","golf","sailing","surfing"];
+  const v=keys.map(k=>sp[k]).filter(x=>x!=null);
+  if(!v.length) return null;
+  return {breadth:v.length/17*100,
+          depth:v.reduce((a,b)=>a+b,0)/v.length*50,
+          standouts:v.filter(x=>x===2).length};
 }
 
 /* ---------- match ---------- */
 function schoolMatch(s,school,fam){
   const {v:want,c:conf}=desiredSchoolVector(s);
   const A={}; Object.keys(school.attrs).forEach(k=>A[k]=evAttr(school,k));
+  /* If this child works beyond their class AND this school runs a stream
+     they would be selected into, the peer group they meet is not the
+     school average. Lift by selectivity of entry only. */
+  /* ---------- steer the interest score by the child's own sub-domain ----------
+     The headline music attribute blends all eight sub-domains, so it cannot
+     tell a classical stronghold from a contemporary one - measured, its
+     correlation with contemporary strength is 0.03. That pointed a
+     production-first child at Rossmoyne, which has contemporary 1 and
+     production 0.
+
+     FIRST ATTEMPT WAS WRONG and is worth recording. It blended the school's
+     figure toward the sub-domain value on every school. But 13 of 22 sit at
+     production 1, so most schools were being pulled toward the middle and
+     the steer washed out - Fremantle College, the one school with a
+     confirmed production pathway, moved three points.
+
+     Only the EXTREMES carry information. A confirmed strength is a real
+     signal and a searched-and-absent is a real signal; "it exists" is not.
+     So we move on 2 and 0 and leave 1 alone, and a near neighbour at
+     strength 2 softens an absence rather than cancelling it. */
+  /* A child who plays by ear gets steered toward the sub-domains that
+     work that way, even if they never named one. And a child whose music
+     lives outside school has the whole music weight damped, because the
+     school's program matters less to them than to an ensemble player. */
+  /* Re-read the sport attribute as breadth or depth depending on which
+     this child actually needs. A casual player is served by a school with
+     something on every season; a serious one by a school that takes their
+     sport seriously. */
+  const shape=sportShape(school.name);
+  if(shape && A.sport!=null){
+    const serious=talentIn(s,"sport");
+    const where=(s&&s.__sport)||null;
+    const casual = where==="casual" || (!serious && where!=="outside");
+    if(serious || where==="outside"){
+      A.sport=A.sport*0.35 + (shape.depth+Math.min(shape.standouts,4)*6)*0.65;
+    } else if(casual){
+      A.sport=A.sport*0.35 + shape.breadth*0.65;
+    }
+  }
+
+  const mp=(s && s.__music) || null;
+  if(mp && A.music!=null){
+    if(mp.leans.length){
+      const best=Math.max(...mp.leans.map(k=>programState(school.name,"music",k)).map(v=>v==null?-1:v));
+      if(best===2) A.music=A.music+(94-A.music)*(talentIn(s,"music")?0.45:0.28);
+      else if(best===0) A.music=A.music-(A.music-6)*(talentIn(s,"music")?0.40:0.22);
+    }
+    if(mp.selfSufficient) A.music=A.music*0.45+50*0.55;   // school program matters less
+  }
+
+  const subs=(s && s.__subs) || null;
+  if(subs){
+    [["music",subs.music],["sport",subs.sport]].forEach(([dom,key])=>{
+      if(!key || A[dom]==null) return;
+      const exact=programState(school.name,dom,key);
+      if(exact!==2 && exact!==0) return;                 // 1 and unknown say nothing
+      const serious=talentIn(s,dom);
+      if(exact===2){
+        A[dom]=A[dom]+(94-A[dom])*(serious?0.60:0.35);
+        return;
+      }
+      /* Absent. Check the neighbourhood before marking it down hard. */
+      const near=((SUB_NEIGHBOURS[dom]||{})[key]||[])
+                   .map(k=>programState(school.name,dom,k)).filter(v=>v===2).length;
+      const cut=(serious?0.55:0.30)*(near?0.45:1);       // a strong neighbour halves the cut
+      A[dom]=A[dom]-(A[dom]-6)*cut;
+    });
+  }
+
+  const tier=streamTier(school.name);
+  const lifts={};
+  if(talentIn(s,"academic")){
+    const L=STREAM_LIFT[tier]||0;
+    if(L>0) ["peerAmbition","peerIntensity"].forEach(k=>lifts[k]=Math.max(lifts[k]||0,L));
+  }
+  /* Same logic, other domains. A child only gets the benefit of a selected
+     program in a domain they are actually working above school level in. */
+  ["music","art","sport"].forEach(dom=>{
+    if(!talentIn(s, dom==="art"?"art":dom)) return;
+    if(!selectedProgram(school.name,dom)) return;
+    (DOMAIN_PEERS[dom]||[]).forEach(k=>lifts[k]=Math.max(lifts[k]||0,PROGRAM_LIFT));
+  });
+  Object.entries(lifts).forEach(([k,L])=>{
+    if(A[k]==null) return;
+    A[k]=A[k]+(94-A[k])*L;
+  });
   const evConf=EV_CONF[school.evidenceLevel]||0.7;
 
   /* --- natural fit: weight by how strongly the child expressed the
@@ -443,7 +1035,10 @@ function schoolMatch(s,school,fam){
     const c=conf[k]||0;
     const isInterest=["music","tech","sport","enterprise"].includes(k);
     const w=(0.4+1.6*strength*c)*(isInterest?INTEREST_DAMP:1);
-    acc+=(100-Math.abs(want[k]-A[k]))*w; totW+=w; measSum+=c;
+    /* evTerm blends an unverifiable culture claim toward what an average
+       school would score, so a prospectus cannot buy a strong match. */
+    const term=evTerm(school,k,want[k],100-Math.abs(want[k]-A[k]));
+    acc+=term*w; totW+=w; measSum+=c;
   });
   const natural=totW>0?acc/totW:50;
   const avgMeas=measSum/keys.length;
@@ -455,13 +1050,27 @@ function schoolMatch(s,school,fam){
   const capacity=top.reduce((sum,t)=>sum+A[t.k],0)/top.length;
 
   const dev=[];
-  dev.push(S(s,"peerInfluence")>65 ? A.peerAmbition : 100-Math.abs(want.peerAmbition-A.peerAmbition));
-  dev.push(S(s,"visibility")>65 ? A.visibility : 100-Math.abs(want.visibility-A.visibility));
-  dev.push(S(s,"focus")>65 ? A.focus : 100-Math.abs(want.focus-A.focus));
+  /* Null-safe. These read attributes directly rather than through the
+     filtered key list, so a school missing one of them used to produce
+     NaN for the whole growth score — and a NaN score silently sorts to
+     the bottom of the list rather than erroring. Any attribute we cannot
+     evidence is simply left out of the average instead. */
+  const push=(cond,hit,wantK,attrK)=>{
+    const a=A[attrK], wv=want[wantK];
+    /* Guard BOTH sides. The attribute can be missing because we could not
+       evidence it, and the want key can be missing because the dimension
+       no longer scores at all. Either way the term is dropped rather than
+       silently poisoning the average with NaN. */
+    if(a===null||a===undefined||wv===null||wv===undefined) return;
+    dev.push(cond ? a : 100-Math.abs(wv-a));
+  };
+  push(S(s,"peerInfluence")>65,1,"peerAmbition","peerAmbition");
+  push(S(s,"focus")>65,1,"focus","focus");
   const wantIntensity=S(s,"resilience")<45?68:S(s,"resilience")<70?78:90;
-  dev.push(100-Math.abs(wantIntensity-A.peerIntensity));
-  dev.push(S(s,"teacher")>65 ? A.teacher : 100-Math.abs(want.teacher-A.teacher));
-  dev.push(S(s,"breadth")>65 ? A.breadth : 100-Math.abs(want.breadth-A.breadth));
+  if(A.peerIntensity!=null) dev.push(100-Math.abs(wantIntensity-A.peerIntensity));
+  push(S(s,"breadth")>65,1,"breadth","breadth");
+  /* visibility and teacher used to contribute here too. They no longer
+     score anywhere — see the note at the top of this file. */
   /* Interests are deliberately the smaller share. A ten-year-old's
      hobbies change; culture, teaching style and the opportunities a
      school actually creates do not, and they matter for six years.
@@ -473,10 +1082,12 @@ function schoolMatch(s,school,fam){
   RISK_RULES.forEach(rule=>{
     const c=Math.min(...rule.dims.map(d=>CF(s,d)));
     if(c<RISK_GATE) return;                      // not measured well enough to claim
-    if(!rule.test(s,A)) return;
+    if(!rule.test(s,A,school)) return;   // school passed so a rule can read its research record
     risk+=rule.pts*(0.6+0.4*c);
     risks.push(rule.msg);
   });
+  const pRisk=peerRisk(s,school.name,fam,fam&&fam.socialUntested);
+  if(pRisk){ risk+=10; risks.push(pRisk); }
   risk=clamp(Math.round(risk),1,99);
 
   /* --- hard constraints: filters, never score penalties --- */
@@ -496,14 +1107,21 @@ function schoolMatch(s,school,fam){
     if(fam.faith==="none" && school.religion!=="secular") blocks.push("This is a faith-based school.");
     if(fam.faith==="light" && school.religion==="strong") softs.push("Religious identity is more prominent here than you preferred.");
     if(fam.faith==="want" && school.religion==="secular") softs.push("This is a secular school; you indicated you wanted a faith community.");
-    if(fam.travel==="local" && school.travel!=="local") softs.push("Further from home than you preferred.");
-    if(fam.travel==="moderate" && school.travel==="metro") softs.push("Likely a longer daily trip than you preferred.");
+    if(fam.travel!=="any" && fam.suburb){
+      const km=distanceFrom(fam.suburb,school.name);
+      if(km!==null && km>+fam.travel)
+        blocks.push("About "+km+" km away, beyond the "+fam.travel+" km you set.");
+    }
   }
 
   /* --- composite, with an honesty band --- */
   const base=natural*0.58+opportunity*0.42;
   const score=clamp(Math.round(base-risk*0.18),1,99);
-  const band=Math.round((1-evConf)*14+(1-avgMeas)*9);
+  /* Evidence now drives the band harder than it used to. A Low-evidence
+     school genuinely could be anywhere on culture, and the number shown
+     should admit that rather than implying a precision we don't have. */
+  let band=Math.round((1-evConf)*26+(1-avgMeas)*9);
+  if(fam && fam.socialUntested) band+=4;   // we know less than the scores imply
 
   const notes=alignmentNotes(want,conf,A);
 
@@ -515,6 +1133,7 @@ function schoolMatch(s,school,fam){
     eligible:blocks.length===0, blocks, softs,
     evConf, avgMeas,
     suits:notes.suits, watch:notes.watch, surplus:notes.surplus,
+    peers:peerNote(school.name,fam),
     character:schoolCharacter(A)
   };
 }

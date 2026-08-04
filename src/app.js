@@ -49,10 +49,21 @@ function renderQ(){
   const q=childQuestions[ci], r=answers[ci];
   const live=liveQuestions(), pos=live.indexOf(q)+1;
   el("roundLabel").textContent="Part "+(q.stage+1)+" · "+STAGE_NAME[q.stage];
-  el("progressText").textContent=pos+" of "+live.length;
-  el("progressBar").style.width=(pos/live.length*100)+"%";
+  /* The sub-domain, talent and clash questions only switch on once the
+     child has picked their three interest tiles in Stage 0. So the total
+     is 48 on the opening screens and jumps to 51-55 afterwards — the
+     counter used to CLIMB while a child was working, which reads as the
+     quiz getting longer the more you do. For a ten-year-old that is the
+     worst possible signal. Show no total until the picks have settled. */
+  if(q.stage===0){
+    el("progressText").textContent="Question "+pos;
+    el("progressBar").style.width=(pos/live.length*100)+"%";
+  } else {
+    el("progressText").textContent=pos+" of "+live.length;
+    el("progressBar").style.width=(pos/live.length*100)+"%";
+  }
 
-  let h=`<div class="q-kicker">${q.type==="bestworst"?"Pick one MOST and one LEAST":q.type==="multi"?(q.pick?("Pick "+q.pick):"Pick any number"):"Choose what feels most true"}</div>`;
+  let h=`<div class="q-kicker">${q.type==="bestworst"?"Pick one MOST and one LEAST":q.type==="grid"?"Rate each one":q.type==="multi"?(q.pick?("Pick "+q.pick):"Pick any number"):"Choose what feels most true"}</div>`;
   h+=`<h2 class="q-title">${esc(fillTokens(q.prompt))}</h2>`;
   if(q.hint) h+=`<p class="note">${esc(q.hint)}</p>`;
 
@@ -74,6 +85,18 @@ function renderQ(){
     });
     h+=`</div>`;
     if(q.pick) h+=`<p class="note" id="pickCount">${sel.length} of ${q.pick} chosen</p>`;
+  } else if(q.type==="grid"){
+    const sel=r||{};
+    h+=`<div class="grid-q">`;
+    q.rows.forEach(row=>{
+      h+=`<div class="grid-row"><span class="grid-label">${esc(row.t)}</span><div class="grid-scale">`;
+      for(let v=1;v<=5;v++)
+        h+=`<button class="dot${sel[row.id]===v?" on":""}" data-grid="${row.id}" data-val="${v}" aria-label="${esc(row.t)}: ${v} of 5"></button>`;
+      h+=`</div></div>`;
+    });
+    h+=`<div class="grid-legend"><span>${esc(q.scale[0])}</span><span>${esc(q.scale[4])}</span></div></div>`;
+    const done=q.rows.filter(x=>sel[x.id]!==undefined).length;
+    h+=`<p class="note">${done} of ${q.rows.length} rated</p>`;
   } else if(q.type==="clash"){
     const tiles=pickedTiles(answers);
     h+=`<div class="opt-list">`;
@@ -105,6 +128,11 @@ function renderQ(){
     else { if(q.pick && cur.length>=q.pick) cur.shift(); cur.push(i); }
     answers[ci]=cur; renderQ();
   });
+  el("questionCard").querySelectorAll("[data-grid]").forEach(b=>b.onclick=()=>{
+    const cur=answers[ci]||{};
+    cur[b.dataset.grid]=+b.dataset.val;
+    answers[ci]=cur; renderQ();
+  });
   el("questionCard").querySelectorAll("[data-most]").forEach(b=>b.onclick=()=>{
     const i=+b.dataset.most, cur=answers[ci]||{};
     cur.most = cur.most===i?undefined:i;
@@ -121,7 +149,12 @@ function renderQ(){
   if(tb) tb.onclick=()=>{ answers[ci]="skip"; tokens--; renderQ(); setTimeout(next,140); };
 
   el("backBtn").disabled=ci===0;
-  el("nextBtn").textContent=ci===childQuestions.length-1?"See the profile":"Next";
+  /* Was: ci === childQuestions.length-1, i.e. index 54. But the last items
+     in the bank are conditional, so a child who picks neither music nor
+     sport never reaches index 54 and the button never changed. Ask instead
+     whether any ACTIVE question remains after this one. */
+  const lastLive = live[live.length-1];
+  el("nextBtn").textContent = (q===lastLive) ? "See the profile" : "Next";
   el("nextBtn").disabled=!answered(q,answers[ci])&&answers[ci]!=="skip";
 }
 
@@ -141,6 +174,7 @@ function back(){
 function finishChild(){
   const clean={}; Object.keys(answers).forEach(k=>{ if(answers[k]!=="skip") clean[k]=answers[k]; });
   childScores=applyInterestRank(scoreQuestions(childQuestions,clean), interestRanking(answers));
+  try{ childScores.__subs = subDomains(answers); childScores.__music = musicProfile(answers); childScores.__sport = sportIntent(answers); }catch(e){}
   useParent=false; showOnly("results"); renderResults();
 }
 
@@ -156,7 +190,21 @@ function renderP(){
   let h=`<div class="q-kicker">${q.part==="A"?"Observation":"Family"}</div><h2 class="q-title">${esc(q.prompt)}</h2>`;
   if(q.note) h+=`<p class="note">${esc(q.note)}</p>`;
 
-  if(q.type==="multi"){
+  if(q.type==="peers"){
+    const sel=Array.isArray(r)?r:[];
+    h+=`<div class="tile-grid">`;
+    schools.forEach(sc=>h+=`<button class="tile${sel.includes(sc.name)?" on":""}" data-peer="${esc(sc.name)}">${esc(sc.short)}</button>`);
+    h+=`</div>
+      <div class="actions"><button class="btn btn-ghost btn-sm" data-peer-none="1">None that I know of</button>
+      <button class="btn btn-ghost btn-sm" data-peer-none="unknown">Too early to say</button></div>`;
+    if(r==="unknown") h+=`<p class="note">Marked as too early to say.</p>`;
+    else h+=`<p class="note">${sel.length} selected</p>`;
+  } else if(q.type==="suburb"){
+    const names=Object.keys(SUBURBS).sort();
+    h+=`<div class="tile-grid">`;
+    names.forEach(n=>h+=`<button class="tile${r===n?" on":""}" data-sub="${esc(n)}">${esc(n)}</button>`);
+    h+=`</div><p class="note">Pick the closest one. It only needs to be roughly right.</p>`;
+  } else if(q.type==="multi"){
     const sel=r||[];
     h+=`<div class="tile-grid">`;
     orderFor(pOrder,pi,q.options.length).forEach(i=>h+=`<button class="tile${sel.includes(i)?" on":""}" data-tile="${i}">${esc(q.options[i].text)}</button>`);
@@ -185,6 +233,18 @@ function renderP(){
     if(at>=0)cur.splice(at,1); else { if(cur.length>=q.pick)cur.shift(); cur.push(i); }
     pAnswers[pi]=cur; renderP();
   });
+  el("parentQuestionCard").querySelectorAll("[data-peer]").forEach(b=>b.onclick=()=>{
+    const cur=Array.isArray(pAnswers[pi])?pAnswers[pi]:[], n=b.dataset.peer, at=cur.indexOf(n);
+    if(at>=0) cur.splice(at,1); else cur.push(n);
+    pAnswers[pi]=cur; renderP();
+  });
+  el("parentQuestionCard").querySelectorAll("[data-peer-none]").forEach(b=>b.onclick=()=>{
+    pAnswers[pi]= b.dataset.peerNone==="unknown" ? "unknown" : [];
+    renderP(); setTimeout(pNext,140);
+  });
+  el("parentQuestionCard").querySelectorAll("[data-sub]").forEach(b=>b.onclick=()=>{
+    pAnswers[pi]=b.dataset.sub; renderP(); setTimeout(pNext,140);
+  });
   el("parentQuestionCard").querySelectorAll("[data-rank]").forEach(b=>b.onclick=()=>{
     const i=+b.dataset.rank, cur=pAnswers[pi]||[], at=cur.indexOf(i);
     if(at>=0)cur.splice(at,1); else { if(cur.length>=2)cur.shift(); cur.push(i); }
@@ -210,8 +270,12 @@ function finishParent(){
   famConfig={};
   parentQuestions.forEach((q,idx)=>{
     if(q.part!=="B"||pAnswers[idx]===undefined) return;
-    if(q.type==="rank2") famConfig[q.config]=pAnswers[idx].map(i=>q.options[i].id);
-    else famConfig[q.config]=q.options[pAnswers[idx]].id;
+    /* The suburb answer is a string, not an option index. Reading
+       q.options[answer].id on it crashed finishParent, which meant the
+       parent flow never closed. */
+    if(q.type==="suburb"||q.type==="peers") famConfig[q.config]=pAnswers[idx];
+    else if(q.type==="rank2") famConfig[q.config]=pAnswers[idx].map(i=>q.options[i].id);
+    else if(q.options && q.options[pAnswers[idx]]) famConfig[q.config]=q.options[pAnswers[idx]].id;
   });
   useParent=true;
   syncFiltersFromFamily();
@@ -229,6 +293,9 @@ function syncFiltersFromFamily(){
 
 function familyFilters(){
   return {
+    socialUntested: socialUntested(parentScores),
+    suburb: famConfig.suburb,
+    knownPeers: famConfig.knownPeers,
     eligibility: el("filterEligible").value,
     coed: el("filterCoed").value,
     budget: el("filterBudget").value,
@@ -239,6 +306,8 @@ function familyFilters(){
 
 /* ---------------- results ---------------- */
 function activeScores(){
+  /* attach the child's sub-domain picks so schoolMatch can steer the
+     interest score toward the kind of music or sport they named */
   if(useParent && parentScores) return blend(childScores,parentScores,famConfig.weighting||"even");
   return childScores;
 }
@@ -295,18 +364,40 @@ function confBar(c){
   return `<span class="conf" title="${lab}"><span class="conf-fill" style="width:${pct}%"></span></span><span class="conf-lab">${lab}</span>`;
 }
 
+/* A dimension is rendered as a lean between two named ends, not as an
+   amount. 50 is neutral, not zero — asking "how much structure have you
+   got" is meaningless, but "wants freedom <-> wants scaffolding" is
+   something a parent can read in a second. */
+function pole(d,x){
+  const p=DIMS[d].poles||["",""], v=x.score, dev=v-50;
+  const strong=Math.abs(dev)>=14;
+  const lo=`<span${!strong||dev<0?' class="on"':''}>${esc(p[0])}</span>`;
+  const hi=`<span${!strong||dev>0?' class="on"':''}>${esc(p[1])}</span>`;
+  const fill = dev>=0 ? `left:50%;width:${dev}%` : `left:${v}%;width:${-dev}%`;
+  const lab = !strong ? "no clear lean either way"
+            : (x.confidence>=.65?"well measured":x.confidence>=.45?"partly measured":"lightly measured")
+              +" · "+x.n+" question"+(x.n===1?"":"s");
+  return `<div class="pole">
+    <div class="pole-labels">${lo}${hi}</div>
+    <div class="pole-track"><div class="pole-fill" style="${fill}"></div><div class="pole-dot" style="left:${v}%"></div></div>
+    <div class="pole-conf"><span class="conf-pip"><i style="width:${Math.round(x.confidence*100)}%"></i></span>${esc(lab)}</div>
+  </div>`;
+}
+
+/* Ordered by distance from neutral, so whatever is actually distinctive
+   about this child rises to the top instead of following a fixed list. */
 function renderTraits(s){
-  const order=["resilience","peerInfluence","visibility","teacher","structure","autonomy","focus",
-               "academic","peerDrive","pressure","social","breadth","grounded",
-               "music","tech","sport","enterprise","academicInterest"];
-  el("traitList").innerHTML=order.map(d=>{
-    const x=s[d]||{score:50,confidence:0};
-    return `<div class="trait">
-      <div class="trait-top"><strong>${esc(DIMS[d].label)}</strong><span class="trait-val">${x.score}</span></div>
-      <div class="bar"><div style="width:${x.score}%"></div></div>
-      <div class="trait-meta">${confBar(x.confidence)}</div>
-      <p>${esc(DIMS[d].desc)}</p></div>`;
-  }).join("");
+  const rows=SCORED_DIMS.concat(PROFILE_DIMS)
+    .filter(d=>s[d]&&s[d].n>0&&DIMS[d].poles)
+    .map(d=>({d,x:s[d],dev:Math.abs(s[d].score-50)}))
+    .sort((a,b)=>b.dev-a.dev);
+  const head=rows.filter(r=>r.dev>=14).slice(0,6);
+  const rest=rows.filter(r=>!head.includes(r));
+  el("traitHead").innerHTML = head.length
+    ? head.map(r=>pole(r.d,r.x)).join("")
+    : `<p class="note">Nothing leaned strongly in either direction. That is a real finding — this child looks adaptable across most of what we measured.</p>`;
+  el("traitList").innerHTML = rest.map(r=>pole(r.d,r.x)).join("");
+  el("traitRestCount").textContent = rest.length;
 }
 
 /* Constructs with no school-side evidence: reported, never scored. */
@@ -332,6 +423,29 @@ function renderProfileNotes(s){
       <b>${names.map(esc).join("</b>, then <b>")}</b>.
       ${rank.tied?"Two of them tied, so this ordering is soft — the clash answers weren't fully consistent.":
         "That order now weights the matching, so first place counts for more than third."}</div>`);
+  }
+  if(socialUntested(parentScores)){
+    bits.push(`<div class="insight warn"><strong>Read the social findings carefully</strong>
+      Your child has never been without friends at school, which is good news — but it means their
+      answers about friendship and belonging show what they have never had to do without,
+      not proven resilience. A low score here is <b>untested, not resilient</b>.
+      Where a school profile below says a quieter or smaller environment would suit,
+      weigh that against how they actually behave in a busy one.</div>`);
+  }
+  const LBL={academic:"academic work",sport:"sport",music:"music",
+             computing:"coding and making",art:"art and design",drama:"drama"};
+  const tal=talents(activeScores());
+  if(tal.length){
+    const named=tal.map(d=>LBL[d]).join(", ").replace(/, ([^,]*)$/," and $1");
+    bits.push(`<div class="insight"><strong>Already working beyond school level</strong>
+      This child is going further than the classroom in ${esc(named)}. Where a school runs a
+      selective or extension pathway in one of those, it is flagged on the card along with how
+      entry actually works — because a pathway only counts if you can get into it.</div>`);
+  }
+  if(tal.length && (subs.sport||subs.music)){
+    bits.push(`<div class="insight"><strong>The specific program matters here</strong>
+      Because they compete or study outside school, whether a school runs their particular
+      sport or instrument carries real weight, rather than being a tour question only.</div>`);
   }
   const unconfirmed=unconfirmedInterests(answers);
   if(unconfirmed.length){
@@ -374,7 +488,9 @@ function renderSchools(s){
       <header class="school-head">
         <div>
           <h3>${esc(sc.name)}</h3>
-          <p class="school-type">${esc(sc.type)} · about $${sc.fee.toLocaleString()} a year</p>
+          <p class="school-type">${esc(sc.type)} · about ${sc.fee.toLocaleString()} a year${(()=>{
+            const km=famConfig.suburb?distanceFrom(famConfig.suburb,sc.name):null;
+            return km===null?"":` · <b>${km} km</b> from ${esc(famConfig.suburb)}`;})()}</p>
         </div>
         <div class="school-score">
           <div class="ss-num">${m.score}<span class="ss-band">±${m.band}</span></div>
@@ -383,7 +499,8 @@ function renderSchools(s){
       </header>
       ${m.blocks.length?`<div class="blocked">Outside your stated constraints: ${esc(m.blocks.join(" "))}</div>`:""}
       ${m.softs.length?`<div class="soft">${esc(m.softs.join(" "))}</div>`:""}
-      ${(()=>{const c=subDomainCheck(sc.name,subs);return c.length?
+      ${m.peers?`<div class="subdomain"><span class="sd ${m.peers.has?"strong":"unknown"}">${esc(m.peers.text)}</span></div>`:""}
+      ${(()=>{const c=subDomainCheck(sc.name,subs,activeScores());return c.length?
         `<div class="subdomain">${c.map(x=>`<span class="sd ${x.level}">${esc(x.text)}</span>`).join("")}
          ${programNote(sc.name)?`<p class="sd-note">${esc(programNote(sc.name))}</p>`:""}</div>`:"";})()}
       <div class="align">
@@ -470,7 +587,7 @@ function renderComparison(){
       <p>${r.abs<12?"Broad agreement.":r.diff>0?"You see more of this than your child reports.":"Your child reports more of this than you observe."}</p>
     </div>`).join("");
 
-  const notes=[];
+  const notes=["You answered after seeing your child's profile, so read these differences as considered reflection rather than an independent second opinion. Where you disagree strongly, that is usually the most useful thing on this page."];
   if(famConfig.prestige==="high") notes.push("You told us reputation matters a lot. That is a legitimate part of a school decision, and naming it means it is visible here rather than buried inside a number. Worth checking separately whether your child's answers suggest they would be comfortable in a status-conscious cohort.");
   if(famConfig.setback==="sit" && CF(childScores,"helpSeeking")>=0.45 && S(childScores,"helpSeeking")<=42)
     notes.push("Your family tends to let a setback sit, and your child's answers suggest they keep difficulty private. Those two together mean a problem could run for a while before anyone acts. Worth asking every school how quickly they would tell you.");
@@ -506,3 +623,99 @@ window.addEventListener("DOMContentLoaded",()=>{
   ["filterEligible","filterCoed","filterBudget","filterFaith","filterTravel"]
     .forEach(id=>el(id).onchange=()=>{ if(childScores) renderSchools(activeScores()); });
 });
+
+/* ============================================================
+   TEST HARNESS  —  add ?dev=1 to the URL
+   ============================================================
+   Answering sixty-odd questions to check one wording change is
+   how a project stops being tested. This does two things:
+
+   SAVE — after a real run, download that child's exact answers.
+   That file is worth more than any profile I could invent, because
+   it is a real ten-year-old's actual responses. Every future change
+   to the engine can then be re-checked against it in one click.
+
+   LOAD — drop a saved file back in and jump straight to results.
+
+   Deliberately hidden behind a URL parameter. A family arriving at
+   the site should never see it, and nothing here touches scoring. */
+
+function devExport(){
+  const blob={
+    saved:new Date().toISOString(),
+    version:(typeof APP_VERSION!=="undefined"?APP_VERSION:"?"),
+    label:prompt("Whose answers are these? (e.g. Hugo, Y6, first run)")||"unlabelled",
+    childAnswers:answers,
+    parentAnswers:pAnswers,
+    famConfig:famConfig,
+    /* stored so a later run can be compared even if the bank changes */
+    childQuestionCount:childQuestions.length,
+    prompts:childQuestions.map(q=>(q.prompt||"").slice(0,60))
+  };
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(blob,null,1)],{type:"application/json"}));
+  a.download="schoolfit-answers-"+blob.label.replace(/[^a-z0-9]+/gi,"-").toLowerCase()+".json";
+  a.click();
+}
+
+function devImport(file){
+  const r=new FileReader();
+  r.onload=()=>{
+    let d; try{ d=JSON.parse(r.result); }catch(e){ alert("Not a valid answer file."); return; }
+    if(d.childQuestionCount && d.childQuestionCount!==childQuestions.length){
+      const ok=confirm("This file was saved against "+d.childQuestionCount+" questions and the bank now has "+
+        childQuestions.length+".\n\nAnswers are stored by position, so any question added or removed since then "+
+        "will shift them out of alignment. Load anyway?");
+      if(!ok) return;
+    }
+    answers=d.childAnswers||{}; pAnswers=d.parentAnswers||{}; famConfig=d.famConfig||{};
+    finishChild();
+    if(Object.keys(pAnswers).length){ try{ finishParent(); }catch(e){} }
+  };
+  r.readAsText(file);
+}
+
+/* Quick synthetic profiles for checking a change without a real file.
+   Only the interest tiles are set; everything else falls to neutral,
+   so these show DIRECTION, not a real child. */
+const DEV_PROFILES={
+  "musician (music, coding, reading)":["music","code","reading"],
+  "athlete (sport, outdoor, helping)":["sport","outdoor","helping"],
+  "maker (coding, building, science)":["code","build","science"],
+  "artist (art, drama, writing)":["art","drama","writing"],
+  "academic (reading, puzzles, science)":["reading","puzzles","science"]
+};
+function devProfile(name){
+  const ids=DEV_PROFILES[name]; if(!ids) return;
+  answers={}; pAnswers={}; famConfig={};
+  answers[0]=ids.map(id=>childQuestions[0].options.findIndex(o=>o.id===id)).filter(i=>i>=0);
+  /* answer everything else with the middle option so the profile is
+     legible rather than random */
+  childQuestions.forEach((q,i)=>{
+    if(i===0||!isActive(q,answers)) return;
+    if(q.type==="grid"){ const o={}; q.rows.forEach(r=>o[r.id]=3); answers[i]=o; }
+    else if(q.type==="bestworst"){ answers[i]={most:0,least:q.items.length-1}; }
+    else if(q.type==="multi"){ answers[i]=[0,1,2].slice(0,q.pick||3); }
+    else if(q.options&&q.options.length){ answers[i]=Math.floor(q.options.length/2); }
+  });
+  finishChild();
+}
+
+function devPanel(){
+  const d=document.createElement("div");
+  d.style.cssText="position:fixed;bottom:12px;right:12px;z-index:9999;background:#111;color:#eee;"+
+    "font:12px/1.5 system-ui;padding:12px 14px;border-radius:10px;max-width:260px;box-shadow:0 6px 24px rgba(0,0,0,.4)";
+  d.innerHTML='<div style="font-weight:600;margin-bottom:8px">Test harness</div>'+
+    '<button id="devSave" style="width:100%;margin-bottom:6px">Save these answers</button>'+
+    '<label style="display:block;margin-bottom:8px"><span style="display:block;margin-bottom:4px">Load an answer file</span>'+
+    '<input id="devLoad" type="file" accept="application/json" style="width:100%;font-size:11px"></label>'+
+    '<select id="devProf" style="width:100%"><option value="">— synthetic profile —</option>'+
+    Object.keys(DEV_PROFILES).map(k=>'<option>'+k+'</option>').join("")+'</select>'+
+    '<div style="opacity:.6;margin-top:8px;font-size:11px">Synthetic profiles set interests only and answer '+
+    'everything else neutrally. They show direction, not a real child.</div>';
+  document.body.appendChild(d);
+  el("devSave").onclick=devExport;
+  el("devLoad").onchange=e=>{ if(e.target.files[0]) devImport(e.target.files[0]); };
+  el("devProf").onchange=e=>{ if(e.target.value) devProfile(e.target.value); };
+}
+if(/[?&]dev=1/.test(location.search)) window.addEventListener("DOMContentLoaded",devPanel);

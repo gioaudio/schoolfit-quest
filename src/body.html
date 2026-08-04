@@ -73,13 +73,12 @@
 
     <div class="grid-2">
       <div class="panel section">
-        <h3>Profile</h3>
-        <p class="note">The grey bar under each trait shows how much of the questionnaire actually informed it.</p>
-        <div class="trait-list" id="traitList"></div>
+        <h3>What stands out</h3>
+        <p class="note">Only where this child leans clearly one way. Everything sitting near the middle is below.</p>
+        <div id="traitHead"></div>
       </div>
       <div class="panel section">
-        <h3>Measured, but not matched on</h3>
-        <p class="note">These say something real about your child, but the school dataset holds no comparable evidence — so they shape the profile and the tour questions, and never touch a school's score.</p>
+        <h3>Worth knowing</h3>
         <div id="profileNotes"></div>
         <div id="unmappedNote"></div>
       </div>
@@ -107,8 +106,9 @@
         <div><label for="filterFaith">Faith</label><select id="filterFaith">
           <option value="fine">No preference</option><option value="want">Want a faith community</option>
           <option value="light">Prefer it minimal</option><option value="none">Secular only</option></select></div>
-        <div><label for="filterTravel">Travel</label><select id="filterTravel">
-          <option value="any">Any</option><option value="moderate">Moderate</option><option value="local">Local only</option></select></div>
+        <div><label for="filterTravel">Distance from home</label><select id="filterTravel">
+          <option value="any">Any distance</option><option value="8">Within 8 km</option>
+          <option value="15">Within 15 km</option><option value="25">Within 25 km</option></select></div>
       </div>
     </div>
 
@@ -120,6 +120,17 @@
       <div id="schoolList"></div>
       <div id="excludedList"></div>
     </div>
+
+    <details class="panel section fold-panel">
+      <summary><b>The rest of the profile</b> <span id="traitRestCount"></span> traits that sat closer to the middle</summary>
+      <p class="note">Near the centre means no clear lean, which is a finding rather than a gap. The grey pip shows how much of the questionnaire informed each one.</p>
+      <div class="trait-list" id="traitList"></div>
+    </details>
+
+    <details class="panel section fold-panel">
+      <summary><b>How this was worked out</b></summary>
+      <p class="note">Every dimension is scored from forced choices, never from agree/disagree scales, and each carries a measurement confidence based on how many questions informed it. Thinly measured dimensions are pulled back toward neutral rather than being allowed to swing, and they cannot trigger a warning about any school. School attributes are positioned relative to the other twenty, not on an absolute scale, and weaker-evidence schools are pulled toward the middle of the field with a wider ± band. Interests count for less than culture and teaching, because a child's hobbies change and a school's way of working does not. Nothing here has been validated against how children actually went at these schools.</p>
+    </details>
   </section>
 
   <footer class="footer">
