@@ -10,7 +10,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 
 /* Bump this on every release you push. It is what lets a visitor
    holding a cached copy notice they are out of date. */
-const VERSION = "5.1.0";
+const VERSION = "5.2.0";
 
 const read = f => readFileSync(new URL(f, import.meta.url), "utf8");
 
